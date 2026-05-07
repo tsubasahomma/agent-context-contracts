@@ -1,0 +1,117 @@
+name: Bounded child change
+description: Define one bounded child work item for implementation.
+title: "[Child]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this GitHub form as an optional adapter entry point for bounded child work.
+        Durable workflow rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts.
+        Repository-local facts belong in `docs/project/**` when a project extension is materialized.
+  - type: input
+    id: parent-scope
+    attributes:
+      label: Parent scope reference
+      description: Reference the parent program or accepted direction without using a closing keyword.
+      placeholder: "[parent issue, artifact, or decision reference]"
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: State the bounded outcome this child owns.
+      placeholder: "Create, update, or validate the specific artifact or behavior in scope."
+    validations:
+      required: true
+  - type: textarea
+    id: current-gap
+    attributes:
+      label: Current defect or missing artifact
+      description: Describe the current gap using evidence pointers where possible.
+      placeholder: "- [observed missing artifact, defect, contradiction, or risk]"
+    validations:
+      required: true
+  - type: textarea
+    id: required-changes
+    attributes:
+      label: Required changes
+      description: List the exact changes expected for this child.
+      placeholder: "- [required file, artifact, behavior, or documentation change]"
+    validations:
+      required: true
+  - type: textarea
+    id: in-scope
+    attributes:
+      label: In-scope paths or surfaces
+      description: List the paths, artifacts, or ownership areas the worker may change or inspect.
+      placeholder: "- `[repository-relative path or surface]`"
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: List forbidden changes and work that must be reported instead of solved.
+      placeholder: "- [excluded path, adapter, tool, artifact, or decision]"
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define reviewable completion criteria.
+      placeholder: "- [ ] [criterion with observable evidence]"
+    validations:
+      required: true
+  - type: textarea
+    id: validation-required
+    attributes:
+      label: Validation required
+      description: List required validation claims, evidence types, and expected readiness status.
+      placeholder: "- [claim]: [command evidence, inspected-state evidence, CI evidence, manual review, or maintainer confirmation]"
+    validations:
+      required: true
+  - type: textarea
+    id: deliverables
+    attributes:
+      label: Deliverables
+      description: List durable artifacts or reports the worker must produce.
+      placeholder: "- [file, artifact, validation report, or readiness report]"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence-pointers
+    attributes:
+      label: Evidence pointers
+      description: Point to current contracts, artifacts, diffs, or decisions the worker must re-inspect.
+      placeholder: "- [repository-relative path, artifact locator, or maintainer-confirmed decision]"
+    validations:
+      required: true
+  - type: textarea
+    id: known-risks
+    attributes:
+      label: Known risks
+      description: Record residual risks, disputed assumptions, or later-work risks.
+      placeholder: "- [risk]: [why it remains and whether it affects readiness]"
+    validations:
+      required: false
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Boundary confirmations
+      options:
+        - label: The worker must re-inspect current evidence before editing.
+          required: true
+        - label: This child must not silently expand beyond the accepted scope.
+          required: true
+        - label: A pull request for this child should close only this child work item.
+          required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Add related parent scope, previous child work, contracts, or other durable evidence pointers.
+      placeholder: "- [reference]"
+    validations:
+      required: false
