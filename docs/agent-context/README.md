@@ -15,7 +15,7 @@ policy details.
 | --- | --- |
 | [Core contract](core.md) | Defines the shared portable principles and boundary between core, local extensions, adapters, and tooling. |
 | [Artifact contracts](artifacts.md) | Defines the portable durable artifact model, metadata, provenance, evidence-reference, schema, and uncertainty expectations. |
-| [Workflow contracts](workflows.md) | Reserves the place for collaboration workflow expectations without defining detailed role or handoff rules yet. |
+| [Workflow contracts](workflows.md) | Defines portable thread roles, bounded handoffs, scope preservation, readiness reporting, and the change lifecycle. |
 | [Validation contracts](validation.md) | Defines the portable validation claim model, status vocabulary, evidence requirements, and success-claim rules. |
 | [Evidence-packing contracts](evidence-packing.md) | Defines the tool-neutral boundary for packaging evidence without choosing a specific packing tool. |
 | [Evaluation contracts](evaluations.md) | Reserves the place for reviewable evaluation rules without adding concrete test cases yet. |
