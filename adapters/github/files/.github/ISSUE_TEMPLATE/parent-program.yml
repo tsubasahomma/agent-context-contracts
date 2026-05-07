@@ -1,0 +1,109 @@
+name: Parent program
+description: Scope a larger program before bounded child work is created.
+title: "[Parent]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this GitHub form as an optional adapter entry point for parent-scope planning.
+        Durable workflow rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts.
+        Repository-local facts belong in `docs/project/**` when a project extension is materialized.
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: State the larger accepted objective.
+      placeholder: "Describe the parent objective and the durable outcome expected."
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Explain the current gap, risk, or missing capability.
+      placeholder: "Describe what is missing or unsafe without this parent program."
+    validations:
+      required: true
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-goals
+      description: List boundaries that child work must not silently expand into.
+      placeholder: "- [out-of-scope behavior, artifact, or decision]"
+    validations:
+      required: true
+  - type: textarea
+    id: design-rules
+    attributes:
+      label: Design rules
+      description: Capture accepted design boundaries and ownership rules.
+      placeholder: "- [portable rule, local-extension boundary, adapter boundary, or sync boundary]"
+    validations:
+      required: true
+  - type: textarea
+    id: target-structure
+    attributes:
+      label: Target structure
+      description: List expected files, artifacts, or surfaces if known.
+      placeholder: |
+        ```text
+        [path-or-artifact]
+        ```
+    validations:
+      required: false
+  - type: textarea
+    id: ownership-model
+    attributes:
+      label: Ownership model
+      description: Identify which layer owns each kind of content or behavior.
+      placeholder: "- [layer]: [owned content, non-owned content, and collision boundary]"
+    validations:
+      required: true
+  - type: textarea
+    id: child-policy
+    attributes:
+      label: Child issue policy
+      description: Define how bounded child work should be shaped.
+      placeholder: "Each child should include goal, current gap, required changes, out of scope, acceptance criteria, validation, deliverables, and references."
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define parent-level completion criteria without turning this form into the durable source of workflow rules.
+      placeholder: "- [ ] [parent-level criterion with observable evidence or child-deliverable dependency]"
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-children
+    attributes:
+      label: Proposed child work
+      description: List candidate bounded child issues or sequencing notes.
+      placeholder: "- [child scope]: [expected deliverable and boundary]"
+    validations:
+      required: false
+  - type: textarea
+    id: validation-policy
+    attributes:
+      label: Validation policy
+      description: State required validation evidence and readiness expectations.
+      placeholder: "- [validation claim]: [expected evidence type and required status]"
+    validations:
+      required: true
+  - type: textarea
+    id: known-risks
+    attributes:
+      label: Known risks
+      description: Record residual risk, uncertainty, or later implementation risk.
+      placeholder: "- [risk]: [impact, owner, and what evidence would reduce it]"
+    validations:
+      required: false
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Add durable evidence pointers. Prefer repository-relative paths, artifact locators, or maintainer-confirmed decisions.
+      placeholder: "- [repository-relative path, artifact locator, or maintainer-confirmed decision]"
+    validations:
+      required: false
