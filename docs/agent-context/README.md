@@ -14,9 +14,9 @@ policy details.
 | Contract | Purpose |
 | --- | --- |
 | [Core contract](core.md) | Defines the shared portable principles and boundary between core, local extensions, adapters, and tooling. |
-| [Artifact contracts](artifacts.md) | Reserves the place for durable artifact expectations without defining schemas yet. |
+| [Artifact contracts](artifacts.md) | Defines the portable durable artifact model, metadata, provenance, evidence-reference, schema, and uncertainty expectations. |
 | [Workflow contracts](workflows.md) | Reserves the place for collaboration workflow expectations without defining detailed role or handoff rules yet. |
-| [Validation contracts](validation.md) | Reserves the place for evidence-backed validation expectations without defining the full validation vocabulary yet. |
+| [Validation contracts](validation.md) | Defines the portable validation claim model, status vocabulary, evidence requirements, and success-claim rules. |
 | [Evidence-packing contracts](evidence-packing.md) | Defines the tool-neutral boundary for packaging evidence without choosing a specific packing tool. |
 | [Evaluation contracts](evaluations.md) | Reserves the place for reviewable evaluation rules without adding concrete test cases yet. |
 | [Path ownership and sync safety](path-ownership-and-sync-safety.md) | Defines source and destination ownership, lock-file ownership, checksum-safe sync decisions, and overwrite refusal behavior. |
