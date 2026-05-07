@@ -1,36 +1,314 @@
 # Workflow Contracts
 
-## Purpose
+This document defines the portable workflow contract for agent collaboration. It
+owns thread roles, bounded handoffs, scope preservation, validation and readiness
+reporting, and the change lifecycle at a platform-agnostic level.
 
-This document reserves the portable surface for agent collaboration workflows. It
-keeps workflow expectations separate from project-local procedures and
-platform-specific adapter behavior.
+Workflow rules describe how collaboration should move from planning to bounded
+implementation and review. They do not define project-local procedures,
+collaboration-platform templates, adapter payloads, tool runtimes, or concrete
+validation commands.
 
-## Owns
+## Terms
+
+- **Work item**: a bounded unit of accepted scope that can be implemented,
+  reviewed, or evaluated without requiring the recipient to replay an unbounded
+  planning history.
+- **Parent scope**: the larger program, objective, or accepted direction that
+  explains why the work item exists.
+- **Handoff**: a bounded packet that transfers role-specific scope, evidence
+  pointers, constraints, and expected outputs.
+- **Scope evidence**: information that establishes what a recipient is being
+  asked to do. Scope evidence guides inspection, but it is not proof that the
+  current source state still matches the handoff.
+- **Evidence pointer**: a concise reference to a source file, artifact, diff,
+  validation report, maintainer confirmation, or other inspected state. Evidence
+  pointers are not evidence-packing instructions.
+- **Readiness report**: a durable summary of deliverables, validation claims,
+  residual risks, and remaining decisions for a change or artifact.
+
+## Role Contracts
+
+Thread roles are portable responsibility boundaries. A single person, agent, or
+process MAY perform more than one role, but the role boundaries MUST remain clear
+in durable handoffs and reports.
+
+### Planning Thread
+
+A Planning Thread owns exploration before implementation scope is accepted.
+
+Responsibilities:
+
+- identify goals, assumptions, constraints, trade-offs, and open questions;
+- compare options and recommend design direction;
+- shape parent scope and candidate work items;
+- define proposed acceptance criteria, boundaries, validation expectations, and
+  known risks;
+- preserve decisions as durable artifacts or concise evidence pointers when they
+  are needed later.
+
+Non-responsibilities:
+
+- making implementation changes for a bounded work item;
+- claiming validation success without observed evidence;
+- requiring later roles to consume unbounded planning transcripts;
+- owning sequencing after the parent scope has been accepted, unless explicitly
+  assigned to an orchestration role.
+
+### Orchestrator Thread
+
+An Orchestrator Thread owns sequencing and scope control after parent scope is
+accepted.
+
+Responsibilities:
+
+- maintain the relationship between parent scope and bounded work items;
+- prepare worker and evaluator handoffs with only the context needed for the
+  recipient role;
+- preserve accepted scope, out-of-scope boundaries, validation expectations, and
+  known risks across role transitions;
+- route out-of-scope findings without silently expanding active work;
+- synthesize worker and evaluator reports into readiness recommendations and
+  follow-up decisions;
+- compare completed work against parent-scope acceptance criteria when needed.
+
+Non-responsibilities:
+
+- making unscoped implementation changes;
+- rewriting accepted parent scope without a new planning or maintainer decision;
+- treating historical planning context as current repository or artifact proof;
+- requiring workers or evaluators to consume broad history when a bounded
+  handoff would answer the active question.
+
+### Worker Thread
+
+A Worker Thread owns one bounded work item or explicitly bounded change.
+
+Responsibilities:
+
+- re-inspect current evidence before editing;
+- compare handoff scope with current source state, artifact state, and governing
+  contracts;
+- implement only accepted in-scope changes;
+- preserve path, artifact, adapter, and ownership boundaries from the governing
+  contracts;
+- produce expected deliverables and validation evidence;
+- report out-of-scope findings, blocked assumptions, and residual risks without
+  silently expanding scope;
+- provide a readiness report using the validation vocabulary in
+  [validation.md](validation.md).
+
+Non-responsibilities:
+
+- creating, splitting, closing, or redesigning work items unless explicitly
+  assigned;
+- solving unrelated defects discovered during implementation;
+- treating handoff text as factual proof of current source state;
+- owning adversarial or readiness evaluation of its own work as the final review
+  authority;
+- changing project-local, adapter-specific, sync, or evaluation surfaces when
+  the active work item does not include them.
+
+### Evaluator Thread
+
+An Evaluator Thread owns adversarial review, evidence checks, and readiness
+assessment for a specific artifact, change, or question.
+
+Responsibilities:
+
+- review the artifact or change against the exact evaluation question;
+- inspect the relevant diff, source state, artifacts, validation evidence, and
+  acceptance criteria provided by the evaluator handoff;
+- check whether validation claims use the required status vocabulary and cite
+  sufficient evidence;
+- identify defects, contradictions, unsupported claims, missing validation, and
+  residual risks;
+- report readiness, non-readiness, or disputed assumptions without taking over
+  implementation scope.
+
+Non-responsibilities:
+
+- implementing the change under review unless explicitly reassigned as a Worker
+  Thread;
+- rewriting parent scope or active work scope;
+- requiring broad historical planning context unless the exact evaluation
+  question cannot be answered without it;
+- converting out-of-scope findings into active requirements without
+  orchestration or maintainer decision.
+
+## Handoff Rules
+
+Handoffs MUST preserve scope without copying unbounded transcripts. A handoff
+SHOULD summarize the decision, boundary, or risk that matters and point to the
+durable source evidence when later inspection is needed.
+
+A handoff MUST NOT require the recipient to trust stale memory, unsupported
+conversation history, or prior tool output as current fact. A handoff is scope
+evidence, not factual proof of current repository, artifact, validation, or
+external state.
+
+Recipients MUST use handoffs to decide what to inspect. They MUST re-inspect
+current evidence that affects their role before making changes, reviewing
+readiness, or claiming validation success.
+
+When handoff evidence is missing, stale, contradictory, or too broad for the
+recipient role, the recipient MUST report the limitation. The recipient MAY
+continue with unaffected in-scope work only when the remaining scope and
+validation evidence are still clear.
+
+## Worker Handoff Contract
+
+A worker handoff MUST include the fields below. Field names MAY vary by
+artifact format, but the content MUST remain explicit and reviewable.
+
+| Field | Requirement |
+| --- | --- |
+| `active_work_item` | Names the bounded work item or change the worker owns. |
+| `parent_scope` | Identifies the parent program, objective, or accepted direction that bounds the work. |
+| `accepted_scope` | States the in-scope behavior, documentation, artifact, or contract change. |
+| `in_scope_refs` | Lists paths, surfaces, artifacts, or ownership areas the worker may change or inspect. File references SHOULD be repository-relative when possible. |
+| `out_of_scope_boundaries` | Lists known exclusions, forbidden changes, and work that must be reported instead of solved. |
+| `evidence_pointers` | Points to current contracts, artifacts, diffs, source state, prior decisions, or validation reports that should guide inspection. |
+| `required_validation` | Lists required validation claims, evidence types, or review checks and the expected use of the statuses in [validation.md](validation.md). |
+| `known_risks` | States known uncertainty, disputed assumptions, blocked areas, and later-work risks. |
+| `deliverables` | States the durable artifacts, source changes, validation report, or readiness report expected from the worker. |
+
+Worker handoffs SHOULD be concise. They MUST include enough evidence pointers
+for the worker to re-inspect current state without receiving an unbounded
+planning transcript.
+
+## Worker Pre-Edit Obligations
+
+Before editing, a Worker Thread MUST:
+
+1. inspect the current source or artifact state for the in-scope references;
+2. inspect governing portable contracts and relevant project-local or adapter
+   extensions when those layers are in scope;
+3. compare current evidence with the handoff's accepted scope and known risks;
+4. identify contradictions, missing evidence, stale assumptions, or path
+   ownership conflicts;
+5. report blockers or out-of-scope findings before changing scope.
+
+If current evidence contradicts the handoff, the worker MUST treat current
+evidence as the factual baseline and the handoff as scope evidence. The worker
+MUST NOT force the source state to match a stale handoff unless the active scope
+explicitly requires that correction and the required validation can support it.
+
+## Evaluator Handoff Contract
+
+An evaluator handoff MUST include the fields below. Field names MAY vary by
+artifact format, but the content MUST remain explicit and reviewable.
+
+| Field | Requirement |
+| --- | --- |
+| `artifact_or_change_under_review` | Identifies the durable artifact, source change, validation report, or change set being evaluated. |
+| `relevant_state_refs` | Points to the relevant diff, source state, rendered artifact, or artifact revision. |
+| `acceptance_criteria` | States the criteria, contract requirements, or readiness conditions the evaluator should apply. |
+| `validation_evidence` | Points to validation claims and supporting evidence, including missing claims or claims with `passed`, `failed`, `skipped`, `pending`, `not_required`, or `maintainer_confirmed` status. |
+| `known_risks_or_disputed_assumptions` | Lists risks, uncertainty, contested interpretations, and areas the evaluator should verify. |
+| `exact_evaluation_question` | States the precise question to answer, such as whether the change satisfies accepted scope or whether a validation claim is supported. |
+
+Evaluator handoffs MUST NOT include broad historical context unless it is needed
+to answer the exact evaluation question. When broad context is needed, the
+handoff SHOULD summarize the relevant decision and provide a durable evidence
+pointer.
+
+## Out-Of-Scope Finding Reports
+
+Workers and evaluators MUST report out-of-scope findings instead of silently
+expanding active scope. A finding report SHOULD include:
+
+- the finding or suspected defect;
+- the evidence pointer or inspected-state summary;
+- why it is outside the active scope;
+- the potential impact or blocked consumer;
+- whether the finding affects current deliverables or validation;
+- the recommended next routing, follow-up decision, or later work item;
+- any residual risk that remains if the finding is not addressed now.
+
+Out-of-scope findings MAY block readiness when they directly affect accepted
+scope, required validation, or artifact safety. They SHOULD be recorded as
+residual risks when they belong to later implementation work.
+
+## Validation And Readiness Reporting
+
+Workflow readiness reports MUST use the validation claim model and status
+vocabulary from [validation.md](validation.md). Required validation claims MUST
+be reported as one of `passed`, `failed`, `pending`, `skipped`, `not_required`,
+or `maintainer_confirmed`.
+
+A readiness report MUST include:
+
+- the work item, artifact, or change being reported;
+- completed deliverables and any missing deliverables;
+- validation claims with evidence references and limitations;
+- out-of-scope findings and how they were routed;
+- residual risks and disputed assumptions;
+- a readiness recommendation for the next role or decision.
+
+A readiness report MUST NOT state or imply that required validation is complete
+when any required claim is `failed`, `pending`, or `skipped`. It MAY recommend
+readiness only when required claims are `passed` or `maintainer_confirmed`, any
+`not_required` claims are justified by scope, and residual risks are disclosed.
+
+Known risks that belong to later implementation work SHOULD be reported as
+residual risks rather than solved through unrelated workflow changes.
+
+## Platform-Agnostic Change Lifecycle
+
+Portable workflow consumers SHOULD adapt the following lifecycle to their local
+platforms without changing the role boundaries:
+
+1. Planning identifies goals, assumptions, trade-offs, candidate scope, and
+   validation expectations.
+2. Orchestration accepts or routes bounded work items under a parent scope.
+3. A worker handoff transfers only active scope, boundaries, evidence pointers,
+   validation expectations, known risks, and deliverables.
+4. The worker re-inspects current evidence before editing.
+5. The worker implements in-scope changes and preserves ownership boundaries.
+6. The worker reports deliverables, validation claims, out-of-scope findings,
+   and residual risks.
+7. An evaluator handoff transfers the artifact or change under review, relevant
+   state, acceptance criteria, validation evidence, risks, and the exact
+   evaluation question.
+8. Evaluation checks the change against accepted scope, validation evidence, and
+   readiness criteria.
+9. Orchestration synthesizes worker and evaluator reports into the next
+   bounded decision.
+10. The owning process accepts, revises, defers, or rejects the change with
+    evidence-backed rationale.
+
+The lifecycle MUST remain adaptable. Project-local workflow exceptions belong in
+`docs/project/**`. Platform-specific entry points, labels, templates, statuses,
+and automations belong with the relevant adapter.
+
+## Boundary Rules
 
 Workflow contracts own:
 
-- the expectation that work starts from current evidence rather than stale
-  handoff text;
-- the expectation that scope, boundaries, deliverables, and validation evidence
-  are kept visible during collaboration;
-- the boundary between portable workflow rules and project-local workflow
-  exceptions;
-- the extension point for future role, handoff, review, and orchestration
-  contracts.
-
-## Must Not Own
+- portable role responsibilities and non-responsibilities;
+- bounded worker and evaluator handoff content;
+- the rule that handoffs are scope evidence, not factual proof of current state;
+- pre-edit evidence inspection obligations;
+- out-of-scope finding and residual-risk reporting;
+- readiness reporting requirements that use the portable validation vocabulary;
+- the platform-agnostic change lifecycle.
 
 Workflow contracts MUST NOT own:
 
-- detailed thread-role definitions, handoff formats, or issue sequencing rules;
-- repository-specific branching, review, release, or deployment procedures;
-- collaboration-platform labels, templates, statuses, or automations;
-- adapter payloads or tool-specific runtime behavior.
+- repository-specific branching, review, release, deployment, or operations
+  procedures;
+- project-local workflow exceptions, validation commands, source maps, or local
+  policy details;
+- collaboration-platform labels, templates, statuses, automations, or payloads;
+- adapter payloads or tool-specific runtime behavior;
+- evidence-packing tool behavior beyond evidence pointers;
+- sync implementation behavior, lock-file updates, or overwrite decisions;
+- concrete evaluation cases, fixtures, scoring rubrics, or datasets.
 
 ## Extension Path
 
-Later detailed workflow work should extend this file with explicit role
-responsibilities, handoff rules, review boundaries, and orchestration contracts.
-Project-local workflow exceptions should live in `docs/project/**`.
-Platform-specific workflow entry points should live with the relevant adapter.
+Later workflow work SHOULD extend this file only when adding portable role,
+handoff, readiness, or lifecycle rules. Project-local workflow exceptions should
+live in `docs/project/**`. Platform-specific workflow entry points should live
+with the relevant adapter.
