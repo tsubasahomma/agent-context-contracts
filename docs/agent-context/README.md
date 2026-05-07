@@ -18,8 +18,14 @@ policy details.
 | [Workflow contracts](workflows.md) | Defines portable thread roles, bounded handoffs, scope preservation, readiness reporting, and the change lifecycle. |
 | [Validation contracts](validation.md) | Defines the portable validation claim model, status vocabulary, evidence requirements, and success-claim rules. |
 | [Evidence-packing contracts](evidence-packing.md) | Defines the tool-neutral boundary for packaging evidence without choosing a specific packing tool. |
-| [Evaluation contracts](evaluations.md) | Reserves the place for reviewable evaluation rules without adding concrete test cases yet. |
+| [Evaluation contracts](evaluations.md) | Defines concrete reviewable pass/fail cases for predictable contract failures. |
 | [Path ownership and sync safety](path-ownership-and-sync-safety.md) | Defines source and destination ownership, lock-file ownership, checksum-safe sync decisions, and overwrite refusal behavior. |
+
+## Tool Entry Points
+
+`tools/lint-portability.sh` is the v0.1 read-only portability lint entry point.
+With no arguments, it scans `AGENTS.md` and `docs/agent-context/**`. Explicit
+path arguments may be used to scan synthetic fixtures or review-specific paths.
 
 ## Ownership Boundary
 
