@@ -146,6 +146,22 @@ def path_has_symlink(target_root, rel_path):
     return False
 
 
+def parent_path_issue(target_root, rel_path):
+    current = target_root
+    built = []
+    parts = normalize_repo_path(rel_path).split("/")
+    for part in parts[:-1]:
+        built.append(part)
+        current = current / part
+        if current.is_symlink():
+            return f"parent component {'/'.join(built)} is a symlink"
+        if current.exists() and not current.is_dir():
+            return f"parent component {'/'.join(built)} is {file_kind(current)}, not directory"
+        if not current.exists():
+            return None
+    return None
+
+
 def sha256_file(path):
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -484,6 +500,39 @@ def plan_sync(args):
     new_entries_by_path = {}
     for path, entry in existing_entries.items():
         if path not in desired_specs:
+            try:
+                destination = safe_join(target_root, path)
+            except (ValueError, SyncError) as exc:
+                refusals.append({"path": path, "reason": str(exc)})
+                continue
+            parent_issue = parent_path_issue(target_root, path)
+            if parent_issue:
+                refusals.append({"path": path, "reason": parent_issue})
+                continue
+            if path_has_symlink(target_root, path):
+                refusals.append(
+                    {"path": path, "reason": "preserved managed path or parent contains a symlink"}
+                )
+                continue
+            kind = file_kind(destination)
+            if kind != "file":
+                refusals.append(
+                    {"path": path, "reason": f"preserved managed destination is {kind}, not file"}
+                )
+                continue
+            current_checksum = sha256_file(destination)
+            expected_checksum = entry_checksum_previous(entry)
+            if current_checksum != expected_checksum:
+                refusals.append(
+                    {
+                        "path": path,
+                        "reason": (
+                            "modified preserved managed file; expected "
+                            f"{expected_checksum}, current {current_checksum}"
+                        ),
+                    }
+                )
+                continue
             reason = "source path removed or adapter not selected; preserving destination by default"
             actions.append(("PRESERVE", path, reason))
             new_entries_by_path[path] = entry
@@ -494,6 +543,11 @@ def plan_sync(args):
             destination = safe_join(target_root, path)
         except (ValueError, SyncError) as exc:
             refusals.append({"path": path, "reason": str(exc)})
+            continue
+
+        parent_issue = parent_path_issue(target_root, path)
+        if parent_issue:
+            refusals.append({"path": path, "reason": parent_issue})
             continue
 
         if path_has_symlink(target_root, path):
@@ -572,6 +626,10 @@ def plan_sync(args):
                 destination = safe_join(target_root, path)
             except (ValueError, SyncError) as exc:
                 refusals.append({"path": path, "reason": str(exc)})
+                continue
+            parent_issue = parent_path_issue(target_root, path)
+            if parent_issue:
+                refusals.append({"path": path, "reason": parent_issue})
                 continue
             if path_has_symlink(target_root, path):
                 refusals.append(

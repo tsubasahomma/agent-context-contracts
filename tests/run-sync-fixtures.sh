@@ -232,6 +232,19 @@ test_unowned_collision_refusal() {
   pass "existing unowned package collision is refused"
 }
 
+test_parent_path_collision_refusal() {
+  target="${tmp_root}/parent-collision"
+  mkdir -p "$target"
+  printf 'pre-existing parent file\n' >"${target}/docs"
+  output="${tmp_root}/parent-collision.out"
+  expect_failure "$output" bash "$sync_tool" --source "$repo_root" --target "$target" --apply
+  assert_contains "$output" "REFUSE docs/agent-context/README.md (parent component docs is file, not directory)"
+  assert_contains "${target}/docs" "pre-existing parent file"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/agent-context.lock.json"
+  pass "existing unowned parent path collision is refused before writes"
+}
+
 test_selected_adapter_and_unselected_skip() {
   target="${tmp_root}/selected-adapter"
   mkdir -p "$target"
@@ -324,6 +337,28 @@ test_source_removal_preserve() {
   pass "source removal preserves destination by default"
 }
 
+test_preserved_managed_checksum_refusal() {
+  target="${tmp_root}/source-removal-modified-target"
+  source_removed="${tmp_root}/source-removed-modified"
+  source_update="${tmp_root}/source-removed-modified-update"
+  mkdir -p "$target"
+  bash "$sync_tool" --source "$repo_root" --target "$target" --apply >/dev/null
+  copy_source_without_one_file "$source_removed"
+  cp -R "$source_removed" "$source_update"
+  printf '\nSource package update fixture.\n' >>"${source_update}/AGENTS.md"
+  printf '\nconsumer edit after source removal\n' >>"${target}/docs/agent-context/evaluations.md"
+  cp "${target}/AGENTS.md" "${tmp_root}/source-removal-modified-agents.before"
+  cp "${target}/agent-context.lock.json" "${tmp_root}/source-removal-modified-lock.before"
+  output="${tmp_root}/source-removal-modified.out"
+  expect_failure "$output" bash "$sync_tool" --source "$source_update" --target "$target" --apply
+  assert_contains "$output" "REFUSE docs/agent-context/evaluations.md (modified preserved managed file"
+  cmp -s "${target}/AGENTS.md" "${tmp_root}/source-removal-modified-agents.before" \
+    || fail "package file changed after preserved managed checksum refusal"
+  cmp -s "${target}/agent-context.lock.json" "${tmp_root}/source-removal-modified-lock.before" \
+    || fail "lock changed after preserved managed checksum refusal"
+  pass "modified preserved managed file refuses apply before other writes"
+}
+
 test_partial_failure_rollback() {
   target="${tmp_root}/partial-failure"
   mkdir -p "$target"
@@ -346,11 +381,13 @@ test_apply_clean_and_parse_lock
 test_modified_managed_refusal
 test_checksum_safe_update
 test_unowned_collision_refusal
+test_parent_path_collision_refusal
 test_selected_adapter_and_unselected_skip
 test_adapter_unowned_collision_refusal
 test_project_extension_seed_and_preserve
 test_malformed_and_unsupported_lock_refusal
 test_source_removal_preserve
+test_preserved_managed_checksum_refusal
 test_partial_failure_rollback
 
 log "completed ${pass_count} fixture checks"
