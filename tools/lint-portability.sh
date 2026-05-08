@@ -89,6 +89,68 @@ scan_file() {
         line ~ /belongs in/
     }
 
+    function boundary_or_negative_allowed(line) {
+      return line ~ /must not/ ||
+        line ~ /does not/ ||
+        line ~ /do not/ ||
+        line ~ /not required/ ||
+        line ~ /not mirrored/ ||
+        line ~ /not mirror/ ||
+        line ~ /not manually mirror/ ||
+        line ~ /without/ ||
+        line ~ /belongs (in|to)/ ||
+        line ~ /local .*policy/ ||
+        line ~ /project .*extension/ ||
+        line ~ /adapter.*(owned|local|boundary|mapping|selected|optional)/ ||
+        line ~ /placeholder/ ||
+        line ~ /explicit placeholders?/ ||
+        line ~ /fail condition/ ||
+        line ~ /manual review/ ||
+        line ~ /evaluation cases?/
+    }
+
+    function command_baseline_allowed(line) {
+      return boundary_or_negative_allowed(line) ||
+        line ~ /command placeholder/ ||
+        line ~ /repository-owned tool entry point/
+    }
+
+    function dynamic_status_allowed(line) {
+      return boundary_or_negative_allowed(line) ||
+        line ~ /observed/ ||
+        line ~ /observation point/ ||
+        line ~ /freshness/ ||
+        line ~ /evidence/ ||
+        line ~ /limitation/ ||
+        line ~ /current state/ ||
+        line ~ /always-current truth/ ||
+        line ~ /status vocabulary/ ||
+        line ~ /pending/ ||
+        line ~ /skipped/ ||
+        line ~ /not_required/ ||
+        line ~ /maintainer_confirmed/ ||
+        line ~ /failed/
+    }
+
+    function reusable_text_surface(file) {
+      return file ~ /^AGENTS\.md$/ ||
+        file ~ /^docs\/agent-context\// ||
+        file ~ /^templates\/project-extension\// ||
+        file ~ /^adapters\// ||
+        file ~ /^tests\/fixtures\/portability-lint\// ||
+        file ~ /\.(md|markdown|txt|yml|yaml)$/
+    }
+
+    function adapter_payload_or_fixture(file) {
+      return file ~ /^adapters\/[^\/]+\/files\// ||
+        file ~ /^tests\/fixtures\/portability-lint\//
+    }
+
+    function template_status_surface(file) {
+      return file ~ /^templates\/project-extension\// ||
+        adapter_payload_or_fixture(file)
+    }
+
     {
       raw = $0
       line = tolower(raw)
@@ -138,6 +200,51 @@ scan_file() {
       if (line ~ /legacy[- ]only[ _-]*(path|command|repo|repository|host|fact)[[:space:]]*[:=]/ ||
           line ~ /(copied from|kept from) legacy/) {
         report("legacy-only-fact", "portable files must not preserve legacy-only facts as reusable contract content")
+      }
+
+      if (reusable_text_surface(file) &&
+          (line ~ /(^|[^a-z0-9_<])#[0-9]+([^0-9]|$)/ ||
+           line ~ /(issue|pull request|pr|ticket|tracker|bug|story)[[:space:]]*#?[0-9]+/)) {
+        report("concrete-tracker-reference", "reusable surfaces must use placeholders or local policy for concrete issue, pull request, or tracker references")
+      }
+
+      if (reusable_text_surface(file) &&
+          (line ~ /(^|[^a-z])((close[sd]?)|(fix(e[sd])?)|(resolve[sd]?))[[:space:]]+#[0-9]+([^0-9]|$)/)) {
+        report("concrete-closing-reference", "portable or generic text must not include concrete issue-closing keywords with real tracker numbers")
+      }
+
+      if (reusable_text_surface(file) &&
+          (line ~ /branch[ _-]*(prefix|name|naming|default)[[:space:]]*[:=][[:space:]]*[`"]?[a-z0-9][a-z0-9._-]*\// ||
+           line ~ /(all|new|default|every)[[:space:]][^.;:]*branches?[^.;:]*(must|shall|required|always|use)[^.;:]*[a-z0-9][a-z0-9._-]*\/[a-z0-9._\/-]*/)) {
+        report("concrete-branch-default", "portable or generic text must not embed concrete branch naming defaults or prefixes")
+      }
+
+      if (reusable_text_surface(file) &&
+          !command_baseline_allowed(line) &&
+          (line ~ /(must|shall|required|requires|always|default|baseline)[^.;:]*(run|use|invoke|execute)[^.;:]*(gh|git|make|npm|pnpm|yarn|pytest|tox|cargo|go test|mvn|gradle|docker|kubectl)([^a-z0-9_-]|$)/ ||
+           line ~ /default[ _-]*(command|validation command)[[:space:]]*[:=][[:space:]]*[`"]?(gh|git|make|npm|pnpm|yarn|pytest|tox|cargo|go test|mvn|gradle|docker|kubectl)([^a-z0-9_-]|$)/)) {
+        report("local-command-baseline", "portable or generic text must not present concrete local or platform commands as reusable baseline behavior")
+      }
+
+      if (template_status_surface(file) &&
+          !dynamic_status_allowed(line) &&
+          line ~ /(^|[^a-z])(ci|check|checks|status|review|deployment|deploy|release|external)([^a-z]|$)/ &&
+          line ~ /(^|[^a-z])(passed|passing|approved|deployed|released|current|complete|green)([^a-z]|$)/) {
+        report("dynamic-status-mirroring", "static templates and durable examples must not mirror dynamic CI, review, deployment, release, or external status as current truth")
+      }
+
+      if (adapter_payload_or_fixture(file) &&
+          !boundary_or_negative_allowed(line) &&
+          (raw ~ /^#{1,3}[[:space:]]*(Portable[[:space:]]+)?(Operating[[:space:]]+Contract|Durable[[:space:]]+Operating[[:space:]]+Rules|Workflow[[:space:]]+Contract|Validation[[:space:]]+Contract|Source[[:space:]]+Precedence|Agent[[:space:]]+Context[[:space:]]+Contracts)/ ||
+           line ~ /(this template|this form|this file).*(authoritative|durable|complete).*(manual|contract|source of truth|operating rules)/)) {
+        report("platform-template-manualization", "adapter payloads must stay thin entry points and route durable operating rules to owning contracts")
+      }
+
+      if (reusable_text_surface(file) &&
+          !boundary_or_negative_allowed(line) &&
+          (line ~ /dotfiles[- ]only/ ||
+           line ~ /(copied|migrated|ported)[^.;:]*(dotfiles|legacy)/)) {
+        report("historical-evidence-leak", "historical dotfiles evidence must not be copied into reusable lint, fixture, template, adapter, or contract text")
       }
     }
 
