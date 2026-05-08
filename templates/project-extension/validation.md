@@ -1,14 +1,17 @@
 # Project Validation
 
 Use this file to record validation commands, manual checks, CI checks,
-environment assumptions, evidence expectations, and unavailable checks for a
-consumer repository.
+environment assumptions, output-artifact validation routing, evidence
+expectations, and unavailable checks for a consumer repository.
 
 Portable validation status tokens are `passed`, `failed`, `pending`, `skipped`,
 `not_required`, and `maintainer_confirmed`. Use them in local validation reports
 and readiness summaries when making claims about checks.
 
 Do not copy local commands or environment assumptions into portable core files.
+Durable output body requirements belong in `output-policy.md`; this file records
+how validation for those outputs is run, evidenced, skipped, or marked
+unavailable.
 
 ## Local Validation Commands
 
@@ -56,6 +59,17 @@ Validation claims should cite evidence that later reviewers can inspect.
 | Manual review evidence | `[criteria, reviewer role, inspected artifacts]` | `[redaction or omitted reason]` |
 | Maintainer confirmation | `[exact confirmation and evidence pointer]` | `[scope limits]` |
 
+## Output Validation Routing
+
+Use this section to record which validation or review checks apply to durable
+outputs such as change-proposal bodies, change messages, issue bodies, worker
+prompts, evaluator prompts, validation reports, readiness reports, command
+bodies, release notes, rollback notes, or evidence summaries.
+
+| Output type | Required check | Evidence expected | When unavailable |
+| --- | --- | --- | --- |
+| `[output type]` | `[local command, manual review, adapter check, maintainer confirmation, pending, or omitted reason]` | `[status, output summary, inspected body, rendered artifact, or limitation]` | `[pending, skipped, not_required, maintainer_confirmed, or escalation rule]` |
+
 ## Unavailable Checks
 
 Unavailable validation MUST NOT be reported as passed. Use this section to make
@@ -64,3 +78,14 @@ missing evidence explicit.
 | Check | State | Reason | Residual risk | Next action |
 | --- | --- | --- | --- | --- |
 | `[unavailable check]` | `[pending, skipped, or not_required]` | `[why evidence is unavailable]` | `[risk if any]` | `[rerun, ask maintainer, defer, or no action]` |
+
+## Validation Boundaries
+
+- Local validation commands and procedures MUST stay in consumer-owned files.
+- Unavailable checks MUST use `pending`, `skipped`, or `not_required`; they MUST
+  NOT be reported as `passed`.
+- Output validation MUST preserve the output role. A validation report records
+  evidence and status; it does not become a readiness report unless the workflow
+  readiness requirements are also satisfied.
+- Static output bodies SHOULD cite observed validation evidence and freshness
+  instead of mirroring changing CI, review, deployment, or external state.

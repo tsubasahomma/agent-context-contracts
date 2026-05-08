@@ -275,6 +275,7 @@ test_project_extension_seed_and_preserve() {
   mkdir -p "$target"
   bash "$sync_tool" --source "$repo_root" --target "$target" --seed-project --apply >/dev/null
   assert_file "${target}/docs/project/README.md"
+  assert_file "${target}/docs/project/output-policy.md"
   assert_file "${target}/docs/project/profile.md"
   assert_json_no_project_managed "${target}/agent-context.lock.json"
   printf '\nlocal profile edit\n' >>"${target}/docs/project/profile.md"
