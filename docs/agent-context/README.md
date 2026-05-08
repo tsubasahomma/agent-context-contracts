@@ -27,6 +27,12 @@ policy details.
 With no arguments, it scans `AGENTS.md` and `docs/agent-context/**`. Explicit
 path arguments may be used to scan synthetic fixtures or review-specific paths.
 
+`tools/sync-agent-context.sh` is the v0.1 safe vendored-snapshot sync entry
+point. It defaults to dry-run, requires `--apply` before writing, accepts
+explicit `--adapter` selections, and seeds missing project extension files only
+when `--seed-project` is passed. `tests/run-sync-fixtures.sh` exercises the
+sync safety cases against temporary consumer targets.
+
 ## Ownership Boundary
 
 Portable files in this directory own reusable collaboration contracts only. They
