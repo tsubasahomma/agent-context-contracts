@@ -4,8 +4,8 @@
 
 This document defines portable evaluation cases for checking whether agent
 context contracts are followed. Evaluation cases are reviewable pass/fail checks
-that apply to durable artifacts, handoffs, validation reports, adapter
-boundaries, and sync-safety claims.
+that apply to durable artifacts, handoffs, validation reports, entrypoint and
+surface boundaries, and sync-safety claims.
 
 ## Owns
 
@@ -15,7 +15,7 @@ Evaluation contracts own:
 - the boundary between portable evaluation criteria and project-local acceptance
   checks;
 - concrete portable evaluation cases covering contract adherence, portability,
-  validation claims, adapter boundaries, and sync safety;
+  validation claims, entrypoint and surface boundaries, and sync safety;
 - expected evidence for those portable cases.
 
 ## Must Not Own
@@ -24,7 +24,7 @@ Evaluation contracts MUST NOT own:
 
 - repository-local acceptance criteria or release gates;
 - portability-lint implementation details;
-- adapter-specific test payloads;
+- optional entrypoint or surface test payloads;
 - sync-tool implementation behavior;
 - generated evidence packs, project-local datasets, or tool-specific scoring
   rubrics.
@@ -42,8 +42,8 @@ Each portable evaluation case MUST state:
 - the expected evidence.
 
 Project-specific acceptance checks should live in `docs/project/**`. Tool,
-adapter, sync-tool, or lint implementation tests should live with the relevant
-implementation.
+selected entrypoint, selected surface, sync-tool, or lint implementation tests
+should live with the relevant implementation.
 
 ## Portable Evaluation Cases
 
@@ -64,21 +64,21 @@ implementation.
 | --- | --- |
 | Risk | Portable files contain repository identity, private identifiers, host-specific assumptions, local commands, secrets, tool-specific baseline assumptions, or legacy-only facts. |
 | Governing contract | [core.md](core.md), [artifacts.md](artifacts.md), [validation.md](validation.md), and the root `AGENTS.md` portability boundary. |
-| Input or condition | Portable core files, root entry point, adapters, templates, lint fixtures, or proposed contract changes. |
+| Input or condition | Portable core files, root entry point, optional source payloads, project scaffolds, lint fixtures, or proposed contract changes. |
 | Pass condition | Portable core and generic entry points contain only repository-agnostic contract content. Project-local facts are absent from portable files or are represented only as clearly synthetic fixtures for negative lint validation. |
 | Fail condition | Reusable contract content embeds concrete repository names, personal identifiers, host paths, local service addresses, local commands, secret-like values, copied legacy facts, or unsupported local operational assumptions. |
 | Expected evidence | Portability lint output for the default portable surface, text searches over changed files, secret-pattern search results, and manual review notes for any synthetic fixtures. |
 
-### EVAL-003 Adapter/Core Boundary Drift
+### EVAL-003 Entrypoint/Surface Core Boundary Drift
 
 | Field | Requirement |
 | --- | --- |
-| Risk | Optional adapter behavior becomes portable-core doctrine, or adapter payloads replace durable portable contracts. |
-| Governing contract | [core.md](core.md), [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md), [evidence-packing.md](evidence-packing.md), and adapter boundary documentation. |
-| Input or condition | Portable contracts, adapter README files, adapter payloads, or proposed cross-links. |
-| Pass condition | Portable core may discuss adapter boundaries but does not require a named platform, agent, evidence-packing tool, payload, runtime, or command as a baseline. Adapter payloads route back to portable contracts and remain optional, explicit, and tool-specific. |
-| Fail condition | Portable core requires a named adapter, platform, agent, evidence-packing tool, payload file, runtime, or command as universal behavior, or an adapter payload becomes the source of durable operating-contract rules. |
-| Expected evidence | Diff review of portable and adapter files, portability lint results for tool-as-baseline patterns, and manual review that allowed adapter-boundary discussion was not treated as a failure. |
+| Risk | Selected entrypoint or collaboration-surface behavior becomes portable-core doctrine, or selected entrypoint or surface payloads replace durable portable contracts. |
+| Governing contract | [core.md](core.md), [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md), [evidence-packing.md](evidence-packing.md), and selected entrypoint or surface boundary documentation. |
+| Input or condition | Portable contracts, selected entrypoint or surface documentation, selected entrypoint or surface payloads, or proposed cross-links. |
+| Pass condition | Portable core may discuss selected entrypoint and surface boundaries but does not require a named platform, agent, evidence-packing tool, payload, runtime, or command as a baseline. Selected payloads route back to portable contracts and remain selected, explicit, and tool- or platform-specific. |
+| Fail condition | Portable core requires a named platform, agent, evidence-packing tool, payload file, runtime, or command as universal behavior, or a selected entrypoint or surface payload becomes the source of durable operating-contract rules. |
+| Expected evidence | Diff review of portable, entrypoint, and surface files; portability lint results for tool-as-baseline patterns; and manual review that allowed selected-entrypoint or selected-surface boundary discussion was not treated as a failure. |
 
 ### EVAL-004 Context Overpacking
 
@@ -98,9 +98,9 @@ implementation.
 | Risk | Sync behavior overwrites consumer-owned or modified files, advances lock state after a refused or failed write, or treats refusal as an error to bypass. |
 | Governing contract | [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md). |
 | Input or condition | Sync design, future sync dry-run output, future sync apply output, or review of sync-related claims. |
-| Pass condition | Expected behavior refuses existing unowned root entry points, project extension files, adapter destination files, modified managed files, malformed lock files, and unsupported ownership state. Refusal leaves destination content and lock state unchanged. |
-| Fail condition | Expected or implemented behavior overwrites unowned or modified destination files, creates adapter payloads without explicit selection, overwrites project extension files after creation, deletes preserved files by default, or updates the lock file after a refused or failed operation. |
-| Expected evidence | Until sync tooling exists, contract review showing the expected pass/fail behavior. After sync tooling exists, dry-run and apply/refusal evidence with path, ownership, checksum, selected-adapter, and lock-state details. Do not claim executable sync validation passed without actual sync evidence. |
+| Pass condition | Expected behavior refuses existing unowned root entry points, project extension files, optional entrypoint or surface destination files, modified managed files, malformed locks, unsupported locks, symlinked locks, inconsistent locks, dirty source, and unresolved source. Refusal leaves destination content and lock state unchanged. Clean package-managed source removals delete only when checksum-safe. |
+| Fail condition | Expected or implemented behavior overwrites unowned or modified destination files, creates entrypoint or surface payloads without explicit selection, overwrites or deletes project extension files after creation, preserves clean removed package-managed files as the default sync behavior, deletes dirty or unowned files, or updates the lock file after a refused or failed operation. |
+| Expected evidence | Until v0.3 sync tooling exists, contract review showing the expected pass/fail behavior. After v0.3 sync tooling exists, dry-run and apply/refusal evidence with path, ownership, checksum, selected group, source channel, resolved commit, and lock-state details. Do not claim executable sync validation passed without actual sync evidence. |
 
 ### EVAL-006 Context Handoff Dilution
 
@@ -142,9 +142,9 @@ implementation.
 | Risk | A change-proposal or pull request body stops being a reviewable evidence packet and becomes vague narrative, unsupported readiness assertion, local template policy, or copied historical convention. |
 | Governing contract | [outputs.md](outputs.md) minimum portable expectations, change-proposal body default, and artifact-mixing boundaries; [validation.md](validation.md) success claim rules; [sources.md](sources.md) collaboration artifact boundary. |
 | Input or condition | A change-proposal body, pull request body, review packet, or proposed template for such a body. |
-| Pass condition | The body states the proposed change, accepted scope, included surfaces, important exclusions, material changes, validation statuses with evidence, residual risks, rollback or mitigation notes when relevant, review notes, out-of-scope findings, and linked evidence or work. It presents portable headings only as defaults and routes exact local fields to project extension or adapter layers. |
+| Pass condition | The body states the proposed change, accepted scope, included surfaces, important exclusions, material changes, validation statuses with evidence, residual risks, rollback or mitigation notes when relevant, review notes, out-of-scope findings, and linked evidence or work. It presents portable headings only as defaults and routes exact local fields to project extension or selected surface layers. |
 | Fail condition | The body omits material scope, evidence, validation status, limitations, or risks; claims readiness without validation evidence; treats body text as proof of current repository state; or encodes local headings, closure syntax, reviewer conventions, or historical defaults as portable requirements. |
-| Expected evidence | The body under review, validation claim evidence, inspected diff or artifact references, source and limitation notes, and manual review notes showing local-policy fields remain owned by project extension or adapters. |
+| Expected evidence | The body under review, validation claim evidence, inspected diff or artifact references, source and limitation notes, and manual review notes showing local-policy fields remain owned by project extension or selected surfaces. |
 
 ### EVAL-010 Dynamic Status Mirroring Drift
 
@@ -152,7 +152,7 @@ implementation.
 | --- | --- |
 | Risk | A static durable output manually mirrors dynamic CI, review, deployment, release, external, or platform status as always-current truth. |
 | Governing contract | [outputs.md](outputs.md) static body claim and artifact-mixing boundaries; [validation.md](validation.md) CI evidence and success claim rules; [sources.md](sources.md) factual claim boundary. |
-| Input or condition | A change-proposal body, readiness report, validation report, issue body, template, adapter payload, or review note includes status claims about checks, reviews, deployments, releases, external systems, or platform state. |
+| Input or condition | A change-proposal body, readiness report, validation report, issue body, template, selected entrypoint or surface payload, or review note includes status claims about checks, reviews, deployments, releases, external systems, or platform state. |
 | Pass condition | Static text records only observed status with an observation point, subject, evidence reference, and limitation, or it points consumers to the authoritative dynamic system without restating the changing status as durable truth. Required validation still uses the portable status vocabulary. |
 | Fail condition | Static text says a dynamic status is passing, approved, deployed, released, current, or complete without observed evidence and freshness, or it asks agents to manually keep dynamic platform state synchronized inside durable body text. |
 | Expected evidence | Status claim table or prose with subject, status, observation point, evidence reference, limitations, and clear routing to the dynamic source when the static output is only a pointer. |
@@ -162,11 +162,11 @@ implementation.
 | Field | Requirement |
 | --- | --- |
 | Risk | A commit, changeset, or version-control message turns project-local issue references, closure syntax, trailers, release fields, merge-message rules, or branch-derived conventions into portable change-message doctrine. |
-| Governing contract | [outputs.md](outputs.md) commit or change message default and artifact-mixing boundaries; [sources.md](sources.md) local policy and adapter mapping boundaries. |
-| Input or condition | A portable contract, project-extension template, adapter payload, change-message proposal, commit body, or review finding defines or evaluates change-message content. |
-| Pass condition | Portable guidance stays limited to reviewable message qualities such as concise subject, useful affected surface, rationale or risk when needed, and no unsupported validation claims. Concrete issue references, closure keywords, trailers, release notes, merge-message policy, scopes, and branch-derived syntax are explicitly local-extension or adapter decisions. |
-| Fail condition | Portable guidance requires, forbids, or assumes a concrete tracker syntax, issue-closing phrase, trailer, scope taxonomy, release field, branch naming rule, merge-message convention, or host-specific message behavior without local policy or selected-adapter ownership. |
-| Expected evidence | Diff or artifact review showing the message rule under evaluation, source references for any local policy or selected adapter mapping, and manual review notes confirming portable defaults do not encode local conventions. |
+| Governing contract | [outputs.md](outputs.md) commit or change message default and artifact-mixing boundaries; [sources.md](sources.md) local policy and selected surface mapping boundaries. |
+| Input or condition | A portable contract, project scaffold, selected surface payload, change-message proposal, commit body, or review finding defines or evaluates change-message content. |
+| Pass condition | Portable guidance stays limited to reviewable message qualities such as concise subject, useful affected surface, rationale or risk when needed, and no unsupported validation claims. Concrete issue references, closure keywords, trailers, release notes, merge-message policy, scopes, and branch-derived syntax are explicitly local-extension or selected-surface decisions. |
+| Fail condition | Portable guidance requires, forbids, or assumes a concrete tracker syntax, issue-closing phrase, trailer, scope taxonomy, release field, branch naming rule, merge-message convention, or host-specific message behavior without local policy or selected-surface ownership. |
+| Expected evidence | Diff or artifact review showing the message rule under evaluation, source references for any local policy or selected surface mapping, and manual review notes confirming portable defaults do not encode local conventions. |
 
 ### EVAL-012 Output Role Mixing Drift
 
@@ -174,7 +174,7 @@ implementation.
 | --- | --- |
 | Risk | One durable output merges incompatible roles so consumers cannot tell whether it is a proposal, validation report, readiness decision, review finding, command body, evidence summary, prompt, or local policy artifact. |
 | Governing contract | [outputs.md](outputs.md) output categories, minimum portable expectations, artifact-mixing boundaries, and validation and readiness outputs; [artifacts.md](artifacts.md) audience and consumer expectations; [workflows.md](workflows.md) readiness reporting. |
-| Input or condition | An agent-authored durable text output, template, adapter payload, or evaluation report that combines multiple output roles. |
+| Input or condition | An agent-authored durable text output, template, selected entrypoint or surface payload, or evaluation report that combines multiple output roles. |
 | Pass condition | The output identifies its primary role and intended consumers. When multiple roles are needed, it separates sections or artifacts, identifies the governing contract for each role, preserves validation statuses and readiness criteria, and avoids assigning implementation scope, review authority, or local policy ownership to the wrong layer. |
 | Fail condition | The output blends validation with readiness, review findings with implementation authorization, command text with unrelated narrative, prompts with factual proof, or evidence summaries with direct source evidence in a way that makes claims hard to audit or broadens responsibility silently. |
 | Expected evidence | Output artifact under review, role or purpose statement, separated sections or linked artifacts when roles differ, validation/readiness evidence when claimed, and manual review notes for any role boundary risk. |
@@ -185,36 +185,37 @@ implementation.
 | --- | --- |
 | Risk | A long or field-sensitive structured body is embedded in fragile inline command construction, copied through an unsafe quoting path, or mixed with narrative that changes what is executed, posted, or stored. |
 | Governing contract | [outputs.md](outputs.md) structured body handling and command text boundaries; [artifacts.md](artifacts.md) durable artifact model; [validation.md](validation.md) evidence expectations for command evidence when a command claim is made. |
-| Input or condition | A command snippet, command body, issue body, change-proposal body, prompt, report, generated summary, adapter field, or local-policy placeholder is prepared for execution, posting, storage, or reuse. |
+| Input or condition | A command snippet, command body, issue body, change-proposal body, prompt, report, generated summary, selected surface field, or local-policy placeholder is prepared for execution, posting, storage, or reuse. |
 | Pass condition | The output uses a safe artifact boundary when line breaks, code fences, lists, structured fields, quoting, escaping, truncation, or interpolation are material. Copyable or executable text is clearly separated from rationale, warnings, validation notes, and rollback notes unless the target command language safely treats those notes as comments. |
 | Fail condition | The output places a long structured body inside a fragile inline command, relies on shell or tool quoting that can alter the content, omits the copyable boundary, or includes unrelated narrative inside the body in a way that changes execution or durable storage semantics. |
-| Expected evidence | Body file, standard-input record, structured API or adapter field, generated artifact locator, or equivalent safe-boundary reference, plus review notes showing narrative and executable or posted content are distinguishable. |
+| Expected evidence | Body file, standard-input record, structured API or selected surface field, generated artifact locator, or equivalent safe-boundary reference, plus review notes showing narrative and executable or posted content are distinguishable. |
 
 ### EVAL-014 Platform Template Manualization Drift
 
 | Field | Requirement |
 | --- | --- |
-| Risk | A GitHub or other selected platform template is treated as the durable manual for portable operating rules, local policy, validation proof, or adapter behavior instead of an optional entry point that routes to owning contracts. |
-| Governing contract | [sources.md](sources.md) adapter boundary; [outputs.md](outputs.md) change-proposal defaults and adapter-owned fields; [core.md](core.md) core boundary; [artifacts.md](artifacts.md) ownership layer expectations. |
-| Input or condition | A platform issue template, pull request template, hosted-agent instruction file, adapter README, adapter payload, or portable contract references a platform-specific template. |
-| Pass condition | The template remains generic, optional, and adapter-owned; routes durable rules to the root entry point, portable contracts, and materialized local extension when present; and avoids treating labels, checkboxes, reviewer requests, statuses, milestones, issue-linking syntax, or command interfaces as portable requirements. |
+| Risk | A selected platform template is treated as the durable manual for portable operating rules, local policy, validation proof, or selected entrypoint or surface behavior instead of an optional surface or entrypoint that routes to owning contracts. |
+| Governing contract | [sources.md](sources.md) entrypoint and surface boundary; [outputs.md](outputs.md) change-proposal defaults and selected surface-owned fields; [core.md](core.md) core boundary; [artifacts.md](artifacts.md) ownership layer expectations. |
+| Input or condition | A platform issue template, pull request template, hosted-agent instruction file, selected entrypoint, selected surface payload, or portable contract references a platform-specific template. |
+| Pass condition | The template remains generic, optional, and owned by the selected entrypoint or surface layer; routes durable rules to the root entry point, portable contracts, and materialized local extension when present; and avoids treating labels, checkboxes, reviewer requests, statuses, milestones, issue-linking syntax, or command interfaces as portable requirements. |
 | Fail condition | The template duplicates or replaces portable contracts, invents local facts, becomes required for all consumers, treats platform fields as validation proof, or requires a named hosting platform or template mechanism as a portable baseline. |
-| Expected evidence | Template or adapter diff review, local link checks to owning contracts, portability review for generic payload content, and manual notes confirming platform-specific fields remain optional adapter mappings. |
+| Expected evidence | Template, selected-entrypoint, or selected-surface diff review; local link checks to owning contracts; portability review for generic payload content; and manual notes confirming platform-specific fields remain optional selected-entrypoint or selected-surface mappings. |
 
 ### EVAL-015 Portable Default Local-Fact Leakage
 
 | Field | Requirement |
 | --- | --- |
-| Risk | Portable defaults, project-extension templates, adapter payloads, or evaluation cases leak branch naming rules, repository identity, host paths, local commands, personal identifiers, concrete issue-number assumptions, labels, reviewers, CI names, release policy, or historical local conventions into reusable doctrine. |
+| Risk | Portable defaults, project scaffolds, selected entrypoint or surface payloads, or evaluation cases leak branch naming rules, repository identity, host paths, local commands, personal identifiers, concrete issue-number assumptions, labels, reviewers, CI names, release policy, or historical local conventions into reusable doctrine. |
 | Governing contract | [core.md](core.md), [sources.md](sources.md) local extension and portable boundary, [outputs.md](outputs.md) output boundary rules, and the root `AGENTS.md` portability boundary. |
-| Input or condition | A portable contract change, project-extension template, adapter payload, evaluation case, worker prompt, review report, or change-proposal body introduces output, source, workflow, validation, branch, command, or template defaults. |
-| Pass condition | Reusable text uses repository-agnostic placeholders or ownership routing. Local facts are absent from portable files, represented only as explicit placeholders in templates, or confined to the project-local or selected-adapter layer that owns them. Historical evidence is used only as a capability inventory and is not copied as structure, wording, local policy, commands, paths, identifiers, branch rules, or assumptions. |
+| Input or condition | A portable contract change, project scaffold, selected entrypoint or surface payload, evaluation case, worker prompt, review report, or change-proposal body introduces output, source, workflow, validation, branch, command, or template defaults. |
+| Pass condition | Reusable text uses repository-agnostic placeholders or ownership routing. Local facts are absent from portable files, represented only as explicit placeholders in scaffolds, or confined to the project-local, selected-entrypoint, or selected-surface layer that owns them. Historical evidence is used only as a capability inventory and is not copied as structure, wording, local policy, commands, paths, identifiers, branch rules, or assumptions. |
 | Fail condition | Reusable doctrine embeds concrete repository names, personal identifiers, host-absolute paths, local commands, branch prefixes, issue-number patterns, labels, reviewers, CI job names, release gates, copied historical wording, or tool/vendor requirements as defaults for all consumers. |
-| Expected evidence | Portability lint output when applicable, targeted leakage searches over changed files, diff review of portable/template/adapter surfaces, and manual review notes for historical-evidence handling and placeholder ownership. |
+| Expected evidence | Portability lint output when applicable, targeted leakage searches over changed files, diff review of portable, scaffold, selected-entrypoint, and selected-surface content, and manual review notes for historical-evidence handling and placeholder ownership. |
 
 ## Extension Path
 
 Later evaluation work SHOULD add cases only when they remain portable,
 reviewable, and evidence-backed. Project-specific gates and datasets belong in
-`docs/project/**`. Adapter tests, lint fixtures, and sync fixtures belong with
-the relevant adapter or tool implementation.
+`docs/project/**`. Selected-entrypoint tests, selected-surface tests, lint
+fixtures, and sync fixtures belong with the relevant selected entrypoint,
+selected surface, or tool implementation.

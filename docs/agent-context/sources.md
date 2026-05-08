@@ -13,8 +13,8 @@ conflicts by claim type, ownership layer, freshness, and evidence quality.
 - **Source class**: a category of input, artifact, contract, or observation with
   a specific ownership layer and trust boundary.
 - **Claim type**: the kind of decision or assertion being made, such as scope
-  control, repository fact, local policy, adapter mapping, validation status, or
-  derived evidence reuse.
+  control, repository fact, local policy, entrypoint or surface mapping,
+  validation status, or derived evidence reuse.
 - **Current inspected state**: source files, diffs, rendered artifacts, command
   output, CI results, or other observable state that was inspected for the
   active task at a known observation point.
@@ -31,11 +31,11 @@ conflicts by claim type, ownership layer, freshness, and evidence quality.
 
 | Source class | May decide or support | Trust boundary |
 | --- | --- | --- |
-| External controlling instructions from the execution environment | Active execution behavior, tool permissions, safety limits, and current-turn constraints that are not owned by the repository. | These instructions control the current run but do not become portable repository doctrine. Portable files MUST NOT encode tool-specific runtime behavior as a reusable baseline; when such behavior must be documented, it belongs to the owning local extension or adapter layer. |
+| External controlling instructions from the execution environment | Active execution behavior, tool permissions, safety limits, and current-turn constraints that are not owned by the repository. | These instructions control the current run but do not become portable repository doctrine. Portable files MUST NOT encode tool-specific runtime behavior as a reusable baseline; when such behavior must be documented, it belongs to the owning local extension, selected entrypoint, selected surface, or tooling layer. |
 | Current inspected repository state and inspected artifacts | Factual claims about files, diffs, repository content, rendered output, validation output, and artifact contents as observed. | This is the factual baseline for files, validation, and repository content. It does not by itself authorize out-of-scope changes. Freshness, coverage, and observation limits MUST be reported when material. |
-| Portable contracts under `docs/agent-context/**` | Reusable role, artifact, output, workflow, validation, evidence, source, evaluation, ownership, and safety boundaries. | Portable contracts MUST remain repository-agnostic and vendor-agnostic. They do not own local identity, local commands, adapter payloads, or execution-environment behavior. |
+| Portable contracts under `docs/agent-context/**` | Reusable role, artifact, output, workflow, validation, evidence, source, evaluation, ownership, and safety boundaries. | Portable contracts MUST remain repository-agnostic and vendor-agnostic. They do not own local identity, local commands, selected entrypoint or surface content, or execution-environment behavior. |
 | Consumer-owned local extensions under `docs/project/**` or a configured local extension path | Repository identity, local surfaces, validation commands, workflow exceptions, local policy, and sensitive-data handling details. | Local extensions may specialize local policy. They MUST NOT silently replace portable role, validation, ownership, artifact, evidence, sync-safety, or source-boundary rules. Missing local extension files mean local facts are unknown. |
-| Selected adapter payloads and platform-specific entry points | Mapping durable portable and local rules into a selected platform or tool surface. | Adapters are optional entry points. They MUST NOT become the durable source of portable doctrine or local facts, and unselected adapter payloads MUST NOT control repository behavior. |
+| Selected entrypoints and collaboration surfaces | Mapping durable portable and local rules into a selected routing file, platform-native form, template, or tool surface. | Entrypoints and surfaces are optional unless selected and lock-recorded. They MUST NOT become the durable source of portable doctrine or local facts, and unselected entrypoint or surface payloads MUST NOT control repository behavior. |
 | Collaboration artifacts | Active scope, review requests, maintainer decisions, acceptance criteria, handoff boundaries, and evidence pointers. | These artifacts are scope, review, or confirmation evidence. Issue bodies, pull request bodies, prompts, review comments, and handoffs are not proof that current files or validation state still match. Maintainer confirmation supports only the exact confirmed claim. |
 | Generated evidence packs, summaries, snapshots, and transcripts | Bounded supporting evidence, source discovery, provenance, review context, and validation support when metadata is sufficient. | Derived evidence MUST identify freshness, source references, included and omitted surfaces, generation or observation point, and limitations before reuse for material claims. Stale or incomplete derived evidence cannot replace fresher direct evidence. |
 | Transient conversation context | Immediate clarification, short-lived coordination, and candidate evidence to materialize elsewhere. | Transient context is not a durable artifact and MUST NOT be reused as factual proof, validation evidence, or local policy unless the relevant claim is captured with provenance and limitations in the owning artifact or contract layer. |
@@ -51,10 +51,10 @@ irrelevant for another.
 | Scope control | Active user or maintainer direction, accepted issue or change scope, review request, handoff, and portable workflow role boundaries. | Use scope sources to decide what may change. Current inspected state may reveal contradictions or blockers, but it MUST NOT broaden scope by itself. Report contradictions before expanding work. |
 | Factual claims about files, validation, repository content, or artifact contents | Current inspected state, current diffs, observed command output, CI evidence, rendered artifact evidence, or explicit maintainer confirmation. | Prefer fresh direct evidence over collaboration text, generated summaries, old transcripts, or memory. If direct evidence is missing, report factual uncertainty or use the validation status vocabulary when the claim is a validation claim. |
 | Local policy and operational facts | Materialized project extension files or explicit maintainer confirmation for the affected repository. | Apply local policy only within portable boundaries. If local policy conflicts with portable role, validation, ownership, or safety rules, report the contradiction and preserve the portable boundary until an explicit scoped change resolves it. |
-| Adapter mapping and platform entry points | The selected adapter documentation, selected payload mapping, current installed adapter state, and relevant local extension policy. | Use adapters to translate durable rules into platform or tool surfaces. Do not treat adapter wording, templates, labels, or platform mechanics as portable-core doctrine. |
+| Entrypoint and surface mapping | The selected entrypoint or surface documentation, selected entrypoint or surface mapping, current lock state, and relevant local extension policy. | Use selected entrypoints and surfaces to translate durable rules into platform or tool surfaces. Do not treat selected entrypoint or surface wording, templates, labels, or platform mechanics as portable-core doctrine. |
 | Validation claims | The validation claim model and status vocabulary in [validation.md](validation.md), supported by observed evidence or exact maintainer confirmation. | Do not mark validation `passed` from expectation, checkbox state, issue text, handoff text, generated summary, or uninspected tool output. Evidence must support the exact subject and status claimed. |
 | Derived evidence reuse | The artifact rules in [artifacts.md](artifacts.md), evidence-pack rules in [evidence-packing.md](evidence-packing.md), and this contract's derived-evidence boundary. | Reuse derived evidence only for its stated subject, observation point, included surfaces, and limitations. If it conflicts with current direct evidence, report the conflict and use the direct evidence for factual claims. |
-| Ownership and sync-safety decisions | The path ownership and sync safety rules in [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md), plus current file and lock-state evidence when relevant. | Do not infer ownership from convenience, adapter presence, old snapshots, or similar-looking files. Preserve consumer-owned and unowned files unless the owning sync-safety rule permits a safe update. |
+| Ownership and sync-safety decisions | The path ownership and sync safety rules in [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md), plus current file and lock-state evidence when relevant. | Do not infer ownership from convenience, selected entrypoint or surface presence, old snapshots, or similar-looking files. Preserve consumer-owned and unowned files unless the owning sync-safety rule permits a safe update or deletion. |
 
 ## Current Inspected State Baseline
 
@@ -115,7 +115,7 @@ validation status, local policy, or portable doctrine.
 
 Project-local extension facts may specialize the repository's local policy,
 including local source maps, command choices, workflow exceptions, secrets
-handling, release requirements, or adapter preferences.
+handling, release requirements, or selected entrypoint or surface preferences.
 
 They MUST NOT silently replace portable contracts that define:
 
@@ -125,26 +125,32 @@ They MUST NOT silently replace portable contracts that define:
 - agent-authored output role and safe body handling expectations;
 - evidence-pack freshness, omission, and redaction expectations;
 - path ownership and sync-safety rules;
-- adapter optionality and routing boundaries;
+- optional entrypoint and collaboration-surface routing boundaries;
 - portable source-class conflict handling.
 
 If a local extension appears to conflict with one of those portable boundaries,
 agents MUST report the contradiction. They MAY proceed only where the local
 policy and portable boundary can both be honored for the active scope.
 
-## Adapter Boundary
+## Entrypoint And Surface Boundary
 
-Adapters may route durable rules into platform-specific instruction files,
-templates, payloads, configuration examples, or generated-entry surfaces. They
-may also describe platform-specific mapping, installation, and collision
-boundaries for selected payloads.
+v0.3 splits optional source-owned payloads into thin entrypoints and
+collaboration surfaces. Legacy adapter paths from earlier package layouts may be
+used as migration evidence, but they are not the active target taxonomy.
 
-Adapters MUST NOT:
+Entrypoints may route durable rules into platform-specific instruction files,
+configuration examples, or generated-entry surfaces. Collaboration surfaces may
+route durable rules into platform-native templates, forms, or review surfaces.
+The selected entrypoint or surface layer may also describe platform-specific
+mapping, installation, detachment, and collision boundaries for selected
+payloads.
+
+Entrypoints and collaboration surfaces MUST NOT:
 
 - replace the portable contract index as the durable source of portable rules;
 - invent local repository facts when the project extension is missing;
 - make a tool, platform, model, or generated format a portable baseline;
-- cause unselected payloads to control behavior;
+- cause unselected entrypoint or surface payloads to control behavior;
 - weaken project-local sensitive-data or validation boundaries;
 - convert template text, labels, platform checkboxes, or entry-point wording into
   validation proof.
@@ -163,8 +169,8 @@ Source-precedence rules own:
   derived evidence with freshness and limitation requirements;
 - the rule that local extensions specialize local policy without silently
   replacing portable boundaries;
-- the rule that adapter payloads map durable rules without becoming durable
-  portable doctrine.
+- the rule that selected entrypoint and collaboration-surface payloads map
+  durable rules without becoming durable portable doctrine.
 
 Source-precedence rules MUST NOT own:
 
@@ -172,7 +178,8 @@ Source-precedence rules MUST NOT own:
 - artifact schemas or metadata fields beyond source-class trust boundaries;
 - validation status semantics or project-local validation commands;
 - evidence-packing implementation behavior or tool-specific generated formats;
-- adapter payload syntax, platform templates, labels, or runtime behavior;
+- selected entrypoint or surface payload syntax, platform templates, labels, or
+  runtime behavior;
 - project-local identity, source maps, commands, branch rules, release policy, or
   secrets policy details;
 - sync-tool implementation behavior, lock-file schemas, or overwrite algorithms;
@@ -186,5 +193,6 @@ SHOULD remain with their owning contracts: workflows in
 [workflows.md](workflows.md), artifacts in [artifacts.md](artifacts.md),
 agent-authored outputs in [outputs.md](outputs.md), validation in
 [validation.md](validation.md), evidence packing in
-[evidence-packing.md](evidence-packing.md), adapters under `adapters/**`, and
-local policy under `docs/project/**` or the configured local extension path.
+[evidence-packing.md](evidence-packing.md), selected entrypoints and surfaces in
+their source-owned layers, and local policy under `docs/project/**` or the
+configured local extension path.
