@@ -145,7 +145,8 @@ durable source evidence when later inspection is needed.
 A handoff MUST NOT require the recipient to trust stale memory, unsupported
 conversation history, or prior tool output as current fact. A handoff is scope
 evidence, not factual proof of current repository, artifact, validation, or
-external state.
+external state. Source-class conflicts and claim-type precedence decisions are
+routed through [sources.md](sources.md).
 
 Recipients MUST use handoffs to decide what to inspect. They MUST re-inspect
 current evidence that affects their role before making changes, reviewing

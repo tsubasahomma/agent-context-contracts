@@ -209,7 +209,8 @@ Subject references SHOULD include one or more of:
 
 Validation claims SHOULD reference evidence rather than embedding full evidence
 packs. Evidence-packing behavior belongs in [evidence-packing.md](evidence-packing.md)
-or in a tool-specific adapter.
+or in a tool-specific adapter. When validation evidence conflicts with another
+source class, apply the claim-type boundaries in [sources.md](sources.md).
 
 Validation claims that cover portable contracts MUST keep portable files free of
 project-local facts. Validation reports for a specific repository MAY contain

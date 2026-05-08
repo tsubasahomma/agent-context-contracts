@@ -122,6 +122,10 @@ Artifact consumers MAY rely only on claims that are:
 3. not contradicted by the artifact's limitations or validation claims;
 4. within the ownership layer that produced the artifact.
 
+When artifact claims conflict with current source evidence or another ownership
+layer, consumers SHOULD apply the source-class and claim-type boundaries in
+[sources.md](sources.md).
+
 An artifact MUST NOT imply that adapter-specific, project-local, or sync-tool
 behavior is portable merely because the artifact references the portable core.
 
