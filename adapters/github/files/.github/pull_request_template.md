@@ -1,30 +1,30 @@
 ## Summary
 
-- What changed:
-- Why it changed:
-- Impact for users, maintainers, or agents:
+- Proposed change:
+- Reviewer-relevant effect:
+- Evidence basis:
 
 ## Scope
 
 - Bounded work item:
-- Parent scope reference:
-- Closes only the bounded child work item:
-- Related context that must not be closed by this PR:
+- Parent scope or accepted direction:
+- Included surfaces:
+- Important exclusions:
 
 ## Contract Routing
 
 - Portable entry point reviewed: `AGENTS.md`
-- Portable contracts reviewed: `docs/agent-context/README.md`
-- Project extension reviewed, when present: `docs/project/**`
-- Adapter or platform-specific files changed:
+- Portable contracts reviewed: `docs/agent-context/README.md`, `docs/agent-context/sources.md`, `docs/agent-context/outputs.md`, `docs/agent-context/workflows.md`, `docs/agent-context/validation.md`
+- Project extension reviewed when present: `docs/project/**`, including `docs/project/output-policy.md` when materialized
+- Adapter or platform-specific files affected:
 
-## Deliverables
+## Changes
 
-| Deliverable | Status | Notes |
+| Surface | Change | Evidence or notes |
 | --- | --- | --- |
-| `[artifact, file, or behavior]` | `[complete, pending, or not_required]` | `[evidence or limitation]` |
+| `[artifact, file, behavior, or policy]` | `[what changed]` | `[inspected state, limitation, or not_required reason]` |
 
-## Validation Claims
+## Validation
 
 Use only `passed`, `failed`, `pending`, `skipped`, `not_required`, or
 `maintainer_confirmed`.
@@ -33,11 +33,29 @@ Use only `passed`, `failed`, `pending`, `skipped`, `not_required`, or
 | --- | --- | --- | --- |
 | `[claim]` | `[status]` | `[command output, inspected state, CI evidence, manual review, or maintainer confirmation]` | `[limits or none]` |
 
-## Readiness
+## Risks
 
-- Required validation claims are `passed` or `maintainer_confirmed`:
-- `not_required` claims are justified by scope:
-- `failed`, `pending`, or `skipped` claims that block readiness:
 - Residual risks:
+- Missing evidence or uncertainty:
+- Affected consumers:
+
+## Rollback
+
+- Safe reversal, fallback, or mitigation:
+- State or artifact cleanup needed:
+
+## Review Notes
+
+- Reviewer attention points:
+- Assumptions or non-obvious decisions:
+- Dynamic platform status intentionally not mirrored here:
+
+## Out of Scope
+
 - Out-of-scope findings:
-- Readiness recommendation:
+- Deferred work:
+
+## Linked Work
+
+- Related work items, handoffs, reports, or evidence pointers:
+- Local issue-linking or closure syntax, if any, follows project or adapter-local policy:

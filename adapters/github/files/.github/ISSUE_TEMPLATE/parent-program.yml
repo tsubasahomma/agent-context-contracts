@@ -6,8 +6,9 @@ body:
     attributes:
       value: |
         Use this GitHub form as an optional adapter entry point for parent-scope planning.
-        Durable workflow rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts.
-        Repository-local facts belong in `docs/project/**` when a project extension is materialized.
+        Durable rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts, including `sources.md`, `outputs.md`, `workflows.md`, and `validation.md`.
+        Repository-local facts and local output policy belong in `docs/project/**`, including `docs/project/output-policy.md` when a project extension is materialized.
+        GitHub issue fields are scope and review evidence; they are not proof of current repository state.
   - type: textarea
     id: goal
     attributes:
@@ -36,8 +37,8 @@ body:
     id: design-rules
     attributes:
       label: Design rules
-      description: Capture accepted design boundaries and ownership rules.
-      placeholder: "- [portable rule, local-extension boundary, adapter boundary, or sync boundary]"
+      description: Capture accepted design boundaries and route durable doctrine to its owning contract.
+      placeholder: "- [portable source, output, workflow, validation, local-extension, adapter, or sync boundary]"
     validations:
       required: true
   - type: textarea
@@ -55,8 +56,16 @@ body:
     id: ownership-model
     attributes:
       label: Ownership model
-      description: Identify which layer owns each kind of content or behavior.
-      placeholder: "- [layer]: [owned content, non-owned content, and collision boundary]"
+      description: Identify which layer owns each kind of content, policy, output, validation, or adapter mapping.
+      placeholder: "- [layer]: [owned content, non-owned content, source boundary, output boundary, and collision boundary]"
+    validations:
+      required: true
+  - type: textarea
+    id: output-policy
+    attributes:
+      label: Output and artifact expectations
+      description: Record parent-level durable output expectations without replacing the portable output contract or local project policy.
+      placeholder: "- [output type]: [purpose, intended consumer, evidence basis, validation status expectation, and local-policy owner if any]"
     validations:
       required: true
   - type: textarea
@@ -64,7 +73,7 @@ body:
     attributes:
       label: Child issue policy
       description: Define how bounded child work should be shaped.
-      placeholder: "Each child should include goal, current gap, required changes, out of scope, acceptance criteria, validation, deliverables, and references."
+      placeholder: "Each child should include goal, current gap, required changes, in-scope surfaces, out-of-scope boundaries, output expectations, validation, deliverables, and evidence pointers."
     validations:
       required: true
   - type: textarea
@@ -87,7 +96,7 @@ body:
     id: validation-policy
     attributes:
       label: Validation policy
-      description: State required validation evidence and readiness expectations.
+      description: State required validation evidence and readiness expectations using the portable validation vocabulary.
       placeholder: "- [validation claim]: [expected evidence type and required status]"
     validations:
       required: true
