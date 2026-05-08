@@ -41,6 +41,7 @@ portable principle shared across the whole contract set. Topic-specific details
 should be added to the owning document:
 
 - artifact rules in [artifacts.md](artifacts.md);
+- source precedence and trust-boundary rules in [sources.md](sources.md);
 - workflow rules in [workflows.md](workflows.md);
 - validation rules in [validation.md](validation.md);
 - evidence-packing rules in [evidence-packing.md](evidence-packing.md);

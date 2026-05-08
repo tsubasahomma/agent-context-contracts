@@ -49,7 +49,8 @@ An evidence pack MAY support:
 Evidence packs are supporting evidence, not automatic proof of current source
 state. A consumer MUST NOT treat a pack as current fact when the relevant source,
 artifact, generated output, external source, or validation result may have
-changed after the observation point.
+changed after the observation point. Claim-type conflict handling for source
+classes is defined in [sources.md](sources.md).
 
 An evidence pack MUST NOT be used as:
 

@@ -14,6 +14,7 @@ policy details.
 | Contract | Purpose |
 | --- | --- |
 | [Core contract](core.md) | Defines the shared portable principles and boundary between core, local extensions, adapters, and tooling. |
+| [Source precedence and trust boundaries](sources.md) | Defines portable source classes, trust boundaries, and claim-type conflict handling without a universal override stack. |
 | [Artifact contracts](artifacts.md) | Defines the portable durable artifact model, metadata, provenance, evidence-reference, schema, and uncertainty expectations. |
 | [Workflow contracts](workflows.md) | Defines portable thread roles, bounded handoffs, scope preservation, readiness reporting, and the change lifecycle. |
 | [Validation contracts](validation.md) | Defines the portable validation claim model, status vocabulary, evidence requirements, and success-claim rules. |
