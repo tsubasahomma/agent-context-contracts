@@ -1,9 +1,9 @@
 # Project Extension Templates
 
 These files are source-package templates for a consumer repository's local
-project extension. They help a consumer record local identity, surfaces,
-validation expectations, workflow exceptions, and secrets policy while keeping
-portable contracts free of local facts.
+project extension. They help a consumer record local identity, surfaces, output
+policy, validation expectations, workflow exceptions, and secrets policy while
+keeping portable contracts free of local facts.
 
 ## Purpose
 
@@ -48,10 +48,28 @@ docs/project/
   README.md
   profile.md
   surfaces.md
+  output-policy.md
   validation.md
   workflows.md
   secrets.md
 ```
+
+Recommended files:
+
+| File | Local ownership |
+| --- | --- |
+| `README.md` | Adoption notes, materialized layout, local fact states, and update-safety reminders. |
+| `profile.md` | Local identity, owning roles, decision sources, assumptions, and maintainer confirmations. |
+| `surfaces.md` | Local source, artifact, output, entry-point, generated-output, and sensitive-surface maps. |
+| `output-policy.md` | Local durable output policy for change proposals, change messages, prompts, command bodies, references, trailers, and merge messages. |
+| `validation.md` | Local validation commands, manual checks, CI checks, unavailable-check handling, and validation evidence expectations. |
+| `workflows.md` | Local workflow exceptions, branch policy, review gates, release or rollback routing, and handoff additions. |
+| `secrets.md` | Local secrets and sensitive-data classification, redaction, storage, and escalation boundaries. |
+
+Local policy MAY specialize repository facts after adoption. It MUST NOT
+silently replace portable source, output, artifact, workflow, validation,
+evidence-packing, ownership, or sync-safety boundaries from
+`docs/agent-context/**`.
 
 ## Local Fact States
 

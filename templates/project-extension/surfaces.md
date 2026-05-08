@@ -19,6 +19,15 @@ Record durable artifacts that agents may create, update, or review.
 | --- | --- | --- | --- |
 | `[artifact surface name]` | `[repository-relative path or local artifact locator]` | `[contract, report, generated output, release artifact, or other kind]` | `[evidence pointer expectations]` |
 
+## Output Artifact Surfaces
+
+Record durable text output surfaces separately when local policy, review,
+validation, or adapter mapping depends on where the output is stored or posted.
+
+| Output surface | Path, locator, or owner layer | Output role | Handling notes |
+| --- | --- | --- | --- |
+| `[change proposal, change message, issue body, worker prompt, evaluator prompt, validation report, readiness report, command body, release note, rollback note, or evidence summary]` | `[repository-relative path, local artifact locator, adapter-owned field, platform-owned field, or omitted reason]` | `[proposal, message, prompt, finding, report, command, summary, or other role]` | `[output-policy link, validation expectation, sensitivity limit, or pending decision]` |
+
 ## Entry Points
 
 Entry points are files, commands, documents, or interfaces that shape how agents
