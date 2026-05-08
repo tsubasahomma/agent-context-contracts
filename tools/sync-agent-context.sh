@@ -174,6 +174,8 @@ def read_lock(target_root):
     path = target_root / LOCK_PATH
     if not path.exists() and not path.is_symlink():
         return None, None, []
+    if path.is_symlink():
+        return None, None, [f"{LOCK_PATH}: lock file must not be a symlink"]
     try:
         text = path.read_text(encoding="utf-8")
     except OSError as exc:

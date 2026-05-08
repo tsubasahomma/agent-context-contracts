@@ -323,6 +323,19 @@ JSON
   pass "malformed and unsupported locks refuse before writes"
 }
 
+test_symlink_lock_refusal() {
+  target="${tmp_root}/symlink-lock"
+  mkdir -p "$target"
+  printf '{}\n' >"${tmp_root}/external-lock.json"
+  ln -s "${tmp_root}/external-lock.json" "${target}/agent-context.lock.json"
+  output="${tmp_root}/symlink-lock.out"
+  expect_failure "$output" bash "$sync_tool" --source "$repo_root" --target "$target" --apply
+  assert_contains "$output" "REFUSE agent-context.lock.json (agent-context.lock.json: lock file must not be a symlink)"
+  assert_no_path "${target}/AGENTS.md"
+  [ -L "${target}/agent-context.lock.json" ] || fail "symlink lock was replaced"
+  pass "symlink lock refuses before writes"
+}
+
 test_source_removal_preserve() {
   target="${tmp_root}/source-removal-target"
   source_removed="${tmp_root}/source-removed"
@@ -386,6 +399,7 @@ test_selected_adapter_and_unselected_skip
 test_adapter_unowned_collision_refusal
 test_project_extension_seed_and_preserve
 test_malformed_and_unsupported_lock_refusal
+test_symlink_lock_refusal
 test_source_removal_preserve
 test_preserved_managed_checksum_refusal
 test_partial_failure_rollback
