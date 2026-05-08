@@ -33,6 +33,7 @@ Durable artifacts MAY include:
 - portable contract documents;
 - project-local extension documents;
 - adapter-specific payloads or templates;
+- agent-authored durable text outputs governed by [outputs.md](outputs.md);
 - validation reports and validation claim sets;
 - evidence summaries or evidence packs;
 - evaluation reports;
@@ -192,6 +193,8 @@ audience, schema, and uncertainty expectations.
 
 Portable artifact rules MUST NOT own:
 
+- agent-authored output categories, output-role boundaries, or structured-body
+  handling;
 - project-local artifact storage paths, naming conventions, release procedures,
   validation commands, or operational facts;
 - adapter-specific template syntax, platform fields, copied payloads, or runtime
@@ -206,6 +209,7 @@ Project-local conventions belong in `docs/project/**`. Adapter artifacts belong
 with the relevant adapter. Sync metadata behavior belongs to the path ownership
 and sync safety contract. Evidence-packing behavior belongs in
 [evidence-packing.md](evidence-packing.md) or a tool-specific adapter.
+Agent-authored durable text output rules belong in [outputs.md](outputs.md).
 
 ## Extension Path
 

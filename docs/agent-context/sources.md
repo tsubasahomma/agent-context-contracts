@@ -33,7 +33,7 @@ conflicts by claim type, ownership layer, freshness, and evidence quality.
 | --- | --- | --- |
 | External controlling instructions from the execution environment | Active execution behavior, tool permissions, safety limits, and current-turn constraints that are not owned by the repository. | These instructions control the current run but do not become portable repository doctrine. Portable files MUST NOT encode tool-specific runtime behavior as a reusable baseline; when such behavior must be documented, it belongs to the owning local extension or adapter layer. |
 | Current inspected repository state and inspected artifacts | Factual claims about files, diffs, repository content, rendered output, validation output, and artifact contents as observed. | This is the factual baseline for files, validation, and repository content. It does not by itself authorize out-of-scope changes. Freshness, coverage, and observation limits MUST be reported when material. |
-| Portable contracts under `docs/agent-context/**` | Reusable role, artifact, workflow, validation, evidence, source, evaluation, ownership, and safety boundaries. | Portable contracts MUST remain repository-agnostic and vendor-agnostic. They do not own local identity, local commands, adapter payloads, or execution-environment behavior. |
+| Portable contracts under `docs/agent-context/**` | Reusable role, artifact, output, workflow, validation, evidence, source, evaluation, ownership, and safety boundaries. | Portable contracts MUST remain repository-agnostic and vendor-agnostic. They do not own local identity, local commands, adapter payloads, or execution-environment behavior. |
 | Consumer-owned local extensions under `docs/project/**` or a configured local extension path | Repository identity, local surfaces, validation commands, workflow exceptions, local policy, and sensitive-data handling details. | Local extensions may specialize local policy. They MUST NOT silently replace portable role, validation, ownership, artifact, evidence, sync-safety, or source-boundary rules. Missing local extension files mean local facts are unknown. |
 | Selected adapter payloads and platform-specific entry points | Mapping durable portable and local rules into a selected platform or tool surface. | Adapters are optional entry points. They MUST NOT become the durable source of portable doctrine or local facts, and unselected adapter payloads MUST NOT control repository behavior. |
 | Collaboration artifacts | Active scope, review requests, maintainer decisions, acceptance criteria, handoff boundaries, and evidence pointers. | These artifacts are scope, review, or confirmation evidence. Issue bodies, pull request bodies, prompts, review comments, and handoffs are not proof that current files or validation state still match. Maintainer confirmation supports only the exact confirmed claim. |
@@ -122,6 +122,7 @@ They MUST NOT silently replace portable contracts that define:
 - thread roles and handoff boundaries;
 - validation statuses and success-claim rules;
 - durable artifact provenance and limitation expectations;
+- agent-authored output role and safe body handling expectations;
 - evidence-pack freshness, omission, and redaction expectations;
 - path ownership and sync-safety rules;
 - adapter optionality and routing boundaries;
@@ -183,6 +184,7 @@ Later source-precedence work SHOULD extend this file when adding portable source
 classes, trust boundaries, or claim-type conflict rules. Topic-specific details
 SHOULD remain with their owning contracts: workflows in
 [workflows.md](workflows.md), artifacts in [artifacts.md](artifacts.md),
-validation in [validation.md](validation.md), evidence packing in
+agent-authored outputs in [outputs.md](outputs.md), validation in
+[validation.md](validation.md), evidence packing in
 [evidence-packing.md](evidence-packing.md), adapters under `adapters/**`, and
 local policy under `docs/project/**` or the configured local extension path.

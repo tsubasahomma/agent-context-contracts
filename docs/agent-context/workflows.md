@@ -26,6 +26,8 @@ validation commands.
   pointers are not evidence-packing instructions.
 - **Readiness report**: a durable summary of deliverables, validation claims,
   residual risks, and remaining decisions for a change or artifact.
+  Agent-authored readiness report output boundaries are defined in
+  [outputs.md](outputs.md).
 
 ## Role Contracts
 
@@ -236,7 +238,8 @@ residual risks when they belong to later implementation work.
 Workflow readiness reports MUST use the validation claim model and status
 vocabulary from [validation.md](validation.md). Required validation claims MUST
 be reported as one of `passed`, `failed`, `pending`, `skipped`, `not_required`,
-or `maintainer_confirmed`.
+or `maintainer_confirmed`. Durable text output boundaries for readiness reports
+are defined in [outputs.md](outputs.md).
 
 A readiness report MUST include:
 
@@ -304,6 +307,8 @@ Workflow contracts MUST NOT own:
 - collaboration-platform labels, templates, statuses, automations, or payloads;
 - adapter payloads or tool-specific runtime behavior;
 - evidence-packing tool behavior beyond evidence pointers;
+- agent-authored output categories, prompt body handling, or change-proposal
+  defaults;
 - sync implementation behavior, lock-file updates, or overwrite decisions;
 - concrete evaluation cases, fixtures, scoring rubrics, or datasets.
 
