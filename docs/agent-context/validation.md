@@ -4,8 +4,8 @@ This document defines the portable validation claim model and validation status
 vocabulary for evidence-backed agent collaboration.
 
 Validation rules describe how to make, support, and report validation claims.
-They do not define project-local commands, CI job names, adapter payloads,
-fixtures, lint implementations, or sync-tool behavior.
+They do not define project-local commands, CI job names, optional entrypoint or
+surface payloads, fixtures, lint implementations, or sync-tool behavior.
 
 ## Terms
 
@@ -19,7 +19,8 @@ fixtures, lint implementations, or sync-tool behavior.
 - **Residual risk**: a known uncertainty that remains after validation is
   reported.
 - **Required validation**: a claim that must be resolved by the governing scope,
-  artifact contract, project-local extension, adapter, or maintainer direction.
+  artifact contract, project-local extension, selected entrypoint or surface
+  layer, or maintainer direction.
 
 ## Validation Claim Model
 
@@ -119,8 +120,9 @@ inspection. A CI-evidence reference SHOULD include:
 - relevant output summary for failures.
 
 CI evidence MUST be scoped to the subject it actually covered. A successful CI
-result for one revision, adapter, or artifact MUST NOT be reused as success for a
-different subject without evidence that the coverage still applies.
+result for one revision, selected optional group, or artifact MUST NOT be reused
+as success for a different subject without evidence that the coverage still
+applies.
 
 ### Manual Review Evidence
 
@@ -167,7 +169,7 @@ A `failed` claim MUST report:
 Validation reports MUST include residual risks when uncertainty remains after
 validation. Residual risks SHOULD identify the subject, why the risk remains,
 what evidence would reduce it, and whether the risk affects release, review,
-sync, adapter, or evaluation consumers.
+sync, selected entrypoint or surface, or evaluation consumers.
 
 Known risks that belong to later implementation work SHOULD be reported as
 residual risks rather than solved by unrelated contract changes.
@@ -211,14 +213,14 @@ Subject references SHOULD include one or more of:
 
 Validation claims SHOULD reference evidence rather than embedding full evidence
 packs. Evidence-packing behavior belongs in [evidence-packing.md](evidence-packing.md)
-or in a tool-specific adapter. When validation evidence conflicts with another
+or in a tool-specific layer. When validation evidence conflicts with another
 source class, apply the claim-type boundaries in [sources.md](sources.md).
 
 Validation claims that cover portable contracts MUST keep portable files free of
 project-local facts. Validation reports for a specific repository MAY contain
 repository-local facts when they are necessary evidence and the report is owned
-by the project-local, adapter, or review layer rather than by portable core
-content.
+by the project-local, selected entrypoint or surface, or review layer rather
+than by portable core content.
 
 ## Boundary Rules
 
@@ -231,20 +233,22 @@ Portable validation rules MUST NOT own:
 - concrete project-local command lines, local runtime requirements, fixtures, or
   CI job names;
 - validation report body templates or other agent-authored output formats;
-- adapter-specific check payloads or platform status fields;
+- selected-entrypoint or selected-surface check content or platform status
+  fields;
 - portability-lint implementation rules;
 - sync-tool implementation behavior beyond the need to validate and report
   sync-related claims with evidence;
 - detailed thread-role, handoff, or orchestration workflows;
 - evaluation cases, datasets, or scoring rubrics.
 
-Project-local validation commands belong in `docs/project/**`. Adapter-specific
-validation behavior belongs with the relevant adapter. Sync safety rules belong
-in [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md).
+Project-local validation commands belong in `docs/project/**`.
+Selected-entrypoint and selected-surface validation behavior belongs with the
+relevant selected layer. Sync safety rules belong in
+[path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md).
 
 ## Extension Path
 
 Later validation work SHOULD extend this file only when adding portable
 claim-model, evidence, or status rules. Project-specific validation procedures,
-adapter checks, lint implementations, and evaluation cases SHOULD extend their
-own owning surfaces instead.
+selected-entrypoint checks, selected-surface checks, lint implementations, and
+evaluation cases SHOULD extend their own owning surfaces instead.

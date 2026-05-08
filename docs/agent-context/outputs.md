@@ -6,7 +6,8 @@ author or update during collaboration.
 Output rules describe how to make durable text reviewable, evidence-backed, and
 safe to route across roles. They do not define project-local headings, branch
 rules, issue-reference policy, trailers, release notes, merge-message policy,
-command conventions, platform templates, or adapter payload syntax.
+command conventions, platform templates, or selected entrypoint or surface
+payload syntax.
 
 ## Terms
 
@@ -19,7 +20,7 @@ command conventions, platform templates, or adapter payload syntax.
 - **Structured body**: long or field-sensitive text whose line breaks, headings,
   lists, code blocks, or machine-consumed fields are material to correct use.
 - **Safe artifact boundary**: a body file, standard input stream, structured API
-  field, adapter-owned payload field, or equivalent mechanism that preserves a
+  field, selected surface-owned field, or equivalent mechanism that preserves a
   structured body without fragile inline quoting or command construction.
 - **Static body claim**: a durable claim recorded in text at a specific
   observation point. It may become stale when repository state, validation
@@ -32,7 +33,7 @@ Agent-authored output categories include, but are not limited to:
 | Output category | Portable purpose | Primary consumers |
 | --- | --- | --- |
 | Change summary | Summarizes what changed, why it changed, and what evidence supports the summary. | Maintainers, reviewers, later agents, release or readiness consumers. |
-| Change-proposal or pull request body | Presents a reviewable evidence packet for a proposed change without becoming platform doctrine. | Reviewers, maintainers, orchestrators, adapter entry points. |
+| Change-proposal or pull request body | Presents a reviewable evidence packet for a proposed change without becoming platform doctrine. | Reviewers, maintainers, orchestrators, selected collaboration surfaces. |
 | Commit or version-control change message | Names a source change concisely and, when useful, records rationale, risk, or validation context. | Maintainers, reviewers, history readers, release tooling. |
 | Issue body | Defines a durable work item, defect, proposal, acceptance criteria, or evidence request. | Maintainers, planners, orchestrators, workers, evaluators. |
 | Worker prompt | Transfers bounded implementation scope, evidence pointers, constraints, validation expectations, and deliverables. | Worker Threads or equivalent implementation roles. |
@@ -40,14 +41,15 @@ Agent-authored output categories include, but are not limited to:
 | Review finding | Reports a defect, risk, unsupported claim, missing validation, or non-finding against explicit evidence and criteria. | Authors, reviewers, maintainers, orchestrators. |
 | Validation report | Records validation claims with the portable status vocabulary and evidence references. | Maintainers, reviewers, workers, evaluators, release or readiness consumers. |
 | Readiness report | Summarizes deliverables, validation claims, residual risks, out-of-scope findings, and next-decision readiness. | Orchestrators, maintainers, reviewers, next-role recipients. |
-| Command snippet or command body | Provides command text, invocation intent, or a reusable body for a tool or shell-like interface. | Operators, agents, adapters, automation or tooling consumers. |
+| Command snippet or command body | Provides command text, invocation intent, or a reusable body for a tool or shell-like interface. | Operators, agents, selected entrypoint or surface layers, automation or tooling consumers. |
 | Generated evidence-pack summary | Summarizes generated or packed evidence while preserving source, freshness, omission, and limitation metadata. | Workers, evaluators, reviewers, maintainers, evidence consumers. |
 
 These categories may be materialized as files, comments, messages, form fields,
-reports, commit metadata, adapter payloads, or other durable records. The
-artifact's ownership layer determines whether the output belongs to portable
-core, project-local extension, adapter, validation, evidence-packing, workflow,
-or another layer under [artifacts.md](artifacts.md).
+reports, commit metadata, selected entrypoint or surface payloads, or other
+durable records. The artifact's ownership layer determines whether the output
+belongs to portable core, project-local extension, selected entrypoint, selected
+surface, validation, evidence-packing, workflow, or another layer under
+[artifacts.md](artifacts.md).
 
 ## Minimum Portable Expectations
 
@@ -88,7 +90,7 @@ hard to audit or assigns responsibility to the wrong layer.
 | Mixing risk | Required boundary |
 | --- | --- |
 | Static change-proposal body claims and dynamic CI, review, deployment, or external state. | Record only observed static evidence and freshness. Do not manually mirror changing status as durable truth unless the output states the observation point and limitation. Dynamic status belongs to the platform, validation report, or current inspected evidence. |
-| Commit subjects and issue-closing, tracker, or release policy. | Keep the portable commit subject focused on the change. Issue references, closure keywords, release links, trailers, and merge-message policy belong to project extension or adapters. |
+| Commit subjects and issue-closing, tracker, or release policy. | Keep the portable commit subject focused on the change. Issue references, closure keywords, release links, trailers, and merge-message policy belong to project extension or selected collaboration surfaces. |
 | Command text and unrelated narrative. | Keep command snippets or command bodies separate from explanatory prose when copying or execution is expected. Put rationale, warnings, and validation notes outside the command boundary. |
 | Review findings and implementation scope. | A finding reports evidence, severity, impact, and suggested direction. It does not authorize unrelated implementation changes or broaden accepted scope. |
 | Validation reports and unsupported readiness claims. | A validation report records claim statuses and evidence. Readiness requires the workflow readiness criteria in [workflows.md](workflows.md) and MUST disclose failed, pending, skipped, and residual-risk claims. |
@@ -109,7 +111,7 @@ Safe boundaries MAY include:
 
 - a body file whose contents are supplied to the relevant operation;
 - standard input or another stream that preserves the body exactly;
-- a structured API field, form field, or adapter-owned payload field;
+- a structured API field, form field, or selected surface-owned field;
 - a generated artifact referenced by stable locator;
 - another project-approved mechanism that preserves line breaks, code fences,
   lists, and structured fields.
@@ -125,8 +127,9 @@ rollback notes SHOULD be outside the command body unless the command language
 itself treats them as comments and the target consumer expects them there.
 
 Portable core does not require a specific command interface, shell, API, or
-hosting platform. Concrete local command conventions and adapter mechanisms
-belong to `docs/project/**` or the relevant adapter.
+hosting platform. Concrete local command conventions and selected entrypoint or
+surface mechanisms belong to `docs/project/**` or the relevant entrypoint or
+surface layer.
 
 ## Change-Proposal Body Default
 
@@ -151,7 +154,7 @@ The following shape is a portable default, not a mandatory universal template:
 
 Exact headings, required local fields, closure syntax, labels, checkboxes,
 reviewer assignment conventions, release-note fields, and platform template
-mapping belong to project extension or adapters.
+mapping belong to project extension or selected collaboration surfaces.
 
 A static change-proposal body MUST report only validation the producer actually
 ran, inspected, or had exactly confirmed. It MUST NOT mirror changing CI or
@@ -174,10 +177,10 @@ The portable default is:
 - no unsupported validation claims;
 - no generated boilerplate that obscures the actual change.
 
-Project extension or adapters MAY define concrete conventions such as subject
-format, allowed scopes, issue references, closure keywords, co-author trailers,
-signed-off-by trailers, squash or merge-message policy, release-note policy, and
-branch-derived message rules.
+Project extension or selected collaboration surfaces MAY define concrete
+conventions such as subject format, allowed scopes, issue references, closure
+keywords, co-author trailers, signed-off-by trailers, squash or merge-message
+policy, release-note policy, and branch-derived message rules.
 
 ## Prompt Outputs
 
@@ -256,7 +259,8 @@ Agent-authored output contracts MUST NOT own:
 - concrete issue templates, pull request templates, commit conventions, branch
   naming, issue-reference policy, trailers, merge-message policy, release-note
   policy, command conventions, labels, or review gates;
-- adapter payload syntax, platform-specific fields, or runtime behavior;
+- selected entrypoint or surface payload syntax, platform-specific fields, or
+  runtime behavior;
 - project-local identity, local source maps, host paths, commands, secrets
   policy details, or operational facts;
 - sync-tool behavior, lock-file schemas, portability-lint implementation, or
@@ -270,6 +274,6 @@ Artifact metadata should remain in [artifacts.md](artifacts.md), source
 precedence in [sources.md](sources.md), workflow roles and readiness in
 [workflows.md](workflows.md), validation statuses in
 [validation.md](validation.md), evidence packing in
-[evidence-packing.md](evidence-packing.md), adapters under `adapters/**`, and
-local output policy under `docs/project/**` or the configured local extension
-path.
+[evidence-packing.md](evidence-packing.md), selected entrypoints and surfaces in
+their source-owned layers, and local output policy under `docs/project/**` or
+the configured local extension path.

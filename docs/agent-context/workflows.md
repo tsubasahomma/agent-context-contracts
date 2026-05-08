@@ -6,8 +6,8 @@ reporting, and the change lifecycle at a platform-agnostic level.
 
 Workflow rules describe how collaboration should move from planning to bounded
 implementation and review. They do not define project-local procedures,
-collaboration-platform templates, adapter payloads, tool runtimes, or concrete
-validation commands.
+collaboration-platform templates, optional entrypoint or surface payloads, tool
+runtimes, or concrete validation commands.
 
 ## Terms
 
@@ -92,8 +92,8 @@ Responsibilities:
 - compare handoff scope with current source state, artifact state, and governing
   contracts;
 - implement only accepted in-scope changes;
-- preserve path, artifact, adapter, and ownership boundaries from the governing
-  contracts;
+- preserve path, artifact, selected entrypoint or surface, and ownership
+  boundaries from the governing contracts;
 - produce expected deliverables and validation evidence;
 - report out-of-scope findings, blocked assumptions, and residual risks without
   silently expanding scope;
@@ -108,8 +108,8 @@ Non-responsibilities:
 - treating handoff text as factual proof of current source state;
 - owning adversarial or readiness evaluation of its own work as the final review
   authority;
-- changing project-local, adapter-specific, sync, or evaluation surfaces when
-  the active work item does not include them.
+- changing project-local, selected entrypoint, selected surface, sync, or
+  evaluation surfaces when the active work item does not include them.
 
 ### Evaluator Thread
 
@@ -185,8 +185,8 @@ planning transcript.
 Before editing, a Worker Thread MUST:
 
 1. inspect the current source or artifact state for the in-scope references;
-2. inspect governing portable contracts and relevant project-local or adapter
-   extensions when those layers are in scope;
+2. inspect governing portable contracts and relevant project-local,
+   entrypoint, or surface extensions when those layers are in scope;
 3. compare current evidence with the handoff's accepted scope and known risks;
 4. identify contradictions, missing evidence, stale assumptions, or path
    ownership conflicts;
@@ -284,7 +284,8 @@ platforms without changing the role boundaries:
 
 The lifecycle MUST remain adaptable. Project-local workflow exceptions belong in
 `docs/project/**`. Platform-specific entry points, labels, templates, statuses,
-and automations belong with the relevant adapter.
+and automations belong with the relevant selected entrypoint, selected surface,
+or project-local extension.
 
 ## Boundary Rules
 
@@ -305,7 +306,7 @@ Workflow contracts MUST NOT own:
 - project-local workflow exceptions, validation commands, source maps, or local
   policy details;
 - collaboration-platform labels, templates, statuses, automations, or payloads;
-- adapter payloads or tool-specific runtime behavior;
+- optional entrypoint or surface payloads, or tool-specific runtime behavior;
 - evidence-packing tool behavior beyond evidence pointers;
 - agent-authored output categories, prompt body handling, or change-proposal
   defaults;
@@ -317,4 +318,5 @@ Workflow contracts MUST NOT own:
 Later workflow work SHOULD extend this file only when adding portable role,
 handoff, readiness, or lifecycle rules. Project-local workflow exceptions should
 live in `docs/project/**`. Platform-specific workflow entry points should live
-with the relevant adapter.
+with the relevant selected entrypoint, selected surface, or project-local
+extension.

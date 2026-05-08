@@ -5,14 +5,14 @@
 This document defines the portable core surface for agent collaboration
 contracts. It gives later contracts a stable place to extend the shared rules
 without mixing reusable guidance with project-local facts or tool-specific
-adapters.
+payloads.
 
 ## Owns
 
 The core contract owns:
 
 - the boundary between portable contracts, project-local extensions, optional
-  adapters, and sync or lint tooling;
+  entrypoints, optional collaboration surfaces, and sync or lint tooling;
 - the expectation that agents inspect current repository evidence before acting;
 - the expectation that durable claims are backed by observed evidence;
 - the rule that portable contracts remain repository-agnostic and
@@ -28,11 +28,12 @@ The core contract MUST NOT own:
   operational assumptions;
 - artifact schemas or detailed validation vocabulary;
 - detailed thread-role, handoff, or workflow rules;
-- adapter payloads or platform-specific entry points;
+- optional entrypoint payloads, collaboration-surface payloads, or
+  platform-specific runtime behavior;
 - sync implementation details, lock-file contents, or portability-lint rules.
 
-Those topics belong to their dedicated contracts, project extensions, adapters,
-or tools.
+Those topics belong to their dedicated contracts, project extensions, selected
+entrypoint or surface layers, or tools.
 
 ## Extension Path
 
