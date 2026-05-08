@@ -1,16 +1,17 @@
-# Project Extension Scaffold
+# Project Extension
 
-This file is part of a source-package scaffold for a consumer repository's
-local project extension. The scaffold helps a consumer record local identity,
-surfaces, output policy, validation expectations, workflow exceptions, and
-secrets policy while keeping portable contracts free of local facts.
+Use this file as the README for a consumer repository's local project extension.
+It may be seeded from `scaffolds/project/**` during adoption, and it becomes
+consumer-owned after materialization. The local project extension records local
+identity, surfaces, output policy, validation expectations, workflow exceptions,
+and secrets policy while keeping portable contracts free of local facts.
 
 ## Purpose
 
-Use this scaffold set when adopting the portable agent context contracts into a
-consumer repository. The materialized project extension is the place for facts
-that are true only for that repository, team, product, environment, or operating
-process.
+Use this local extension set when adopting the portable agent context contracts
+into a consumer repository. The materialized project extension is the place for
+facts that are true only for that repository, team, product, environment, or
+operating process.
 
 Local facts MUST NOT be copied into portable core files under
 `docs/agent-context/**`. Portable core files should continue to describe reusable

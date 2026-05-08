@@ -1,7 +1,7 @@
 # Project Secrets Policy
 
 Use this file to record the consumer repository's local secrets and sensitive
-data handling policy. This template describes classification, storage,
+data handling policy. This file describes classification, storage,
 redaction, and handling boundaries. It must not contain actual secrets.
 
 Do not include tokens, credentials, private keys, passwords, private personal
