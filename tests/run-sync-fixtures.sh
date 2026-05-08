@@ -144,7 +144,7 @@ copy_source() {
   mkdir -p "$destination"
   (
     cd "$repo_root"
-    tar -cf - AGENTS.md docs tools adapters templates
+    tar -cf - AGENTS.md docs tools entrypoints surfaces scaffolds
   ) | (
     cd "$destination"
     tar -xf -
@@ -268,6 +268,26 @@ test_adapter_unowned_collision_refusal() {
   assert_contains "${target}/CLAUDE.md" "pre-existing adapter file"
   assert_no_path "${target}/agent-context.lock.json"
   pass "existing unowned adapter destination is refused"
+}
+
+test_github_surface_and_copilot_split() {
+  surface_target="${tmp_root}/github-surface"
+  copilot_target="${tmp_root}/github-copilot"
+  mkdir -p "$surface_target" "$copilot_target"
+
+  bash "$sync_tool" --source "$repo_root" --target "$surface_target" --adapter github --apply >/dev/null
+  assert_file "${surface_target}/.github/pull_request_template.md"
+  assert_file "${surface_target}/.github/ISSUE_TEMPLATE/parent-program.yml"
+  assert_file "${surface_target}/.github/ISSUE_TEMPLATE/child-change.yml"
+  assert_no_path "${surface_target}/.github/copilot-instructions.md"
+
+  bash "$sync_tool" --source "$repo_root" --target "$copilot_target" --adapter github-copilot --apply >/dev/null
+  assert_file "${copilot_target}/.github/copilot-instructions.md"
+  assert_no_path "${copilot_target}/.github/pull_request_template.md"
+  assert_no_path "${copilot_target}/.github/ISSUE_TEMPLATE/parent-program.yml"
+  assert_no_path "${copilot_target}/.github/ISSUE_TEMPLATE/child-change.yml"
+
+  pass "github collaboration surface is split from github-copilot entrypoint"
 }
 
 test_project_extension_seed_and_preserve() {
@@ -436,6 +456,7 @@ test_unowned_collision_refusal
 test_parent_path_collision_refusal
 test_selected_adapter_and_unselected_skip
 test_adapter_unowned_collision_refusal
+test_github_surface_and_copilot_split
 test_project_extension_seed_and_preserve
 test_project_extension_path_overlap_refusal
 test_malformed_and_unsupported_lock_refusal

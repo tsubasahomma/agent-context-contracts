@@ -34,39 +34,35 @@ LOCK_PATH = "agent-context.lock.json"
 ADAPTER_MAPPINGS = {
     "github": [
         (
-            "adapters/github/files/.github/copilot-instructions.md",
-            ".github/copilot-instructions.md",
-        ),
-        (
-            "adapters/github/files/.github/pull_request_template.md",
+            "surfaces/github/pull_request_template.md",
             ".github/pull_request_template.md",
         ),
         (
-            "adapters/github/files/.github/ISSUE_TEMPLATE/parent-program.yml",
+            "surfaces/github/ISSUE_TEMPLATE/parent-program.yml",
             ".github/ISSUE_TEMPLATE/parent-program.yml",
         ),
         (
-            "adapters/github/files/.github/ISSUE_TEMPLATE/child-change.yml",
+            "surfaces/github/ISSUE_TEMPLATE/child-change.yml",
             ".github/ISSUE_TEMPLATE/child-change.yml",
+        ),
+    ],
+    "github-copilot": [
+        (
+            "entrypoints/github-copilot/copilot-instructions.md",
+            ".github/copilot-instructions.md",
         ),
     ],
     "codex": [
         (
-            "adapters/codex/files/.codex/config.example.toml",
+            "entrypoints/codex/config.example.toml",
             ".codex/config.example.toml",
         ),
     ],
     "claude": [
-        ("adapters/claude/files/CLAUDE.md", "CLAUDE.md"),
+        ("entrypoints/claude/CLAUDE.md", "CLAUDE.md"),
     ],
     "gemini": [
-        ("adapters/gemini/files/GEMINI.md", "GEMINI.md"),
-    ],
-    "repomix": [
-        (
-            "adapters/repomix/files/repomix-instructions.md",
-            "repomix-instructions.md",
-        ),
+        ("entrypoints/gemini/GEMINI.md", "GEMINI.md"),
     ],
 }
 
@@ -358,17 +354,17 @@ def collect_selected_adapter_specs(source_root, selected_adapters):
     return specs, refusals
 
 
-def collect_project_templates(source_root, project_extension_path):
-    template_root = source_root / "templates/project-extension"
-    templates = []
-    if not template_root.is_dir():
-        return templates
-    for path in sorted(template_root.rglob("*")):
+def collect_project_scaffolds(source_root, project_extension_path):
+    scaffold_root = source_root / "scaffolds/project"
+    scaffolds = []
+    if not scaffold_root.is_dir():
+        return scaffolds
+    for path in sorted(scaffold_root.rglob("*")):
         if path.is_file() and not path.is_symlink():
-            rel = path.relative_to(template_root).as_posix()
+            rel = path.relative_to(scaffold_root).as_posix()
             dest = normalize_repo_path(f"{project_extension_path}/{rel}")
-            templates.append((dest, path, path.stat().st_mode & 0o777))
-    return templates
+            scaffolds.append((dest, path, path.stat().st_mode & 0o777))
+    return scaffolds
 
 
 def detect_source_ref(source_root):
@@ -649,7 +645,7 @@ def plan_sync(args):
 
     if args.seed_project:
         seed_paths = set()
-        for path, source_path, mode in collect_project_templates(
+        for path, source_path, mode in collect_project_scaffolds(
             source_root, project_extension_path
         ):
             if path in seed_paths:
@@ -909,7 +905,7 @@ def parse_args(argv):
     parser.add_argument(
         "--seed-project",
         action="store_true",
-        help="seed missing project extension files from templates",
+        help="seed missing project extension files from scaffolds",
     )
     parser.add_argument(
         "--project-extension-path",

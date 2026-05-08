@@ -14,6 +14,9 @@ boundary drift. With no PATH arguments, the default scan surface is:
 
   AGENTS.md
   docs/agent-context/**
+  entrypoints/**
+  surfaces/**
+  scaffolds/project/**
 
 Explicit PATH arguments may name files or directories, including synthetic
 fixtures. The tool is read-only, does not use the network, and exits non-zero
@@ -81,7 +84,7 @@ scan_file() {
         line ~ /not required/ ||
         line ~ /not a .*requirement/ ||
         line ~ /optional/ ||
-        line ~ /(adapter|payload).*(selected|explicit|generic|boundary|tool-specific)/ ||
+        line ~ /(entrypoint|surface|payload).*(selected|explicit|generic|boundary|tool-specific)/ ||
         line ~ /claim to be/ ||
         line ~ /assert universal/ ||
         line ~ /forbidden/ ||
@@ -101,7 +104,7 @@ scan_file() {
         line ~ /belongs (in|to)/ ||
         line ~ /local .*policy/ ||
         line ~ /project .*extension/ ||
-        line ~ /adapter.*(owned|local|boundary|mapping|selected|optional)/ ||
+        line ~ /(entrypoint|surface).*(owned|local|boundary|mapping|selected|optional)/ ||
         line ~ /placeholder/ ||
         line ~ /explicit placeholders?/ ||
         line ~ /fail condition/ ||
@@ -135,20 +138,22 @@ scan_file() {
     function reusable_text_surface(file) {
       return file ~ /^AGENTS\.md$/ ||
         file ~ /^docs\/agent-context\// ||
-        file ~ /^templates\/project-extension\// ||
-        file ~ /^adapters\// ||
+        file ~ /^entrypoints\// ||
+        file ~ /^surfaces\// ||
+        file ~ /^scaffolds\/project\// ||
         file ~ /^tests\/fixtures\/portability-lint\// ||
         file ~ /\.(md|markdown|txt|yml|yaml)$/
     }
 
-    function adapter_payload_or_fixture(file) {
-      return file ~ /^adapters\/[^\/]+\/files\// ||
+    function selected_payload_or_fixture(file) {
+      return file ~ /^entrypoints\/[^\/]+\// ||
+        file ~ /^surfaces\/[^\/]+\// ||
         file ~ /^tests\/fixtures\/portability-lint\//
     }
 
-    function template_status_surface(file) {
-      return file ~ /^templates\/project-extension\// ||
-        adapter_payload_or_fixture(file)
+    function static_template_status_surface(file) {
+      return file ~ /^scaffolds\/project\// ||
+        selected_payload_or_fixture(file)
     }
 
     {
@@ -226,25 +231,25 @@ scan_file() {
         report("local-command-baseline", "portable or generic text must not present concrete local or platform commands as reusable baseline behavior")
       }
 
-      if (template_status_surface(file) &&
+      if (static_template_status_surface(file) &&
           !dynamic_status_allowed(line) &&
           line ~ /(^|[^a-z])(ci|check|checks|status|review|deployment|deploy|release|external)([^a-z]|$)/ &&
           line ~ /(^|[^a-z])(passed|passing|approved|deployed|released|current|complete|green)([^a-z]|$)/) {
         report("dynamic-status-mirroring", "static templates and durable examples must not mirror dynamic CI, review, deployment, release, or external status as current truth")
       }
 
-      if (adapter_payload_or_fixture(file) &&
+      if (selected_payload_or_fixture(file) &&
           !boundary_or_negative_allowed(line) &&
           (raw ~ /^#{1,3}[[:space:]]*(Portable[[:space:]]+)?(Operating[[:space:]]+Contract|Durable[[:space:]]+Operating[[:space:]]+Rules|Workflow[[:space:]]+Contract|Validation[[:space:]]+Contract|Source[[:space:]]+Precedence|Agent[[:space:]]+Context[[:space:]]+Contracts)/ ||
            line ~ /(this template|this form|this file).*(authoritative|durable|complete).*(manual|contract|source of truth|operating rules)/)) {
-        report("platform-template-manualization", "adapter payloads must stay thin entry points and route durable operating rules to owning contracts")
+        report("platform-template-manualization", "selected payloads must route durable operating rules to owning contracts")
       }
 
       if (reusable_text_surface(file) &&
           !boundary_or_negative_allowed(line) &&
           (line ~ /dotfiles[- ]only/ ||
            line ~ /(copied|migrated|ported)[^.;:]*(dotfiles|legacy)/)) {
-        report("historical-evidence-leak", "historical dotfiles evidence must not be copied into reusable lint, fixture, template, adapter, or contract text")
+        report("historical-evidence-leak", "historical dotfiles evidence must not be copied into reusable lint, fixture, scaffold, entrypoint, surface, or contract text")
       }
     }
 
@@ -289,6 +294,9 @@ EOF
 if [ "$#" -eq 0 ]; then
   scan_target "${repo_root}/AGENTS.md"
   scan_target "${repo_root}/docs/agent-context"
+  scan_target "${repo_root}/entrypoints"
+  scan_target "${repo_root}/surfaces"
+  scan_target "${repo_root}/scaffolds/project"
 else
   for arg in "$@"; do
     scan_target "$arg"
