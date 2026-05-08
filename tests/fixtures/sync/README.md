@@ -4,8 +4,9 @@
 sync behavior instead of storing materialized target repositories here.
 
 The runner covers clean dry-run and apply, checksum-safe update, checksum
-refusal, unowned collision refusal, selected and unselected adapter behavior,
-parent path collision refusal, project extension seeding and preservation,
+refusal, unowned collision refusal, selected and unselected optional payload
+behavior through the transitional adapter flag, parent path collision refusal,
+project extension seeding and preservation,
 project extension path overlap refusal, malformed, unsupported, inconsistent,
 or symlink lock refusal, source-removal preservation, preserved managed checksum
 refusal, and partial-failure rollback.

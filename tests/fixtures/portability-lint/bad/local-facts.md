@@ -9,6 +9,6 @@ Tenant ID: tenant-example-12345
 Host path: /home/example-user/example-service
 Internal host: build.example.internal
 Portable users must use Repomix for every evidence pack.
-The Repomix adapter must be installed in every repository.
+Repomix must be installed in every repository.
 Codex is the baseline agent for all repositories.
 legacy-only command: run retired-project-check
