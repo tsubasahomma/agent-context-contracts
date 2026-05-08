@@ -6,13 +6,14 @@ body:
     attributes:
       value: |
         Use this GitHub form as an optional adapter entry point for bounded child work.
-        Durable workflow rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts.
-        Repository-local facts belong in `docs/project/**` when a project extension is materialized.
+        Durable rules remain in `AGENTS.md`, `docs/agent-context/README.md`, and the relevant portable contracts, including `sources.md`, `outputs.md`, `workflows.md`, and `validation.md`.
+        Repository-local facts and local output policy belong in `docs/project/**`, including `docs/project/output-policy.md` when a project extension is materialized.
+        GitHub issue fields are scope and review evidence; workers still re-inspect current evidence before editing or claiming validation.
   - type: input
     id: parent-scope
     attributes:
       label: Parent scope reference
-      description: Reference the parent program or accepted direction without using a closing keyword.
+      description: Reference the parent program or accepted direction. Local issue-linking or closure syntax belongs to project or adapter-local policy.
       placeholder: "[parent issue, artifact, or decision reference]"
     validations:
       required: true
@@ -65,10 +66,18 @@ body:
     validations:
       required: true
   - type: textarea
+    id: output-expectations
+    attributes:
+      label: Output expectations
+      description: List durable outputs this child must produce or update, with intended consumers and evidence expectations.
+      placeholder: "- [change summary, change-proposal body, validation report, readiness report, prompt, or other output]: [purpose, consumer, evidence, and limitation expectation]"
+    validations:
+      required: true
+  - type: textarea
     id: validation-required
     attributes:
       label: Validation required
-      description: List required validation claims, evidence types, and expected readiness status.
+      description: List required validation claims, evidence types, and expected readiness status using the portable validation vocabulary.
       placeholder: "- [claim]: [command evidence, inspected-state evidence, CI evidence, manual review, or maintainer confirmation]"
     validations:
       required: true
@@ -105,7 +114,7 @@ body:
           required: true
         - label: This child must not silently expand beyond the accepted scope.
           required: true
-        - label: A pull request for this child should close only this child work item.
+        - label: A change proposal for this child must not claim validation or closure beyond the evidence and local policy provided.
           required: true
   - type: textarea
     id: references
