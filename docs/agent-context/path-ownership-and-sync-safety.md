@@ -78,6 +78,11 @@ checks as dry-run before changing files. The sync tool MUST update
 succeeded. If any planned write fails or is refused, the lock file MUST NOT be
 advanced for that failed operation.
 
+Apply mode MUST also protect destination content from partial write failures.
+The implementation MUST use atomic apply, staged writes, rollback, or explicit
+recovery behavior that is validated by executable evidence. Merely leaving the
+old lock file in place after a partial write is not sufficient protection.
+
 ## Sync Decision Table
 
 | Scenario | Safe v0.1 decision |
