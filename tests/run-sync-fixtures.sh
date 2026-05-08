@@ -288,6 +288,23 @@ test_project_extension_seed_and_preserve() {
   pass "project extension is seeded once and then preserved"
 }
 
+test_project_extension_path_overlap_refusal() {
+  target="${tmp_root}/project-path-overlap"
+  mkdir -p "$target"
+  output="${tmp_root}/project-path-overlap.out"
+  expect_failure "$output" bash "$sync_tool" \
+    --source "$repo_root" \
+    --target "$target" \
+    --seed-project \
+    --project-extension-path docs/agent-context \
+    --apply
+  assert_contains "$output" "REFUSE docs/agent-context (project extension path must be docs/project or below)"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/docs/agent-context"
+  assert_no_path "${target}/agent-context.lock.json"
+  pass "project extension path outside docs/project refuses before writes"
+}
+
 test_malformed_and_unsupported_lock_refusal() {
   target="${tmp_root}/bad-lock"
   mkdir -p "$target"
@@ -320,7 +337,28 @@ JSON
   expect_failure "$output2" bash "$sync_tool" --source "$repo_root" --target "$target2" --apply
   assert_contains "$output2" "unsupported schema_version"
   assert_no_path "${target2}/AGENTS.md"
-  pass "malformed and unsupported locks refuse before writes"
+
+  target3="${tmp_root}/inconsistent-project-path-lock"
+  mkdir -p "$target3"
+  cat >"${target3}/agent-context.lock.json" <<'JSON'
+{
+  "schema_version": "0.1",
+  "package_version": "0.1.0",
+  "source_ref": "synthetic-source",
+  "project_extension_path": "docs/agent-context",
+  "managed_files": [],
+  "installed_adapters": [],
+  "created_by": {
+    "tool": "sync-agent-context",
+    "version": "0.1.0"
+  }
+}
+JSON
+  output3="${tmp_root}/inconsistent-project-path-lock.out"
+  expect_failure "$output3" bash "$sync_tool" --source "$repo_root" --target "$target3" --apply
+  assert_contains "$output3" "project_extension_path project extension path must be docs/project or below"
+  assert_no_path "${target3}/AGENTS.md"
+  pass "malformed, unsupported, and inconsistent locks refuse before writes"
 }
 
 test_symlink_lock_refusal() {
@@ -398,6 +436,7 @@ test_parent_path_collision_refusal
 test_selected_adapter_and_unselected_skip
 test_adapter_unowned_collision_refusal
 test_project_extension_seed_and_preserve
+test_project_extension_path_overlap_refusal
 test_malformed_and_unsupported_lock_refusal
 test_symlink_lock_refusal
 test_source_removal_preserve

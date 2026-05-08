@@ -121,6 +121,12 @@ def normalize_repo_path(raw):
     return "/".join(parts)
 
 
+def project_extension_path_refusal(path):
+    if path == "docs/project" or path.startswith("docs/project/"):
+        return None
+    return "project extension path must be docs/project or below"
+
+
 def safe_join(target_root, rel_path):
     rel = normalize_repo_path(rel_path)
     root = target_root.resolve()
@@ -203,6 +209,9 @@ def validate_lock(data):
             normalized_project_path = normalize_repo_path(data["project_extension_path"])
             if data["project_extension_path"] != normalized_project_path:
                 errors.append("project_extension_path must already be normalized")
+            project_path_refusal = project_extension_path_refusal(normalized_project_path)
+            if project_path_refusal:
+                errors.append(f"project_extension_path {project_path_refusal}")
         except ValueError as exc:
             errors.append(f"project_extension_path is unsafe: {exc}")
 
@@ -455,10 +464,28 @@ def plan_sync(args):
     selected_adapters = set(args.selected_adapters)
     source_ref = args.source_ref or detect_source_ref(source_root)
 
-    lock_data, lock_text, lock_errors = read_lock(target_root)
     actions = []
     refusals = []
     file_writes = []
+
+    project_path_refusal = project_extension_path_refusal(project_extension_path)
+    if project_path_refusal:
+        refusals.append({"path": project_extension_path, "reason": project_path_refusal})
+        return {
+            "source_root": source_root,
+            "target_root": target_root,
+            "project_extension_path": project_extension_path,
+            "selected_adapters": selected_adapters,
+            "source_ref": source_ref,
+            "actions": actions,
+            "refusals": refusals,
+            "file_writes": file_writes,
+            "lock_action": "blocked",
+            "lock_content": None,
+            "lock_text": None,
+        }
+
+    lock_data, lock_text, lock_errors = read_lock(target_root)
 
     if lock_errors:
         for error in lock_errors:
@@ -621,9 +648,22 @@ def plan_sync(args):
         new_entries_by_path[path] = make_lock_entry(spec)
 
     if args.seed_project:
+        seed_paths = set()
         for path, source_path, mode in collect_project_templates(
             source_root, project_extension_path
         ):
+            if path in seed_paths:
+                refusals.append({"path": path, "reason": "duplicate project extension seed destination"})
+                continue
+            seed_paths.add(path)
+            if path in desired_specs:
+                refusals.append(
+                    {
+                        "path": path,
+                        "reason": "project extension seed destination overlaps a managed destination",
+                    }
+                )
+                continue
             try:
                 destination = safe_join(target_root, path)
             except (ValueError, SyncError) as exc:
@@ -908,6 +948,7 @@ def main(argv):
         args = parse_args(argv)
         plan = plan_sync(args)
         print_plan(plan, args.apply)
+        sys.stdout.flush()
         if args.apply:
             if plan["refusals"]:
                 eprint("Apply refused; no files were changed")
