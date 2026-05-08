@@ -39,6 +39,7 @@ limits apply.
 An evidence pack MAY support:
 
 - artifact evidence references under [artifacts.md](artifacts.md);
+- generated evidence-pack summaries under [outputs.md](outputs.md);
 - validation claims and evidence summaries under [validation.md](validation.md);
 - worker and evaluator handoffs under [workflows.md](workflows.md);
 - manual review, readiness review, or follow-up planning;
@@ -235,6 +236,8 @@ Evidence-packing contracts MUST NOT own:
 
 - required packing tools, command lines, generated file formats, or adapter
   payloads;
+- generated evidence-pack summary output shape beyond the evidence metadata this
+  contract requires;
 - project-local source maps, validation commands, secret handling procedures, or
   context budgets;
 - detailed workflow handoff contracts beyond how packs support them;

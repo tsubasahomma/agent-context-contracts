@@ -24,8 +24,10 @@ fixtures, lint implementations, or sync-tool behavior.
 ## Validation Claim Model
 
 A validation report is a durable artifact under [artifacts.md](artifacts.md).
-Each validation report MUST contain one or more validation claims. Each claim
-MUST be reviewable without relying on unsupported conversation memory.
+Agent-authored validation report output boundaries are defined in
+[outputs.md](outputs.md). Each validation report MUST contain one or more
+validation claims. Each claim MUST be reviewable without relying on unsupported
+conversation memory.
 
 Each validation claim MUST include:
 
@@ -228,6 +230,7 @@ Portable validation rules MUST NOT own:
 
 - concrete project-local command lines, local runtime requirements, fixtures, or
   CI job names;
+- validation report body templates or other agent-authored output formats;
 - adapter-specific check payloads or platform status fields;
 - portability-lint implementation rules;
 - sync-tool implementation behavior beyond the need to validate and report
