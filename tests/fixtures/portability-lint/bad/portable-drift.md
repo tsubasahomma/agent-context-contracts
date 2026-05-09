@@ -1,4 +1,4 @@
-# Synthetic Bad v0.3 Drift Examples
+# Synthetic Bad Portable Drift Examples
 
 This fixture intentionally contains invalid synthetic examples for
 `tools/lint-portability.sh`. None of these lines are project facts.

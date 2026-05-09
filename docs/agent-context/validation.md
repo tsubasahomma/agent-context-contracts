@@ -4,8 +4,9 @@ This document defines the portable validation claim model and validation status
 vocabulary for evidence-backed agent collaboration.
 
 Validation rules describe how to make, support, and report validation claims.
-They do not define project-local commands, CI job names, optional entrypoint or
-surface payloads, fixtures, lint implementations, or sync-tool behavior.
+They do not define project-local commands, CI job names, vendor shim payloads,
+platform surface payloads, fixtures, lint implementations, or installer
+behavior.
 
 ## Terms
 
@@ -19,8 +20,8 @@ surface payloads, fixtures, lint implementations, or sync-tool behavior.
 - **Residual risk**: a known uncertainty that remains after validation is
   reported.
 - **Required validation**: a claim that must be resolved by the governing scope,
-  artifact contract, project-local extension, selected entrypoint or surface
-  layer, or maintainer direction.
+  artifact contract, project-local extension, consumer-owned surface, or
+  maintainer direction.
 
 ## Validation Claim Model
 
@@ -120,8 +121,8 @@ inspection. A CI-evidence reference SHOULD include:
 - relevant output summary for failures.
 
 CI evidence MUST be scoped to the subject it actually covered. A successful CI
-result for one revision, selected optional group, or artifact MUST NOT be reused
-as success for a different subject without evidence that the coverage still
+result for one revision, local surface, or artifact MUST NOT be reused as
+success for a different subject without evidence that the coverage still
 applies.
 
 ### Manual Review Evidence
@@ -169,7 +170,7 @@ A `failed` claim MUST report:
 Validation reports MUST include residual risks when uncertainty remains after
 validation. Residual risks SHOULD identify the subject, why the risk remains,
 what evidence would reduce it, and whether the risk affects release, review,
-sync, selected entrypoint or surface, or evaluation consumers.
+installer behavior, vendor shims, platform surfaces, or evaluation consumers.
 
 Known risks that belong to later implementation work SHOULD be reported as
 residual risks rather than solved by unrelated contract changes.
@@ -219,8 +220,8 @@ source class, apply the claim-type boundaries in [sources.md](sources.md).
 Validation claims that cover portable contracts MUST keep portable files free of
 project-local facts. Validation reports for a specific repository MAY contain
 repository-local facts when they are necessary evidence and the report is owned
-by the project-local, selected entrypoint or surface, or review layer rather
-than by portable core content.
+by the project-local, platform surface, vendor shim, or review layer rather than
+by portable core content.
 
 ## Boundary Rules
 
@@ -233,22 +234,22 @@ Portable validation rules MUST NOT own:
 - concrete project-local command lines, local runtime requirements, fixtures, or
   CI job names;
 - validation report body templates or other agent-authored output formats;
-- selected-entrypoint or selected-surface check content or platform status
+- vendor shim or platform surface check content or platform status
   fields;
 - portability-lint implementation rules;
-- sync-tool implementation behavior beyond the need to validate and report
-  sync-related claims with evidence;
+- installer implementation behavior beyond the need to validate and report
+  installer-related claims with evidence;
 - detailed thread-role, handoff, or orchestration workflows;
 - evaluation cases, datasets, or scoring rubrics.
 
 Project-local validation commands belong in `docs/project/**`.
-Selected-entrypoint and selected-surface validation behavior belongs with the
-relevant selected layer. Sync safety rules belong in
-[path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md).
+Vendor shim and platform surface validation behavior belongs with the relevant
+consumer-owned layer. Installer safety rules belong in
+[ownership.md](ownership.md).
 
 ## Extension Path
 
 Later validation work SHOULD extend this file only when adding portable
 claim-model, evidence, or status rules. Project-specific validation procedures,
-selected-entrypoint checks, selected-surface checks, lint implementations, and
+vendor shim checks, platform surface checks, lint implementations, and
 evaluation cases SHOULD extend their own owning surfaces instead.

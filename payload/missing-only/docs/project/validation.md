@@ -68,7 +68,7 @@ bodies, release notes, rollback notes, or evidence summaries.
 
 | Output type | Required check | Evidence expected | When unavailable |
 | --- | --- | --- | --- |
-| `[output type]` | `[local command, manual review, selected-surface check, maintainer confirmation, pending, or omitted reason]` | `[status, output summary, inspected body, rendered artifact, or limitation]` | `[pending, skipped, not_required, maintainer_confirmed, or escalation rule]` |
+| `[output type]` | `[local command, manual review, platform-surface check, maintainer confirmation, pending, or omitted reason]` | `[status, output summary, inspected body, rendered artifact, or limitation]` | `[pending, skipped, not_required, maintainer_confirmed, or escalation rule]` |
 
 ## Unavailable Checks
 

@@ -22,7 +22,7 @@ Record durable artifacts that agents may create, update, or review.
 ## Output Artifact Surfaces
 
 Record durable text output surfaces separately when local policy, review,
-validation, or selected-surface mapping depends on where the output is stored or
+validation, or platform-surface mapping depends on where the output is stored or
 posted.
 
 | Output surface | Path, locator, or owner layer | Output role | Handling notes |
