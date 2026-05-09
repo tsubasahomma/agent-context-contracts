@@ -89,6 +89,61 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Fail condition | Quoting, escaping, command interpolation, or mixed prose changes line breaks, code fences, lists, or machine-consumed fields. |
 | Expected evidence | The body artifact or posting mechanism, plus review notes showing the executable or posted content boundary. |
 
+## EVAL-007 Output Default Template Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Portable output defaults become mandatory platform templates, default-installed platform payload, or local workflow doctrine. |
+| Governing contract | [outputs.md](outputs.md), [ownership.md](ownership.md), [core.md](core.md), and [sources.md](sources.md). |
+| Input or condition | Parent Issue defaults, Child Issue defaults, change-proposal defaults, platform-surface examples, installer payload changes, or proposed template files. |
+| Pass condition | Portable output guidance is framed as reusable defaults that apply when no project-local policy or consumer-owned platform surface is more specific. Platform-native issue forms, pull request templates, labels, reviewer assignment, closure syntax, and field mappings remain optional consumer-owned surfaces. |
+| Fail condition | A portable contract or default payload requires a platform template, installs platform collaboration surfaces by default, makes local headings or platform fields mandatory for every consumer, or treats a platform-native form as portable core doctrine. |
+| Expected evidence | Diff review of portable contracts and payload paths, installer payload inspection, and targeted checks that no default platform issue or pull request template was introduced. |
+
+## EVAL-008 Issue And Proposal Evidence Completeness
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Durable issue or change-proposal bodies look complete while omitting material motivation, evidence basis, validation status, scope boundary, risk, rollback, mitigation, or out-of-scope information. |
+| Governing contract | [outputs.md](outputs.md), [validation.md](validation.md), [workflows.md](workflows.md), and [artifacts.md](artifacts.md). |
+| Input or condition | Parent Issue body, Child Issue body, change-proposal body, pull request body, readiness report, or change summary. |
+| Pass condition | When material to the output role, the body states why the work exists, what scope it accepts and excludes, which evidence or inspected state supports material claims, which validation status applies, and what residual risk, rollback, mitigation, or next decision remains. |
+| Fail condition | The body substitutes generated boilerplate, unchecked boxes, or unsupported assertions for evidence; omits material motivation or scope boundaries; reports validation as decoration rather than a claim; or hides risk, rollback, mitigation, unavailable evidence, or out-of-scope findings needed for review. |
+| Expected evidence | Body review against its output role, validation-claim evidence, inspected-state notes for material claims, and reviewer notes for omissions or non-findings. |
+
+## EVAL-009 Change Message Local Doctrine Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Portable commit or change-message guidance hard-requires project-local syntax, tracker references, release-note fields, trailers, Conventional Commits, merge-message policy, branch-derived subjects, or strict numeric line-length gates. |
+| Governing contract | [outputs.md](outputs.md), [ownership.md](ownership.md), [sources.md](sources.md), and [validation.md](validation.md). |
+| Input or condition | Commit-message guidance, changeset guidance, version-control message examples, release note mapping, merge-message mapping, lint rules, or fixtures. |
+| Pass condition | Portable guidance treats concise resulting-change subjects, subject/body separation, and practical line wrapping as reviewability defaults with exceptions. Project-local syntax, tracker references, trailers, Conventional Commits decisions, release-note fields, merge-message rules, branch conventions, and hard validation gates remain local policy or platform-surface concerns. |
+| Fail condition | Portable core requires a named commit convention, concrete tracker syntax, issue-closing keywords, local release fields, trailers, merge-message structure, branch-derived subject format, or absolute 50/72 validity gates for all consumers. |
+| Expected evidence | Diff review of message guidance and fixtures, portability-lint output when relevant, and manual review that examples do not make local conventions portable doctrine. |
+
+## EVAL-010 Missing-Only Output Policy Starter Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | A missing-only local output-policy starter leaks concrete local facts, converts placeholders into local policy, or makes local platform fields portable doctrine before a consumer owns them. |
+| Governing contract | [outputs.md](outputs.md), [ownership.md](ownership.md), [sources.md](sources.md), and [validation.md](validation.md). |
+| Input or condition | `payload/missing-only/docs/project/output-policy.md`, adjacent missing-only local policy starters, vendor shims, or starter examples. |
+| Pass condition | Starter text uses placeholders, explicit decision states, and local ownership language. It leaves concrete field names, tracker syntax, platform mappings, release rules, commit conventions, and validation commands unsettled until the consumer records evidence or confirmation in its local context. |
+| Fail condition | Starter text names a concrete repository, command, host, reviewer, label, tracker value, platform field, release rule, commit convention, or validation result as if it were already local policy or portable doctrine. |
+| Expected evidence | Portability-lint output when applicable, manual review of starter placeholders and decision states, and missing-only boundary inspection showing existing consumer-owned files would not be overwritten. |
+
+## EVAL-011 Durable Repository Process Debris
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Durable repository files retain stale process notes, worker narration, migration notes, issue-plan narration, dead comments, obsolete compatibility guidance, or historical scaffolding that no longer helps current consumers. |
+| Governing contract | [outputs.md](outputs.md), [workflows.md](workflows.md), [ownership.md](ownership.md), and [validation.md](validation.md). |
+| Input or condition | Portable contracts, root documentation, missing-only starters, vendor shims, fixtures, scripts, comments, examples, or proposed durable repository text. |
+| Pass condition | Durable repository text describes steady-state behavior for its owning layer. Historical process context stays in issue bodies, change proposals, change messages, validation reports, or other change records unless it is required for current operation. |
+| Fail condition | Repository files include temporary migration narration, worker self-reporting, issue execution plans, obsolete compatibility promises, stale selected-entrypoint or lifecycle language, dead comments, dead fixtures, or historical explanations that conflict with the current contract model. |
+| Expected evidence | Targeted text searches, diff review of changed durable files, manual review that process context belongs to a change record, and validation notes for any intentionally retained historical reference. |
+
 ## Boundary Rules
 
 Evaluation contracts own reusable failure cases and evidence expectations for
