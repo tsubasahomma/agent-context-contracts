@@ -167,12 +167,41 @@ def resolve_source(source_root, args):
         except (OSError, subprocess.CalledProcessError):
             repository = "local-source"
     channel = args.channel
+    explicit_resolved_commit = args.resolved_commit
+    if explicit_resolved_commit and not COMMIT_RE.match(explicit_resolved_commit):
+        refusals.append(
+            {
+                "path": "source",
+                "reason": "--resolved-commit must be a full commit SHA",
+            }
+        )
+        explicit_resolved_commit = None
     head_commit = None
     try:
         head_commit = git_output(source_root, ["rev-parse", "HEAD"])
     except (OSError, subprocess.CalledProcessError):
         pass
-    if channel:
+    if explicit_resolved_commit:
+        resolved_commit = explicit_resolved_commit
+        if channel:
+            try:
+                channel_commit = git_output(
+                    source_root,
+                    ["rev-parse", "--verify", f"{channel}^{{commit}}"],
+                )
+            except (OSError, subprocess.CalledProcessError):
+                channel_commit = None
+            if channel_commit and channel_commit != resolved_commit:
+                refusals.append(
+                    {
+                        "path": "source",
+                        "reason": (
+                            "requested source channel "
+                            f"{channel} resolves to {channel_commit}, not {resolved_commit}"
+                        ),
+                    }
+                )
+    elif channel:
         try:
             resolved_commit = git_output(source_root, ["rev-parse", "--verify", f"{channel}^{{commit}}"])
         except (OSError, subprocess.CalledProcessError):
@@ -949,6 +978,10 @@ def build_parser():
         sub.add_argument("--apply", action="store_true", help="write changes; default is dry-run")
         sub.add_argument("--repository", help="source.repository value for the lock")
         sub.add_argument("--channel", help="source.channel value for the lock")
+        sub.add_argument(
+            "--resolved-commit",
+            help="full source commit SHA for archive-based source packages",
+        )
         sub.add_argument("--project-extension-path", default=PROJECT_EXTENSION_DEFAULT)
         sub.add_argument(
             "--local-development",
