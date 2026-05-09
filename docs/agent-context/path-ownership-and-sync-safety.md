@@ -70,6 +70,12 @@ checksum-safe. It MUST delete clean package-managed files removed from the
 resolved source. It MUST preserve consumer-owned project files and detached
 surfaces.
 
+`sync` MAY detach a selected collaboration surface through an explicit option
+such as `--detach-surface <name>`. Detach is an ownership metadata operation:
+it MUST remove the detached surface's package-managed entries from
+`managed_files[]`, MUST preserve destination files without checksum-guarded
+content changes, and MUST NOT add a third top-level command.
+
 Dry-run is the default mode. A dry-run MUST report planned creates, updates,
 deletions, skips, refusals, scaffold materializations, detach effects, and lock
 changes without writing to the consumer repository.
@@ -170,6 +176,7 @@ tool behavior, source ownership, or local policy.
 | Detached collaboration surface | MUST NOT remain in `managed_files[]`. Sync MUST preserve the destination path and MUST NOT reattach or overwrite it without explicit adoption. |
 | Unselected collaboration surface | MUST NOT create, update, delete, or record destination files. |
 | Project scaffold materialization | MAY create missing `docs/project/**` files during `init` when requested. MUST NOT manage those files after creation. Future scaffold changes MAY be shown as advisory diffs but MUST NOT be automatically merged. |
+| Project scaffold drift during `sync` | MAY report missing, changed, symlinked, or non-file `docs/project/**` destinations as advisory information. MUST NOT write, overwrite, delete, merge, patch, or lock-manage those files. |
 | Missing lock after prior adoption is suspected | MUST treat destination files as unowned unless ownership is re-established by an explicit future recovery workflow. |
 | Symlinked lock file | MUST refuse apply-mode writes. MUST NOT replace the symlink. |
 | Unreadable, malformed, or unsupported lock file | MUST refuse apply-mode writes. SHOULD report the lock-file error and leave destination files unchanged. |
@@ -227,6 +234,13 @@ contracts. When selected and lock-recorded, they are package-managed by default
 and are updated by `sync` when checksum-safe. If a consumer needs local workflow
 rules in a surface, the surface MUST be explicitly detached or handled by a
 documented manual workflow before local ownership is assumed.
+
+A detached surface remains visible in `selected_surfaces[]` with
+`detached: true` so diagnostics can explain why the source surface is not being
+managed. The detached surface MUST NOT have entries in `managed_files[]`.
+Detach MAY be applied even when the surface destination file has local edits,
+because detach does not overwrite, delete, or repair that file; it only releases
+package ownership in the lock.
 
 The presence of optional source content MUST NOT install anything by itself.
 Selection and lock metadata are required for package-managed optional content.

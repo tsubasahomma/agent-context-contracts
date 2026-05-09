@@ -38,6 +38,13 @@ from `surfaces/**` are package-managed only when selected and recorded in
 materialize missing `docs/project/**` files during adoption, but materialized
 project files are consumer-owned after creation.
 
+`sync` may detach a selected collaboration surface, for example with
+`--detach-surface <name>`, by preserving the destination files and removing
+their package-managed lock entries. Detached surfaces remain consumer-owned
+unless a future explicit re-adoption workflow is used. During `sync`, project
+scaffold drift may be reported as advisory information, but `docs/project/**`
+files are never patched, overwritten, deleted, or lock-managed.
+
 Source-package tooling is distribution machinery, not default consumer managed
 payload. The root `agent-context.lock.json` file records sync metadata,
 including source channel and resolved commit, but it does not own portable
