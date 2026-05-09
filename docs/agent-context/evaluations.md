@@ -144,6 +144,83 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Fail condition | Repository files include temporary migration narration, worker self-reporting, issue execution plans, obsolete compatibility promises, stale selected-entrypoint or lifecycle language, dead comments, dead fixtures, or historical explanations that conflict with the current contract model. |
 | Expected evidence | Targeted text searches, diff review of changed durable files, manual review that process context belongs to a change record, and validation notes for any intentionally retained historical reference. |
 
+## EVAL-012 Worker Approval Boundary Collapse
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Worker self-review, local change-surface setup, or change-proposal creation is confused with final independent approval or made portable when it is only required by local policy. |
+| Governing contract | [workflows.md](workflows.md), [outputs.md](outputs.md), [sources.md](sources.md), and [validation.md](validation.md). |
+| Input or condition | Worker readiness report, change proposal, worker self-review note, evaluator handoff, local workflow policy, or proposed workflow contract change. |
+| Pass condition | The Worker records self-review as readiness evidence, preserves any locally required isolated change surface or change-proposal requirement when confirmed by project-local policy, and routes final approval to the evaluator, orchestrator, maintainer, owning process, or delegated local authority. |
+| Fail condition | The Worker treats self-review as final independent approval, skips a confirmed local isolation or change-proposal requirement without reporting it, or makes branch, isolation, or change-proposal mechanics a portable default for every consumer. |
+| Expected evidence | Worker readiness evidence, local policy or maintainer confirmation for any required change surface, change-proposal evidence when applicable, and evaluator or owner decision evidence for final approval. |
+
+## EVAL-013 Irreversible Lifecycle Action Without Authority
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Final acceptance, merge, release, destructive cleanup, issue closure, or equivalent irreversible publication happens from readiness optimism rather than explicit authority. |
+| Governing contract | [workflows.md](workflows.md), [validation.md](validation.md), [outputs.md](outputs.md), and [sources.md](sources.md). |
+| Input or condition | Readiness report, release or publication note, cleanup plan, change-proposal status, issue closure claim, or platform-surface action. |
+| Pass condition | The report or action cites owner authority, exact maintainer confirmation, or project-local delegation for the irreversible step, and reports `pending` when that authority is absent or unclear. |
+| Fail condition | A Worker, Orchestrator, generated summary, completed checklist, passing review note, or local progress state is treated as enough authority for final acceptance, merge, release, destructive cleanup, issue closure, or equivalent irreversible publication. |
+| Expected evidence | Maintainer confirmation, project-local policy, owning-process record, validation claims for required checks, readiness limitations, and the exact action or decision under review. |
+
+## EVAL-014 Progress State As Validation Evidence
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Checkbox, tasklist, linked-item, status column, label, milestone, or project-field state is used as validation, readiness, or final acceptance evidence by itself. |
+| Governing contract | [workflows.md](workflows.md), [validation.md](validation.md), [sources.md](sources.md), and [outputs.md](outputs.md). |
+| Input or condition | Readiness report, validation report, issue body, change-proposal body, progress comment, platform-surface field, or evaluation report. |
+| Pass condition | Progress state is treated as routing or coordination state only, and any validation or readiness claim cites separate observed evidence, manual review evidence, CI evidence, or exact maintainer confirmation for the specific subject. |
+| Fail condition | A checked item, linked item, status value, label, milestone, or project-field value is reported as proof that validation passed, readiness is complete, final acceptance occurred, or a work item may be closed without a separate validation claim. |
+| Expected evidence | Validation claims with allowed statuses, inspected-state or command evidence, manual review notes, maintainer confirmation when used, and any platform state clearly labeled as progress or routing state. |
+
+## EVAL-015 Current Evidence Substitution
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Stale handoff text, broad history, generated summaries, uninspected prompt memory, or old tool output is treated as current repository, artifact, validation, or local-policy evidence. |
+| Governing contract | [workflows.md](workflows.md), [sources.md](sources.md), [evidence-packing.md](evidence-packing.md), and [validation.md](validation.md). |
+| Input or condition | Worker prompt, evaluator prompt, handoff, generated evidence summary, readiness report, validation report, or review finding. |
+| Pass condition | The artifact uses stale or derived material only as a pointer for inspection, records freshness and limitations, and bases factual or validation claims on current inspected state, scoped derived evidence with required metadata, or exact maintainer confirmation. |
+| Fail condition | The artifact asks a recipient to trust broad history, generated summaries, stale handoff assertions, prompt memory, or uninspected prior output as proof of current files, validation status, local policy, or readiness. |
+| Expected evidence | Current diff or file inspection notes, command or CI evidence when claimed, evidence-pack metadata when derived evidence is reused, freshness limitations, and explicit contradiction handling when current evidence differs from the handoff. |
+
+## EVAL-016 Platform Lifecycle Doctrine Leakage
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Platform-specific lifecycle mechanics leak into portable core as required branch, review, issue, tasklist, label, assignee, reviewer, milestone, project-field, merge, release, cleanup, or closure doctrine. |
+| Governing contract | [workflows.md](workflows.md), [outputs.md](outputs.md), [ownership.md](ownership.md), and [sources.md](sources.md). |
+| Input or condition | Portable contracts, missing-only starters, vendor shims, platform-surface examples, lint fixtures, or proposed lifecycle guidance. |
+| Pass condition | Portable text keeps role boundaries, evidence expectations, and lifecycle gates platform-agnostic while routing concrete mechanics, field names, labels, reviewer rules, closure syntax, release steps, and cleanup commands to project-local policy or consumer-owned platform surfaces. |
+| Fail condition | Portable core requires a specific hosted workflow, branch or proposal mechanic, closure syntax, label taxonomy, reviewer assignment, milestone rule, project field, merge method, release operation, cleanup command, or platform status behavior for all consumers. |
+| Expected evidence | Diff review of reusable text, ownership-boundary inspection, portability-lint output when applicable, and targeted searches for platform-specific lifecycle leakage in changed durable files. |
+
+## EVAL-017 Collaboration Comment And Mutation Authority Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | AI-authored comments become noisy progress logs or malformed records, or agents mutate labels, assignees, reviewer requests, milestones, or project fields without local authority. |
+| Governing contract | [outputs.md](outputs.md), [workflows.md](workflows.md), [sources.md](sources.md), and [ownership.md](ownership.md). |
+| Input or condition | Agent-authored collaboration comment, progress update, review finding, routing note, platform field mutation, label change, assignee change, reviewer request, milestone update, or project-field update. |
+| Pass condition | Material comments are sparse, role-specific, evidence-oriented records that state their purpose, evidence basis, requested decision or next owner, and limitations when relevant; platform-state mutations cite existing local policy, existing platform metadata, platform-surface ownership, or exact maintainer confirmation. |
+| Fail condition | Comments post repetitive progress chatter, use mandatory heavy boilerplate without material content, omit role or evidence basis for workflow-affecting claims, obscure the current owner or requested decision, create labels or taxonomy, assign users, request reviewers, change milestones, or mutate project fields by guesswork. |
+| Expected evidence | Comment body review, local output or workflow policy, platform-surface ownership evidence, existing platform metadata when used, maintainer confirmation for delegated mutations, and limitations for skipped or pending authority. |
+
+## EVAL-018 Handoff Identifier Completeness
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Handoffs or readiness reports omit available artifact identifiers that later roles need to find governing scope, active work, review surfaces, validation evidence, or equivalent collaboration artifacts. |
+| Governing contract | [workflows.md](workflows.md), [outputs.md](outputs.md), [artifacts.md](artifacts.md), and [sources.md](sources.md). |
+| Input or condition | Worker handoff, evaluator handoff, readiness report, change-proposal body, validation report, review finding, or generated handoff artifact. |
+| Pass condition | The artifact includes available identifiers or stable locators for material governing scope, active work item, change proposal, review surface, validation report, source artifact, or equivalent artifact, while leaving identifier syntax and platform mechanics to the owning local surface. |
+| Fail condition | The artifact relies on vague phrases, broad history, conversation memory, or generated summaries when concrete identifiers are available and material, or it mandates a platform-specific identifier syntax as portable core. |
+| Expected evidence | Review of the handoff or report, available artifact or source locators, local policy for identifier syntax when applicable, and stated limitations for unavailable or intentionally omitted identifiers. |
+
 ## Boundary Rules
 
 Evaluation contracts own reusable failure cases and evidence expectations for
