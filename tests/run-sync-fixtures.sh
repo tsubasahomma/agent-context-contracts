@@ -441,6 +441,68 @@ test_requested_channel_mismatch_refusal() {
   pass "requested source channel must resolve to the checkout bytes being applied"
 }
 
+test_explicit_resolved_commit_channel_mismatch_refusal() {
+  source="${tmp_root}/source-explicit-channel-mismatch"
+  target="${tmp_root}/explicit-channel-mismatch-target"
+  make_source "$source"
+  main_commit="$(git -C "$source" rev-parse main)"
+  git -C "$source" switch -q -c feature
+  printf '\nFeature source bytes that must not claim main.\n' >>"${source}/AGENTS.md"
+  commit_source_change "$source" "feature source update for explicit commit mismatch"
+  mkdir -p "$target"
+  output="${tmp_root}/explicit-channel-mismatch.out"
+  expect_failure "$output" bash "$agent_tool" init \
+    --source "$source" \
+    --target "$target" \
+    --channel main \
+    --resolved-commit "$(git -C "$source" rev-parse HEAD)" \
+    --apply
+  assert_contains "$output" "REFUSE source (requested source channel main resolves to $main_commit"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/agent-context.lock.json"
+  pass "explicit resolved commit must not contradict a resolvable source channel"
+}
+
+test_archive_source_explicit_commit_metadata() {
+  git_source="${tmp_root}/source-archive-origin"
+  archive_source="${tmp_root}/source-archive"
+  target="${tmp_root}/archive-target"
+  make_source "$git_source"
+  resolved_commit="$(git -C "$git_source" rev-parse HEAD)"
+  copy_source_tree "$archive_source"
+  mkdir -p "$target"
+  output="${tmp_root}/archive-source.out"
+  bash "$agent_tool" init \
+    --source "$archive_source" \
+    --target "$target" \
+    --repository tsubasahomma/agent-context-contracts \
+    --channel main \
+    --resolved-commit "$resolved_commit" \
+    --entrypoint claude \
+    --surface github \
+    --materialize-project \
+    --apply >"$output"
+  assert_contains "$output" "Source repository: tsubasahomma/agent-context-contracts"
+  assert_contains "$output" "Source channel: main"
+  assert_contains "$output" "Resolved commit: $resolved_commit"
+  assert_file "${target}/AGENTS.md"
+  assert_file "${target}/CLAUDE.md"
+  assert_file "${target}/.github/pull_request_template.md"
+  assert_file "${target}/docs/project/profile.md"
+  python3 - "${target}/agent-context.lock.json" "$resolved_commit" <<'PY'
+import json
+import sys
+
+data = json.load(open(sys.argv[1], encoding="utf-8"))
+assert data["source"] == {
+    "repository": "tsubasahomma/agent-context-contracts",
+    "channel": "main",
+    "resolved_commit": sys.argv[2],
+}
+PY
+  pass "archive-style source can apply with explicit resolved commit metadata"
+}
+
 test_unowned_collision_refusal() {
   source="${tmp_root}/source-collision"
   target="${tmp_root}/unowned-collision"
@@ -582,6 +644,8 @@ test_surface_detach_refuses_mixed_file_changes
 test_dirty_source_removal_refusal
 test_unresolved_source_refusal_and_local_development_metadata
 test_requested_channel_mismatch_refusal
+test_explicit_resolved_commit_channel_mismatch_refusal
+test_archive_source_explicit_commit_metadata
 test_unowned_collision_refusal
 test_entrypoint_unowned_collision_refusal
 test_project_scaffold_materialize_and_preserve
