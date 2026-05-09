@@ -173,6 +173,24 @@ assert sys.argv[2] not in paths
 PY
 }
 
+assert_lock_detached_surface() {
+  lock=$1
+  surface=$2
+  python3 - "$lock" "$surface" <<'PY'
+import json
+import sys
+
+data = json.load(open(sys.argv[1], encoding="utf-8"))
+surface = sys.argv[2]
+assert data["selected_surfaces"] == [
+    {"name": surface, "source_path": f"surfaces/{surface}", "detached": True}
+]
+for entry in data["managed_files"]:
+    assert entry["group"]["kind"] != "surface", entry["path"]
+    assert not entry["source_path"].startswith(f"surfaces/{surface}/"), entry["source_path"]
+PY
+}
+
 test_dry_run_clean_no_mutation() {
   source="${tmp_root}/source-dry"
   target="${tmp_root}/dry-run-clean"
@@ -285,6 +303,81 @@ test_source_removal_deletes_clean_managed_file() {
   pass "clean managed source removal deletes destination and advances lock"
 }
 
+test_surface_detach_dry_run_apply_and_later_sync() {
+  source="${tmp_root}/source-detach"
+  target="${tmp_root}/detach-target"
+  make_source "$source"
+  mkdir -p "$target"
+  init_target "$source" "$target"
+  printf '\nlocal surface edit\n' >>"${target}/.github/pull_request_template.md"
+  cp "${target}/.github/pull_request_template.md" "${tmp_root}/detach-surface.before"
+  cp "${target}/agent-context.lock.json" "${tmp_root}/detach-lock.before"
+
+  dry_output="${tmp_root}/detach-dry.out"
+  bash "$agent_tool" sync --source "$source" --target "$target" --detach-surface github >"$dry_output"
+  assert_contains "$dry_output" "Mode: dry-run"
+  assert_contains "$dry_output" "DETACH .github/pull_request_template.md"
+  assert_contains "$dry_output" "LOCK update agent-context.lock.json"
+  cmp -s "${target}/agent-context.lock.json" "${tmp_root}/detach-lock.before" \
+    || fail "lock changed during detach dry-run"
+  cmp -s "${target}/.github/pull_request_template.md" "${tmp_root}/detach-surface.before" \
+    || fail "surface file changed during detach dry-run"
+
+  apply_output="${tmp_root}/detach-apply.out"
+  bash "$agent_tool" sync --source "$source" --target "$target" --detach-surface github --apply >"$apply_output"
+  assert_contains "$apply_output" "DETACH surfaces/github"
+  assert_contains "$apply_output" "DETACH .github/pull_request_template.md"
+  assert_lock_detached_surface "${target}/agent-context.lock.json" "github"
+  cmp -s "${target}/.github/pull_request_template.md" "${tmp_root}/detach-surface.before" \
+    || fail "surface file changed during detach apply"
+
+  repeat_output="${tmp_root}/detach-repeat.out"
+  bash "$agent_tool" sync --source "$source" --target "$target" --detach-surface github --apply >"$repeat_output"
+  assert_contains "$repeat_output" "SKIP surfaces/github (surface is already detached)"
+  if grep -Fq "DETACH surfaces/github" "$repeat_output"; then
+    fail "already detached surface was reported as a planned detach"
+  fi
+  assert_lock_detached_surface "${target}/agent-context.lock.json" "github"
+
+  printf '\nsource surface update after detach\n' >>"${source}/surfaces/github/pull_request_template.md"
+  commit_source_change "$source" "update detached source surface"
+  post_output="${tmp_root}/detach-post-sync.out"
+  bash "$agent_tool" sync --source "$source" --target "$target" --apply >"$post_output"
+  assert_contains "$post_output" "Selected surfaces: (none)"
+  assert_contains "$post_output" "LOCK update agent-context.lock.json"
+  cmp -s "${target}/.github/pull_request_template.md" "${tmp_root}/detach-surface.before" \
+    || fail "detached surface resumed management during later sync"
+  assert_lock_detached_surface "${target}/agent-context.lock.json" "github"
+  pass "surface detach is lock-only, allows dirty local surface files, and prevents later re-management"
+}
+
+test_surface_detach_refuses_mixed_file_changes() {
+  source="${tmp_root}/source-detach-mixed"
+  target="${tmp_root}/detach-mixed-target"
+  make_source "$source"
+  mkdir -p "$target"
+  init_target "$source" "$target"
+  cp "${target}/AGENTS.md" "${tmp_root}/detach-mixed-agents.before"
+  printf '\nsource core update before detach\n' >>"${source}/AGENTS.md"
+  commit_source_change "$source" "update core before detach"
+  output="${tmp_root}/detach-mixed.out"
+  expect_failure "$output" bash "$agent_tool" sync --source "$source" --target "$target" --detach-surface github --apply
+  assert_contains "$output" "REFUSE detach (surface detach is metadata-only"
+  cmp -s "${target}/AGENTS.md" "${tmp_root}/detach-mixed-agents.before" \
+    || fail "metadata-only detach applied unrelated file changes"
+  python3 - "${target}/agent-context.lock.json" <<'PY'
+import json
+import sys
+
+data = json.load(open(sys.argv[1], encoding="utf-8"))
+assert data["selected_surfaces"] == [
+    {"name": "github", "source_path": "surfaces/github", "detached": False}
+]
+assert any(entry["group"]["kind"] == "surface" for entry in data["managed_files"])
+PY
+  pass "surface detach refuses to mix ownership changes with package-managed file updates"
+}
+
 test_dirty_source_removal_refusal() {
   source="${tmp_root}/source-removal-dirty"
   target="${tmp_root}/source-removal-dirty-target"
@@ -390,11 +483,17 @@ test_project_scaffold_materialize_and_preserve() {
   commit_source_change "$source" "change project scaffold"
   output="${tmp_root}/project-sync.out"
   bash "$agent_tool" sync --source "$source" --target "$target" --apply >"$output"
+  assert_contains "$output" "ADVISE docs/project/profile.md (project scaffold differs"
   assert_contains "$output" "SKIP docs/project (project extension is consumer-owned)"
   cmp -s "${target}/docs/project/profile.md" "${tmp_root}/profile.before" \
     || fail "project extension file was overwritten"
+  rm -f "${target}/docs/project/surfaces.md"
+  output2="${tmp_root}/project-sync-missing.out"
+  bash "$agent_tool" sync --source "$source" --target "$target" --apply >"$output2"
+  assert_contains "$output2" "ADVISE docs/project/surfaces.md (project scaffold exists in source but destination is missing"
+  assert_no_path "${target}/docs/project/surfaces.md"
   assert_no_project_or_tool_managed "${target}/agent-context.lock.json"
-  pass "project scaffold materialization is not lock-managed and sync preserves docs/project"
+  pass "project scaffold materialization is not lock-managed and sync reports advisory drift only"
 }
 
 test_malformed_unsupported_and_inconsistent_locks() {
@@ -478,6 +577,8 @@ test_sync_uses_lock_selected_groups
 test_sync_dry_run_no_mutation
 test_modified_managed_refusal
 test_source_removal_deletes_clean_managed_file
+test_surface_detach_dry_run_apply_and_later_sync
+test_surface_detach_refuses_mixed_file_changes
 test_dirty_source_removal_refusal
 test_unresolved_source_refusal_and_local_development_metadata
 test_requested_channel_mismatch_refusal

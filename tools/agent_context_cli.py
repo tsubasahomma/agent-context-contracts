@@ -495,22 +495,28 @@ def selected_from_lock(lock_data):
     return entrypoints, surfaces
 
 
+def all_surface_records(active_names, existing_records=None, detach_names=None):
+    records = {}
+    if existing_records:
+        for item in existing_records:
+            if isinstance(item, dict) and item.get("name") in SURFACE_MAPPINGS:
+                records[item["name"]] = {
+                    "name": item["name"],
+                    "source_path": f"surfaces/{item['name']}",
+                    "detached": item.get("detached") is True,
+                }
+    for name in active_names:
+        records[name] = {"name": name, "source_path": f"surfaces/{name}", "detached": False}
+    for name in detach_names or []:
+        if name in records:
+            records[name]["detached"] = True
+        else:
+            records[name] = {"name": name, "source_path": f"surfaces/{name}", "detached": True}
+    return [records[name] for name in sorted(records)]
+
+
 def selected_entrypoint_records(names):
     return [{"name": name, "source_path": f"entrypoints/{name}"} for name in sorted(names)]
-
-
-def selected_surface_records(names, existing_records=None):
-    detached = {}
-    if existing_records:
-        detached = {
-            item.get("name"): item.get("detached", False)
-            for item in existing_records
-            if isinstance(item, dict)
-        }
-    return [
-        {"name": name, "source_path": f"surfaces/{name}", "detached": detached.get(name, False)}
-        for name in sorted(names)
-    ]
 
 
 def make_lock_entry(spec):
@@ -535,13 +541,18 @@ def make_lock(
     entries,
     local_development=None,
     existing_surface_records=None,
+    detach_surfaces=None,
 ):
     lock = {
         "schema_version": SCHEMA_VERSION,
         "source": source,
         "project_extension_path": project_extension_path,
         "selected_entrypoints": selected_entrypoint_records(entrypoint_names),
-        "selected_surfaces": selected_surface_records(surface_names, existing_surface_records),
+        "selected_surfaces": all_surface_records(
+            surface_names,
+            existing_surface_records,
+            detach_surfaces,
+        ),
         "managed_files": sorted(entries, key=lambda item: item["path"]),
         "created_by": {"tool": TOOL_NAME, "version": TOOL_VERSION},
     }
@@ -602,6 +613,7 @@ def plan_operation(args):
             refusals.append({"path": LOCK_PATH, "reason": "init requires no existing lock; use sync"})
         selected_entrypoints = set(args.entrypoints or [])
         selected_surfaces = set(args.surfaces or [])
+        detach_surfaces = set()
         existing_entries = {}
         existing_surface_records = None
     else:
@@ -610,17 +622,35 @@ def plan_operation(args):
                 refusals.append({"path": LOCK_PATH, "reason": "sync requires an existing v0.3 lock; run init first"})
             selected_entrypoints = set()
             selected_surfaces = set()
+            detach_surfaces = set(args.detach_surfaces or [])
             existing_entries = {}
             existing_surface_records = None
         else:
             selected_entrypoints, selected_surfaces = selected_from_lock(lock_data)
+            detach_surfaces = set(args.detach_surfaces or [])
             existing_entries = lock_entries(lock_data)
             existing_surface_records = lock_data.get("selected_surfaces", [])
             project_extension_path = lock_data.get("project_extension_path", project_extension_path)
+            selected_surface_names = {
+                item.get("name")
+                for item in existing_surface_records
+                if isinstance(item, dict)
+            }
+            for name in sorted(detach_surfaces):
+                if name not in selected_surface_names:
+                    refusals.append({"path": f"surfaces/{name}", "reason": "surface is not selected in the lock"})
+                elif name not in selected_surfaces:
+                    actions.append(("SKIP", f"surfaces/{name}", "surface is already detached"))
+            active_detach_surfaces = detach_surfaces.intersection(selected_surfaces)
+            selected_surfaces.difference_update(detach_surfaces)
+    if args.command == "init" or lock_data is None:
+        active_detach_surfaces = set()
     for name in sorted(selected_entrypoints):
         actions.append(("ENTRYPOINT", name, "selected"))
     for name in sorted(selected_surfaces):
         actions.append(("SURFACE", name, "selected"))
+    for name in sorted(active_detach_surfaces):
+        actions.append(("DETACH", f"surfaces/{name}", "surface files become consumer-owned; lock management removed"))
     desired_specs = {}
     try:
         for spec in collect_core_specs(source_root).values():
@@ -640,6 +670,10 @@ def plan_operation(args):
     new_entries = {}
     for path, entry in sorted(existing_entries.items()):
         if path in desired_specs:
+            continue
+        kind_name = entry_group(entry)
+        if kind_name[0] == "surface" and kind_name[1] in active_detach_surfaces:
+            actions.append(("DETACH", path, f"preserve destination; remove managed ownership for surface {kind_name[1]}"))
             continue
         try:
             destination = safe_join(target_root, path)
@@ -750,7 +784,31 @@ def plan_operation(args):
     elif args.command == "init":
         actions.append(("SKIP", project_extension_path, "project scaffold materialization not requested"))
     else:
+        for path, source_path, _mode in collect_project_scaffolds(source_root, project_extension_path):
+            try:
+                destination = safe_join(target_root, path)
+            except (ValueError, SyncError) as exc:
+                actions.append(("ADVISE", path, f"project scaffold advisory skipped: {exc}"))
+                continue
+            kind = file_kind(destination)
+            if kind == "missing":
+                actions.append(("ADVISE", path, "project scaffold exists in source but destination is missing; sync will not materialize"))
+            elif kind != "file":
+                actions.append(("ADVISE", path, f"project scaffold destination is {kind}; sync will not modify"))
+            elif sha256_file(destination) != sha256_file(source_path):
+                actions.append(("ADVISE", path, "project scaffold differs from consumer-owned destination; sync will not modify"))
         actions.append(("SKIP", project_extension_path, "project extension is consumer-owned"))
+    if active_detach_surfaces and writes:
+        planned = ", ".join(task.path for task in writes)
+        refusals.append(
+            {
+                "path": "detach",
+                "reason": (
+                    "surface detach is metadata-only; run sync without detach first "
+                    f"to apply planned file changes: {planned}"
+                ),
+            }
+        )
     lock_action = "blocked"
     if not refusals:
         lock_new = make_lock(
@@ -761,6 +819,7 @@ def plan_operation(args):
             list(new_entries.values()),
             local_development,
             existing_surface_records,
+            detach_surfaces,
         )
         lock_content = format_json(lock_new).encode("utf-8")
         if lock_text is None:
@@ -778,6 +837,7 @@ def plan_operation(args):
         "project_extension_path": project_extension_path,
         "selected_entrypoints": selected_entrypoints,
         "selected_surfaces": selected_surfaces,
+        "detach_surfaces": detach_surfaces,
         "actions": actions,
         "refusals": refusals,
         "writes": writes,
@@ -796,8 +856,10 @@ def print_plan(plan, apply_mode):
         print(f"LOCAL-DEVELOPMENT {plan['local_development']['warning']}")
     entrypoints = ", ".join(sorted(plan["selected_entrypoints"])) or "(none)"
     surfaces = ", ".join(sorted(plan["selected_surfaces"])) or "(none)"
+    detached = ", ".join(sorted(plan["detach_surfaces"])) or "(none)"
     print(f"Selected entrypoints: {entrypoints}")
     print(f"Selected surfaces: {surfaces}")
+    print(f"Detach surfaces: {detached}")
     print(f"Project extension path: {plan['project_extension_path']}")
     for action, path, detail in plan["actions"]:
         print(f"{action} {path} ({detail})")
@@ -905,6 +967,13 @@ def build_parser():
     )
     sync = subparsers.add_parser("sync", help="update package-managed content from the lock-selected source")
     add_common(sync)
+    sync.add_argument(
+        "--detach-surface",
+        dest="detach_surfaces",
+        action="append",
+        choices=sorted(SURFACE_MAPPINGS),
+        help="make a selected collaboration surface consumer-owned by removing managed lock entries",
+    )
     sync.set_defaults(entrypoints=None, surfaces=None, materialize_project=False)
     return parser
 
