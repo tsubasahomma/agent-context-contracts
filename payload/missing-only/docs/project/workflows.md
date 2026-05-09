@@ -39,6 +39,19 @@ action.
 | Final acceptance, merge, release, issue closure, or destructive cleanup | `[release scope, source change, platform item, cleanup action, or not_required reason]` | `[maintainer, owning process, delegated role, platform surface, pending, or omitted reason]` | `[acceptance decision, validation evidence, maintainer confirmation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 | Progress-state mapping | `[checkboxes, tasklists, project fields, labels, status columns, or omitted reason]` | `[platform surface, project extension, maintainer, pending, or omitted reason]` | `[routing evidence only, validation claim reference, or limitation]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 
+## Work Item And Progress-State Mutation Authority
+
+Record who may update durable work-item bodies and progress surfaces after
+creation. These slots do not make progress state validation evidence; they only
+record local authority for mutation and routing.
+
+| Mutation area | Applies to | Authorized local owner | Required evidence or confirmation | Status | Evidence pointer |
+| --- | --- | --- | --- | --- | --- |
+| Parent work-item body edits | `[parent scope type, platform surface, or not_required reason]` | `[maintainer, orchestrator, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Child work-item body edits | `[work item type, platform surface, or not_required reason]` | `[maintainer, orchestrator, worker, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Acceptance-criteria or checklist mutation | `[work item type, checkbox, tasklist, linked item, sub-item, or not_required reason]` | `[maintainer, orchestrator, platform owner, pending, or omitted reason]` | `[routing evidence, validation claim reference, maintainer confirmation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Project status or field mutation | `[status column, project field, platform surface, or not_required reason]` | `[maintainer, orchestrator, project owner, platform owner, pending, or omitted reason]` | `[local policy, platform-surface rule, maintainer confirmation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+
 ## Review Gates
 
 | Gate | Applies to | Required evidence | Bypass or escalation |
@@ -109,6 +122,29 @@ history.
 | --- | --- | --- | --- |
 | `[worker, evaluator, release, rollback, or readiness]` | `[field name]` | `[local reason and evidence expectation]` | `[unknown, pending, omitted, or maintainer_confirmed]` |
 
+## Prompt And Handoff Skeletons
+
+Use this section to record local prompt or handoff skeletons for recurring role
+transitions. Skeletons should preserve portable role boundaries, include
+available artifact identifiers, and avoid requiring recipients to replay broad
+history.
+
+| Transition | Skeleton owner | Required local slots | Status | Evidence pointer |
+| --- | --- | --- | --- | --- |
+| Orchestrator to Worker | `[orchestrator, platform surface, project extension, pending, or omitted reason]` | `[active work item, parent scope, accepted scope, evidence pointers, required validation, known risks, deliverables, or local additions]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Worker to Orchestrator | `[worker, platform surface, project extension, pending, or omitted reason]` | `[deliverables, validation claims, self-review evidence, residual risks, out-of-scope findings, next requested decision, or local additions]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Orchestrator to Evaluator | `[orchestrator, platform surface, project extension, pending, or omitted reason]` | `[artifact under review, relevant state refs, acceptance criteria, validation evidence, known risks, exact evaluation question, or local additions]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Evaluator to Orchestrator or maintainer | `[evaluator, platform surface, project extension, pending, or omitted reason]` | `[findings, non-findings, validation assessment, disputed assumptions, readiness recommendation, requested decision, or local additions]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+
+## Failure Thresholds And Escalation
+
+Record local thresholds for stopping, escalating, or requesting maintainer
+confirmation. Do not infer thresholds from examples or prior agent behavior.
+
+| Condition | Threshold | Required escalation packet | Status | Evidence pointer |
+| --- | --- | --- | --- | --- |
+| `[repeated validation failure, missing authority, contradictory evidence, scope expansion request, sensitive evidence, or other condition]` | `[local threshold, pending decision, omitted reason, or not_required reason]` | `[evidence pointer, validation status, residual risk, requested decision, or limitation]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+
 ## Workflow Boundaries
 
 - Local exceptions MUST name the portable rule they extend.
@@ -121,6 +157,8 @@ history.
 - Label, assignee, reviewer request, milestone, and project-field mutation
   authority MUST be recorded as local policy or platform-surface ownership
   before agents treat it as delegated authority.
+- Work-item body edits and progress-state mutations MUST be recorded as local
+  authority before agents treat them as delegated authority.
 - Release or deployment notes MUST avoid secrets and sensitive operational
   details unless the local secrets policy allows the specific summary.
 - Durable output formatting, issue-reference policy, trailers, closure keywords,
