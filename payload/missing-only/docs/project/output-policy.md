@@ -26,6 +26,17 @@ Use these states when recording local policy decisions:
 
 Add other local state values only when the project owns their meaning.
 
+## Language Policy
+
+Record local language decisions for conversational coordination and durable
+artifacts. Keep the two decisions separate because conversation language and
+durable artifact language may serve different consumers.
+
+| Language surface | Applies to | Local decision | Status | Evidence pointer |
+| --- | --- | --- | --- | --- |
+| Conversation language | `[agent conversation, maintainer coordination, platform comments, pending decision, or not_required reason]` | `[local language, follow requester language, surface-owned rule, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+| Durable artifact language | `[repository documentation, issue bodies, change proposals, review comments, validation reports, readiness reports, pending decision, or not_required reason]` | `[local language, artifact-specific rule, surface-owned rule, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+
 ## Parent Issue Local Fields
 
 Record local field decisions for Parent Issue bodies. Use placeholders until a
@@ -113,6 +124,17 @@ history.
 | --- | --- | --- | --- | --- |
 | `[worker prompt, evaluator prompt, review finding, validation report, readiness report, evidence summary, or omitted reason]` | `[field name, evidence slot, status slot, or omitted reason]` | `[scope, risk class, artifact type, pending decision, not_required reason, or maintainer confirmation]` | `[evidence pointer, validation status, limitation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
 
+## AI-Authored Comments
+
+Record local policy for agent-authored comments on collaboration surfaces.
+Comments should be sparse, role-specific, and evidence-oriented. Do not require
+comments for every progress update unless a consumer-owned surface or local
+policy explicitly owns that requirement.
+
+| Comment purpose | Required when | Required content | Local placement or owner | Status | Evidence pointer |
+| --- | --- | --- | --- | --- | --- |
+| `[worker readiness, evaluator finding, orchestrator routing, maintainer question, or omitted reason]` | `[scope, risk class, platform event, pending decision, not_required reason, or maintainer confirmation]` | `[role or purpose, evidence basis, requested decision or next owner, limitations, or omitted reason]` | `[project extension, platform surface, owner role, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+
 ## Command And Structured Body Handling
 
 Record local policy for command snippets, command bodies, body files, standard
@@ -132,13 +154,17 @@ portable doctrine. If the project does not use a platform surface, record
 | Surface field or mechanism | Mapped local output | Owner layer | Local handling | Status |
 | --- | --- | --- | --- | --- |
 | `[label placeholder, status placeholder, checkbox placeholder, template field placeholder, reviewer request placeholder, milestone placeholder, release field placeholder, or omitted reason]` | `[parent issue, child issue, change proposal, change message, release note, validation report, readiness report, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
+| `[assignee placeholder or omitted reason]` | `[parent issue, child issue, change proposal, review surface, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
+| `[reviewer request placeholder or omitted reason]` | `[change proposal, review surface, release change, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
+| `[project-field placeholder or omitted reason]` | `[parent issue, child issue, change proposal, readiness report, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
 
 ## Output Boundaries
 
 - Local output policy MUST identify whether a rule is confirmed, pending,
   omitted, unknown, `not_required`, or `maintainer_confirmed`.
 - Local policy MAY specialize exact headings, fields, references, trailers,
-  message conventions, body handling, and platform-surface mapping.
+  message conventions, body handling, language choices, and platform-surface
+  mapping.
 - Local policy MUST NOT claim validation success without evidence that satisfies
   the portable validation contract.
 - Static output bodies MUST NOT mirror changing review, CI, deployment, or

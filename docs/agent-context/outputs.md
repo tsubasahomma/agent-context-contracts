@@ -108,6 +108,8 @@ When material to the output role, durable text outputs MUST state:
 
 - purpose or output role;
 - scope and out-of-scope boundaries;
+- available artifact identifiers for the work item, governing scope, change
+  proposal, review surface, or equivalent collaboration artifact;
 - intended consumer or consumer class;
 - evidence basis, inspected-state basis, or source pointers;
 - validation status using [validation.md](validation.md) when validation is
@@ -127,6 +129,14 @@ state, deployment state, or external state unless the claim is backed by current
 inspected evidence, observed validation evidence, exact maintainer confirmation,
 or a clearly stated limitation. Source-class boundaries are defined in
 [sources.md](sources.md).
+
+Agent-authored comments on collaboration surfaces SHOULD be sparse,
+role-specific durable records. When a comment materially affects workflow,
+review, validation, or routing, it SHOULD state its purpose or role, evidence
+basis, requested decision or next owner, and material limitations. Portable core
+does not require every comment to follow a heavy template; exact comment
+triggers, fields, and platform placement belong to project-local policy or
+consumer-owned platform surfaces.
 
 Generated boilerplate MUST NOT obscure the actual change, work item, evidence,
 risk, or requested decision. Empty headings SHOULD be omitted unless a local

@@ -23,6 +23,22 @@ and the evidence or confirmation that supports it.
 | --- | --- | --- | --- | --- |
 | `[exception name]` | `[role, handoff, validation, lifecycle, ownership, or other boundary]` | `[local exception or pending decision]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 
+## Lifecycle Gate Decisions
+
+Use this section to record local owners and evidence expectations for lifecycle
+gates. If a gate owner or delegation is not confirmed, record the state as
+`unknown` or `pending` and require maintainer confirmation before irreversible
+action.
+
+| Gate | Applies to | Local owner or delegation | Required evidence | Status | Evidence pointer |
+| --- | --- | --- | --- | --- | --- |
+| Accepted implementation scope | `[work item type, parent scope, risk class, or pending decision]` | `[orchestrator, maintainer, platform surface, project extension, pending, or omitted reason]` | `[accepted work item, handoff, maintainer confirmation, or limitation]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Worker self-review and readiness | `[work item type, artifact, source change, or pending decision]` | `[worker role, readiness reviewer, platform surface, pending, or omitted reason]` | `[self-review note, validation report, readiness report, or limitation]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Independent evaluation or review | `[risk class, path set, artifact type, release scope, or not_required reason]` | `[evaluator role, reviewer group, maintainer, platform surface, pending, or omitted reason]` | `[evaluation report, review finding, validation evidence, maintainer confirmation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Change proposal or review surface creation | `[work item type, platform surface, source change, or not_required reason]` | `[worker, orchestrator, maintainer, platform surface, pending, or omitted reason]` | `[readiness report, proposal body, linked work item, or limitation]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Final acceptance, merge, release, issue closure, or destructive cleanup | `[release scope, source change, platform item, cleanup action, or not_required reason]` | `[maintainer, owning process, delegated role, platform surface, pending, or omitted reason]` | `[acceptance decision, validation evidence, maintainer confirmation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Progress-state mapping | `[checkboxes, tasklists, project fields, labels, status columns, or omitted reason]` | `[platform surface, project extension, maintainer, pending, or omitted reason]` | `[routing evidence only, validation claim reference, or limitation]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+
 ## Review Gates
 
 | Gate | Applies to | Required evidence | Bypass or escalation |
@@ -40,6 +56,20 @@ vendor shims, or platform surface defaults.
 | Branch naming | `[work type, role, release scope, or omitted reason]` | `[local naming rule, pending decision, omitted reason, or maintainer confirmation]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 | Change ownership | `[paths, artifacts, generated outputs, or workflow stage]` | `[who may create, update, review, or route the change]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 | Scope escalation | `[finding, request, blocked validation, or review gate]` | `[route to maintainer, planner, orchestrator, platform surface, queue, or omitted reason]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+
+## Platform Surface Mutation Authority
+
+Record local authority for mutating platform-surface routing state. These slots
+do not create a taxonomy or require any platform surface. If a surface is absent
+or outside local workflow scope, record `not_required` or an omitted reason.
+
+| Mutation area | Applies to | Authorized local owner | Required evidence or confirmation | Status | Evidence pointer |
+| --- | --- | --- | --- | --- | --- |
+| Label mutation | `[work item type, platform surface, risk class, or not_required reason]` | `[maintainer, orchestrator, worker, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Assignee mutation | `[work item type, platform surface, ownership area, or not_required reason]` | `[maintainer, orchestrator, worker, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Reviewer request mutation | `[change proposal, review surface, risk class, or not_required reason]` | `[maintainer, orchestrator, worker, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Milestone mutation | `[work item type, release scope, platform surface, or not_required reason]` | `[maintainer, orchestrator, release owner, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Project-field mutation | `[work item type, project surface, status field, routing field, or not_required reason]` | `[maintainer, orchestrator, project owner, platform owner, pending, or omitted reason]` | `[local policy, maintainer confirmation, platform-surface rule, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 
 ## Release And Deployment Notes
 
@@ -88,6 +118,9 @@ history.
 - Maintainer confirmation MUST state the exact scope confirmed.
 - Branch naming, routing, and review gates MUST be recorded as local facts, not
   inferred from examples.
+- Label, assignee, reviewer request, milestone, and project-field mutation
+  authority MUST be recorded as local policy or platform-surface ownership
+  before agents treat it as delegated authority.
 - Release or deployment notes MUST avoid secrets and sensitive operational
   details unless the local secrets policy allows the specific summary.
 - Durable output formatting, issue-reference policy, trailers, closure keywords,

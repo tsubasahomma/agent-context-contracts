@@ -160,6 +160,14 @@ recipient role, the recipient MUST report the limitation. The recipient MAY
 continue with unaffected in-scope work only when the remaining scope and
 validation evidence are still clear.
 
+Orchestrator and Worker handoffs SHOULD include concrete artifact identifiers
+for the governing parent scope, active work item, change proposal, review
+surface, or equivalent collaboration artifact when those identifiers are
+available. Readiness reports SHOULD include the same identifiers for the work
+being reported. Identifier formats are owned by the relevant local artifact or
+platform surface; this rule does not require a specific tracker, pull request,
+issue-closing syntax, branch name, or platform mechanic.
+
 ## Worker Handoff Contract
 
 A worker handoff MUST include the fields below. Field names MAY vary by
@@ -245,6 +253,8 @@ are defined in [outputs.md](outputs.md).
 A readiness report MUST include:
 
 - the work item, artifact, or change being reported;
+- available artifact identifiers for the governing scope, active work item,
+  change proposal, review surface, or equivalent collaboration artifact;
 - completed deliverables and any missing deliverables;
 - validation claims with evidence references and limitations;
 - out-of-scope findings and how they were routed;
@@ -259,10 +269,52 @@ readiness only when required claims are `passed` or `maintainer_confirmed`, any
 Known risks that belong to later implementation work SHOULD be reported as
 residual risks rather than solved through unrelated workflow changes.
 
+## Lifecycle Gates
+
+Lifecycle gates are portable decision points that control when work may move
+from exploration to accepted scope, from implementation to review, from review
+to acceptance, or from acceptance to irreversible publication or cleanup. This
+contract defines gate responsibilities and evidence expectations only. Local
+owners, platform mechanics, labels, fields, branch names, closure syntax,
+reviewer rules, merge commands, release steps, and cleanup commands belong to
+project-local policy or consumer-owned platform surfaces.
+
+An implementation scope gate MUST exist before a Worker Thread owns changes. A
+planning recommendation, candidate scope, historical discussion, or generated
+summary does not authorize implementation by itself. Accepted worker scope MUST
+come from an orchestrator handoff, maintainer direction, accepted work-item
+artifact, or another project-local delegation that preserves the portable role
+boundaries.
+
+A worker readiness gate MUST include worker self-review evidence. Worker
+self-review is required evidence for readiness reporting, but it is not final
+independent approval of the work. A Worker Thread MAY create a change proposal
+or equivalent review surface as a deliverable when local policy and the platform
+support it. The exact platform fields, posting mechanics, issue references, and
+publication timing are local policy.
+
+When independent or adversarial review is required by the parent scope,
+orchestration, local policy, or maintainer direction, an Evaluator Thread or
+equivalent review process MUST evaluate the artifact or change against explicit
+criteria and validation evidence. Evaluation MUST NOT broaden implementation
+scope unless the role is explicitly reassigned.
+
+Final acceptance, merge, release, destructive cleanup, issue closure, or any
+equivalent irreversible publication requires an owning process, exact maintainer
+confirmation, or project-local delegation. When that authority is absent or
+unclear, the readiness claim is `pending` and the next owner or requested
+decision MUST be reported.
+
+Checkboxes, tasklists, project fields, labels, status columns, and similar
+progress surfaces MAY help route work, but they are progress state only. They
+MUST NOT be used as validation evidence, readiness evidence, or final acceptance
+evidence unless a separate validation claim cites supporting evidence allowed by
+[validation.md](validation.md).
+
 ## Platform-Agnostic Change Lifecycle
 
 Portable workflow consumers SHOULD adapt the following lifecycle to their local
-platforms without changing the role boundaries:
+platforms without changing the role boundaries or lifecycle gates:
 
 1. Planning identifies goals, assumptions, trade-offs, candidate scope, and
    validation expectations.
@@ -298,6 +350,7 @@ Workflow contracts own:
 - pre-edit evidence inspection obligations;
 - out-of-scope finding and residual-risk reporting;
 - readiness reporting requirements that use the portable validation vocabulary;
+- lifecycle gate responsibilities and evidence expectations;
 - the platform-agnostic change lifecycle.
 
 Workflow contracts MUST NOT own:
@@ -307,6 +360,7 @@ Workflow contracts MUST NOT own:
 - project-local workflow exceptions, validation commands, source maps, or local
   policy details;
 - collaboration-platform labels, templates, statuses, automations, or payloads;
+- local acceptance, merge, release, issue-closure, or cleanup authority;
 - vendor shim or platform surface payloads, or tool-specific runtime behavior;
 - evidence-packing tool behavior beyond evidence pointers;
 - agent-authored output categories, prompt body handling, or change-proposal
