@@ -96,9 +96,80 @@ urlencode_ref() {
       -e 's#/#%2F#g'
 }
 
+unsafe_destination() {
+  rel=$1
+  reason=$2
+  printf 'install.sh: unsafe destination %s: %s\n' "$rel" "$reason" >&2
+  exit 73
+}
+
+validate_relative_destination() {
+  rel=$1
+  case "$rel" in
+    ""|/*|*'//'*) unsafe_destination "$rel" "destination path must be repository-relative" ;;
+  esac
+  case "/${rel}/" in
+    *"/./"*|*"/../"*) unsafe_destination "$rel" "destination path contains an unsafe segment" ;;
+  esac
+}
+
+ensure_destination_parent_safe() {
+  rel=$1
+  validate_relative_destination "$rel"
+
+  parent=$(dirname "$rel")
+  [ "$parent" != "." ] || return 0
+
+  current=$target_root
+  rest=$parent
+  while [ -n "$rest" ]; do
+    case "$rest" in
+      */*)
+        component=${rest%%/*}
+        rest=${rest#*/}
+        ;;
+      *)
+        component=$rest
+        rest=
+        ;;
+    esac
+
+    current="${current}/${component}"
+    if [ -L "$current" ]; then
+      unsafe_destination "$rel" "parent component ${component} is a symlink"
+    fi
+    if [ -e "$current" ] && [ ! -d "$current" ]; then
+      unsafe_destination "$rel" "parent component ${component} is not a directory"
+    fi
+    if [ ! -e "$current" ]; then
+      return 0
+    fi
+  done
+}
+
+preflight_missing_only_destinations() {
+  missing_root=$1
+  [ -d "$missing_root" ] || return 0
+
+  while IFS= read -r src; do
+    [ -n "$src" ] || continue
+    rel=${src#"$missing_root"/}
+    ensure_destination_parent_safe "$rel"
+  done <<EOF
+$(find "$missing_root" -type f | LC_ALL=C sort)
+EOF
+}
+
+preflight_destinations() {
+  ensure_destination_parent_safe "AGENTS.md"
+  ensure_destination_parent_safe "docs/agent-context"
+  preflight_missing_only_destinations "$1"
+}
+
 copy_overwrite_file() {
   src=$1
   rel=$2
+  ensure_destination_parent_safe "$rel"
   dst="${target_root}/${rel}"
   if [ "$dry_run" -eq 1 ]; then
     printf 'OVERWRITE %s\n' "$rel"
@@ -112,6 +183,7 @@ copy_overwrite_file() {
 replace_directory() {
   src=$1
   rel=$2
+  ensure_destination_parent_safe "$rel"
   dst="${target_root}/${rel}"
   if [ "$dry_run" -eq 1 ]; then
     printf 'REPLACE %s/\n' "$rel"
@@ -135,6 +207,7 @@ seed_missing_only() {
 
   find "$missing_root" -type f | LC_ALL=C sort | while IFS= read -r src; do
     rel=${src#"$missing_root"/}
+    ensure_destination_parent_safe "$rel"
     dst="${target_root}/${rel}"
     if [ -e "$dst" ] || [ -L "$dst" ]; then
       printf 'SKIP existing %s\n' "$rel"
@@ -156,6 +229,7 @@ require_command tar
 require_command mktemp
 require_command find
 require_command sort
+require_command dirname
 
 if [ ! -d "$target" ]; then
   printf 'install.sh: target is not a directory: %s\n' "$target" >&2
@@ -193,6 +267,8 @@ if [ ! -f "${source_dir}/AGENTS.md" ] || [ ! -d "${source_dir}/docs/agent-contex
   printf 'install.sh: source archive does not contain the portable payload\n' >&2
   exit 65
 fi
+
+preflight_destinations "${source_dir}/payload/missing-only"
 
 printf 'Source: %s\n' "$repo"
 printf 'Channel: %s\n' "$channel"
