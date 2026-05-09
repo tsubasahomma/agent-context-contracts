@@ -17,7 +17,7 @@ exceptions, policy details, or sensitive surfaces.
 | [Core contract](core.md) | Defines the shared portable principles and boundary between portable contracts, local extensions, optional routing shims, platform surfaces, and tooling. |
 | [Source precedence and trust boundaries](sources.md) | Defines portable source classes, trust boundaries, and claim-type conflict handling without a universal override stack. |
 | [Artifact contracts](artifacts.md) | Defines the portable durable artifact model, metadata, provenance, evidence-reference, schema, and uncertainty expectations. |
-| [Agent-authored output contracts](outputs.md) | Defines portable durable text output categories, output-role boundaries, safe body handling, and reviewable change-proposal and change-message defaults. |
+| [Agent-authored output contracts](outputs.md) | Defines portable durable text output categories, output-role boundaries, default precedence, Parent/Child Issue defaults, change-proposal and change-message defaults, and safe structured-body handling. |
 | [Workflow contracts](workflows.md) | Defines portable thread roles, bounded handoffs, scope preservation, readiness reporting, and the change lifecycle. |
 | [Validation contracts](validation.md) | Defines the portable validation claim model, status vocabulary, evidence requirements, and success-claim rules. |
 | [Evidence-packing contracts](evidence-packing.md) | Defines the tool-neutral boundary for packaging evidence without choosing a specific packing tool. |
