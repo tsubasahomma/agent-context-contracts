@@ -132,6 +132,12 @@ consumer-side state file. It MUST NOT require previous installer state to decide
 whether a missing-only file may be changed. It MUST NOT expose public
 `init`/`sync` lifecycle commands.
 
+Before writing any source-owned or missing-only destination, the installer MUST
+refuse unsafe destination parents. Unsafe parents include symlinked parent
+components and parent components that exist as files instead of directories.
+Refusal preserves the target-repository boundary and prevents partial writes
+outside the intended managed paths.
+
 Without consumer-side package state, the safety model is simple:
 
 - source-owned portable payload is refreshed from the resolved source commit;

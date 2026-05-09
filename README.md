@@ -27,6 +27,11 @@ repositories should keep repository identity, commands, local policy, workflow
 exceptions, validation details, and sensitive-surface notes under
 `docs/project/**`.
 
+Before writing managed paths, the installer refuses unsafe destination parents,
+including symlinked parent components and parent components that are files
+instead of directories. This keeps the source-owned overwrite model and the
+missing-only seed model inside the target repository tree.
+
 ## Missing-Only Payload
 
 `payload/missing-only/**` mirrors consumer repository destination paths. It is
