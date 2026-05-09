@@ -43,6 +43,16 @@ assert_contains() {
   fi
 }
 
+assert_not_contains() {
+  file=$1
+  needle=$2
+  if grep -Fq -- "$needle" "$file"; then
+    printf -- '--- %s ---\n' "$file" >&2
+    sed -n '1,220p' "$file" >&2
+    fail "expected output not to contain: $needle"
+  fi
+}
+
 assert_file_contains() {
   file=$1
   needle=$2
@@ -93,12 +103,16 @@ make_fake_curl() {
   archive=$2
   calls=$3
   commit=$4
+  source_repo=${5:-test-owner/test-repo}
+  encoded_ref=${6:-main}
   mkdir -p "$bin_dir"
   cat >"${bin_dir}/curl" <<EOF
 #!/bin/sh
 archive='${archive}'
 calls='${calls}'
 commit='${commit}'
+source_repo='${source_repo}'
+encoded_ref='${encoded_ref}'
 
 url=''
 while [ "\$#" -gt 0 ]; do
@@ -118,18 +132,17 @@ done
 
 printf '%s\n' "\$url" >>"\$calls"
 
-case "\$url" in
-  https://api.github.com/repos/test-owner/test-repo/commits/main)
-    printf '{"sha":"%s"}\n' "\$commit"
-    ;;
-  https://codeload.github.com/test-owner/test-repo/tar.gz/"\$commit")
-    cat "\$archive"
-    ;;
-  *)
-    printf 'unexpected curl url: %s\n' "\$url" >&2
-    exit 22
-    ;;
-esac
+api_url="https://api.github.com/repos/\${source_repo}/commits/\${encoded_ref}"
+archive_url="https://codeload.github.com/\${source_repo}/tar.gz/\${commit}"
+
+if [ "\$url" = "\$api_url" ]; then
+  printf '{"sha":"%s"}\n' "\$commit"
+elif [ "\$url" = "\$archive_url" ]; then
+  cat "\$archive"
+else
+  printf 'unexpected curl url: %s\n' "\$url" >&2
+  exit 22
+fi
 EOF
   chmod +x "${bin_dir}/curl"
 }
@@ -227,6 +240,31 @@ test_dry_run_does_not_mutate() {
   pass "dry-run reports installer actions without mutating the target"
 }
 
+test_cli_repo_and_channel_flags_override_environment() {
+  commit=6666666666666666666666666666666666666666
+  archive="${tmp_root}/cli-config-source.tar.gz"
+  fake_bin="${tmp_root}/cli-config-bin"
+  calls="${tmp_root}/cli-config-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit" "cli-owner/cli-repo" "feature%2Finstaller-hardening"
+
+  target="${tmp_root}/cli-config-target"
+  mkdir -p "$target"
+  output="${tmp_root}/cli-config.out"
+  run_installer "$target" "$output" --repo "cli-owner/cli-repo" --channel "feature/installer-hardening"
+
+  assert_contains "$output" "Source: cli-owner/cli-repo"
+  assert_contains "$output" "Channel: feature/installer-hardening"
+  assert_contains "$output" "Resolved commit: ${commit}"
+  assert_contains "$calls" "https://api.github.com/repos/cli-owner/cli-repo/commits/feature%2Finstaller-hardening"
+  assert_contains "$calls" "https://codeload.github.com/cli-owner/cli-repo/tar.gz/${commit}"
+  assert_not_contains "$calls" "https://api.github.com/repos/test-owner/test-repo/commits/main"
+  assert_file "${target}/AGENTS.md"
+  assert_no_path "${target}/agent-context.lock.json"
+
+  pass "CLI repo and slash-containing channel flags override environment defaults and use encoded commit API URL"
+}
+
 test_source_owned_parent_symlink_refusal() {
   commit=3333333333333333333333333333333333333333
   archive="${tmp_root}/source-symlink-source-owned.tar.gz"
@@ -250,6 +288,31 @@ test_source_owned_parent_symlink_refusal() {
   assert_no_path "${target}/AGENTS.md"
 
   pass "source-owned payload refuses symlinked parent without writing outside target"
+}
+
+test_source_owned_file_parent_refusal() {
+  commit=7777777777777777777777777777777777777777
+  archive="${tmp_root}/source-file-parent-source-owned.tar.gz"
+  fake_bin="${tmp_root}/source-file-parent-bin"
+  calls="${tmp_root}/source-file-parent-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit"
+
+  target="${tmp_root}/source-file-parent-target"
+  mkdir -p "$target"
+  printf 'blocking docs file\n' >"${target}/docs"
+
+  output="${tmp_root}/source-file-parent.out"
+  expect_installer_failure "$target" "$output"
+
+  assert_contains "$output" "unsafe destination docs/agent-context"
+  assert_contains "$output" "parent component docs is not a directory"
+  assert_file_contains "${target}/docs" "blocking docs file"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/CLAUDE.md"
+  assert_no_path "${target}/agent-context.lock.json"
+
+  pass "source-owned payload refuses non-directory parent before partial writes"
 }
 
 test_missing_only_parent_symlink_refusal() {
@@ -277,6 +340,33 @@ test_missing_only_parent_symlink_refusal() {
   pass "missing-only payload refuses symlinked parent without writing outside target"
 }
 
+test_missing_only_file_parent_refusal() {
+  commit=8888888888888888888888888888888888888888
+  archive="${tmp_root}/missing-file-parent-source.tar.gz"
+  fake_bin="${tmp_root}/missing-file-parent-bin"
+  calls="${tmp_root}/missing-file-parent-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit"
+
+  target="${tmp_root}/missing-file-parent-target"
+  mkdir -p "$target"
+  printf 'blocking github file\n' >"${target}/.github"
+
+  output="${tmp_root}/missing-file-parent.out"
+  expect_installer_failure "$target" "$output"
+
+  assert_contains "$output" "unsafe destination .github/copilot-instructions.md"
+  assert_contains "$output" "parent component .github is not a directory"
+  assert_file_contains "${target}/.github" "blocking github file"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/docs"
+  assert_no_path "${target}/CLAUDE.md"
+  assert_no_path "${target}/GEMINI.md"
+  assert_no_path "${target}/agent-context.lock.json"
+
+  pass "missing-only payload refuses non-directory parent before partial writes"
+}
+
 test_old_subcommands_are_not_public_lifecycle() {
   output="${tmp_root}/unknown-subcommand.out"
   expect_failure "$output" sh "$installer" init
@@ -291,8 +381,11 @@ test_old_subcommands_are_not_public_lifecycle() {
 
 test_install_and_refresh_behavior
 test_dry_run_does_not_mutate
+test_cli_repo_and_channel_flags_override_environment
 test_source_owned_parent_symlink_refusal
+test_source_owned_file_parent_refusal
 test_missing_only_parent_symlink_refusal
+test_missing_only_file_parent_refusal
 test_old_subcommands_are_not_public_lifecycle
 
 log "completed ${pass_count} fixture checks"
