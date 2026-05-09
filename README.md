@@ -73,12 +73,13 @@ local workflow intentionally manages them.
 The default source is this repository on the `main` channel. Optional settings:
 
 ```sh
-AGENT_CONTEXT_CHANNEL=v1.0.0 \
-curl -fsSL https://raw.githubusercontent.com/tsubasahomma/agent-context-contracts/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/tsubasahomma/agent-context-contracts/main/install.sh |
+  AGENT_CONTEXT_CHANNEL=v1.0.0 sh
 ```
 
 ```sh
-AGENT_CONTEXT_REPO=owner/repo AGENT_CONTEXT_CHANNEL=main sh install.sh
+curl -fsSL https://raw.githubusercontent.com/tsubasahomma/agent-context-contracts/main/install.sh |
+  AGENT_CONTEXT_REPO=owner/repo AGENT_CONTEXT_CHANNEL=main sh
 ```
 
 For private repositories or higher GitHub API limits, set `GITHUB_TOKEN` in the

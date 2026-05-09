@@ -60,6 +60,17 @@ expect_failure() {
   [ "$status" -ne 0 ] || fail "expected command to fail: $*"
 }
 
+expect_installer_failure() {
+  target=$1
+  output=$2
+  shift 2
+  set +e
+  run_installer "$target" "$output" "$@"
+  status=$?
+  set -e
+  [ "$status" -ne 0 ] || fail "expected installer to fail for target: $target"
+}
+
 make_source_archive() {
   destination=$1
   commit=$2
@@ -130,7 +141,7 @@ run_installer() {
   PATH="${fake_bin}:$PATH" \
     AGENT_CONTEXT_REPO="test-owner/test-repo" \
     AGENT_CONTEXT_CHANNEL="main" \
-    sh "$installer" --target "$target" "$@" >"$output"
+    sh "$installer" --target "$target" "$@" >"$output" 2>&1
 }
 
 test_install_and_refresh_behavior() {
@@ -216,6 +227,56 @@ test_dry_run_does_not_mutate() {
   pass "dry-run reports installer actions without mutating the target"
 }
 
+test_source_owned_parent_symlink_refusal() {
+  commit=3333333333333333333333333333333333333333
+  archive="${tmp_root}/source-symlink-source-owned.tar.gz"
+  fake_bin="${tmp_root}/source-symlink-bin"
+  calls="${tmp_root}/source-symlink-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit"
+
+  target="${tmp_root}/source-symlink-target"
+  external="${tmp_root}/source-symlink-external"
+  mkdir -p "$target" "$external"
+  ln -s "$external" "${target}/docs"
+
+  output="${tmp_root}/source-symlink.out"
+  expect_installer_failure "$target" "$output"
+
+  assert_contains "$output" "unsafe destination docs/agent-context"
+  assert_contains "$output" "parent component docs is a symlink"
+  assert_no_path "${external}/agent-context"
+  assert_no_path "${external}/project"
+  assert_no_path "${target}/AGENTS.md"
+
+  pass "source-owned payload refuses symlinked parent without writing outside target"
+}
+
+test_missing_only_parent_symlink_refusal() {
+  commit=4444444444444444444444444444444444444444
+  archive="${tmp_root}/source-symlink-missing-only.tar.gz"
+  fake_bin="${tmp_root}/missing-symlink-bin"
+  calls="${tmp_root}/missing-symlink-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit"
+
+  target="${tmp_root}/missing-symlink-target"
+  external="${tmp_root}/missing-symlink-external"
+  mkdir -p "$target" "$external"
+  ln -s "$external" "${target}/.github"
+
+  output="${tmp_root}/missing-symlink.out"
+  expect_installer_failure "$target" "$output"
+
+  assert_contains "$output" "unsafe destination .github/copilot-instructions.md"
+  assert_contains "$output" "parent component .github is a symlink"
+  assert_no_path "${external}/copilot-instructions.md"
+  assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/docs"
+
+  pass "missing-only payload refuses symlinked parent without writing outside target"
+}
+
 test_old_subcommands_are_not_public_lifecycle() {
   output="${tmp_root}/unknown-subcommand.out"
   expect_failure "$output" sh "$installer" init
@@ -230,6 +291,8 @@ test_old_subcommands_are_not_public_lifecycle() {
 
 test_install_and_refresh_behavior
 test_dry_run_does_not_mutate
+test_source_owned_parent_symlink_refusal
+test_missing_only_parent_symlink_refusal
 test_old_subcommands_are_not_public_lifecycle
 
 log "completed ${pass_count} fixture checks"
