@@ -311,6 +311,17 @@ MUST NOT be used as validation evidence, readiness evidence, or final acceptance
 evidence unless a separate validation claim cites supporting evidence allowed by
 [validation.md](validation.md).
 
+Authority to edit work-item bodies, acceptance-criteria markers, tasklists,
+project fields, labels, or equivalent progress markers belongs to
+project-local policy or consumer-owned platform surfaces. When that layer
+authorizes the mutation, an agent MAY update progress surfaces after supporting
+readiness, acceptance, or closure evidence has been recorded. Such updates are
+progress-state housekeeping only. They MUST NOT create validation evidence,
+review evidence, final approval, closure authority, or irreversible-publication
+authority. The durable evidence record remains the authoritative basis for those
+claims. When a housekeeping update is material to later routing or audit, it
+SHOULD point to the supporting evidence record or otherwise be traceable to it.
+
 ## Platform-Agnostic Change Lifecycle
 
 Portable workflow consumers SHOULD adapt the following lifecycle to their local
