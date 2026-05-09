@@ -130,10 +130,13 @@ Record local policy for agent-authored comments on collaboration surfaces.
 Comments should be sparse, role-specific, and evidence-oriented. Do not require
 comments for every progress update unless a consumer-owned surface or local
 policy explicitly owns that requirement.
+Record whether agents should update an existing durable comment or create a new
+comment, and record any local noise limits before treating those behaviors as
+settled policy.
 
-| Comment purpose | Required when | Required content | Local placement or owner | Status | Evidence pointer |
-| --- | --- | --- | --- | --- | --- |
-| `[worker readiness, evaluator finding, orchestrator routing, maintainer question, or omitted reason]` | `[scope, risk class, platform event, pending decision, not_required reason, or maintainer confirmation]` | `[role or purpose, evidence basis, requested decision or next owner, limitations, or omitted reason]` | `[project extension, platform surface, owner role, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+| Comment purpose | Required when | Required content | Update behavior | Noise limit | Local placement or owner | Status | Evidence pointer |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `[worker readiness, evaluator finding, orchestrator routing, maintainer question, or omitted reason]` | `[scope, risk class, platform event, pending decision, not_required reason, or maintainer confirmation]` | `[role or purpose, evidence basis, requested decision or next owner, limitations, or omitted reason]` | `[update existing, create new, surface-owned, pending, omitted, or not_required reason]` | `[material events only, review findings only, no progress chatter, surface-owned, pending, omitted, or not_required reason]` | `[project extension, platform surface, owner role, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
 
 ## Command And Structured Body Handling
 
