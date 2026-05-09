@@ -1,7 +1,7 @@
-# Gemini Entrypoint Routing
+# Gemini Routing
 
-This file is an optional Gemini-specific entry point. It does not replace the
-durable operating contracts.
+This file is a missing-only Gemini routing shim. It does not replace the durable
+operating contracts.
 
 Use this routing order before making or reviewing changes:
 
@@ -12,9 +12,6 @@ Use this routing order before making or reviewing changes:
    exceptions, and policy.
 4. If `docs/project/**` is absent or incomplete, report the missing local
    evidence instead of inventing local facts.
-
-For validation and readiness reporting, follow
-`docs/agent-context/validation.md` and `docs/agent-context/workflows.md`.
 
 Do not put repository identity, maintainer names, host paths, local commands,
 secrets, tokens, private identifiers, or durable portable-core rules in this

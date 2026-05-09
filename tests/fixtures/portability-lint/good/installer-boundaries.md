@@ -1,11 +1,11 @@
-# Synthetic Allowed v0.3 Boundary Examples
+# Synthetic Allowed Installer Boundary Examples
 
 This fixture intentionally shows allowed placeholder and routing language for
 `tools/lint-portability.sh`.
 
 Related issue: `#<child-issue-number>`.
-Local issue-linking or closure syntax belongs to project-local or
-selected-surface policy.
+Local issue-linking or closure syntax belongs to project-local or platform
+surface policy.
 
 Branch naming rules belong in the project extension. Use `<branch-name>` as a
 placeholder in reusable text.
@@ -17,9 +17,8 @@ Dynamic CI, review, deployment, release, and external status are intentionally
 not mirrored here. Static text should cite observed evidence and freshness when
 status is reported.
 
-This optional selected-surface template routes durable operating rules to the
-root entry point, portable contracts, and materialized local extension when
-present.
+Missing-only routing shims route readers to the root entry point, portable
+contracts, and materialized local extension when present.
 
 Historical evidence categories are covered by manual review and evaluation
 cases when they are too semantic for shell lint.

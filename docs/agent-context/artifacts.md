@@ -5,7 +5,7 @@ reviewed, or consumed during agent collaboration.
 
 Portable artifact rules describe what must be true of durable artifacts without
 embedding repository identity, local commands, host details, secret-adjacent
-facts, optional entrypoint or surface payloads, or sync metadata.
+facts, vendor shim payloads, platform surface payloads, or installer state.
 
 ## Terms
 
@@ -16,8 +16,8 @@ facts, optional entrypoint or surface payloads, or sync metadata.
   captured as a durable artifact with metadata and evidence references.
 - **Artifact producer**: the person, agent, process, or tool that creates or
   updates an artifact.
-- **Artifact consumer**: the person, agent, process, tool, selected entrypoint
-  or surface layer, evaluator, or sync workflow that relies on an artifact.
+- **Artifact consumer**: the person, agent, process, tool, vendor shim,
+  platform surface, evaluator, or local workflow that relies on an artifact.
 - **Evidence reference**: a pointer to source material, inspected state,
   validation output, or maintainer confirmation that supports an artifact claim
   without requiring the artifact to embed all source material.
@@ -32,12 +32,12 @@ Durable artifacts MAY include:
 
 - portable contract documents;
 - project-local extension documents;
-- selected entrypoint or collaboration-surface payloads and templates;
+- vendor routing shims and consumer-owned platform surface payloads;
 - agent-authored durable text outputs governed by [outputs.md](outputs.md);
 - validation reports and validation claim sets;
 - evidence summaries or evidence packs;
 - evaluation reports;
-- sync reports or sync metadata summaries.
+- installer validation reports or installer diagnostics.
 
 This model describes the portable expectations shared by those artifact kinds.
 It does not make every artifact portable core content. The artifact boundary is
@@ -47,8 +47,8 @@ defined by the artifact's ownership layer:
 | --- | --- |
 | Portable core | Reusable contract rules and artifact metadata expectations. |
 | Project-local extension | Repository-local artifact names, storage conventions, validation commands, and operational facts. |
-| Selected entrypoint or collaboration surface | Platform-specific or tool-specific payload shape, template format, and copied routing or collaboration files. |
-| Sync metadata | Managed-file state, checksums, selected entrypoint and surface records, source resolution, and update bookkeeping. |
+| Vendor shim or platform surface | Platform-specific or tool-specific payload shape, template format, and routing or collaboration files. |
+| Installer diagnostics | Source channel, resolved commit, copied payload class, skipped missing-only files, and validation evidence for installer behavior. |
 | Evidence-packing tooling | Tool-specific collection, serialization, compression, or packing behavior. |
 
 Transient conversation context MAY inform an artifact, but it MUST NOT be treated
@@ -84,8 +84,9 @@ information remains clear and reviewable.
 Portable core files MUST NOT add repository-local identifiers, maintainer
 identifiers, host-absolute paths, local command lines, secrets policy details, or
 vendor-specific baseline assumptions merely to satisfy metadata fields. When
-such details are necessary, they belong in a project-local extension, selected
-payload artifact, validation report, or sync report owned by that layer.
+such details are necessary, they belong in a project-local extension, vendor
+shim, platform surface, validation report, or installer diagnostic owned by that
+layer.
 
 ## Schema And Version Expectations
 
@@ -105,8 +106,8 @@ Schema versions MUST have clear compatibility meaning:
 - artifacts SHOULD record the artifact revision or update point separately from
   the schema version when both matter.
 
-Portable contracts MAY define shared schemas. Project-local extensions, selected
-entrypoints, selected surfaces, sync tools, and evidence-packing tools MAY define
+Portable contracts MAY define shared schemas. Project-local extensions, vendor
+shims, platform surfaces, installer tools, and evidence-packing tools MAY define
 their own schemas, but those schemas MUST NOT be treated as portable core
 doctrine unless a portable contract explicitly adopts them.
 
@@ -127,9 +128,9 @@ When artifact claims conflict with current source evidence or another ownership
 layer, consumers SHOULD apply the source-class and claim-type boundaries in
 [sources.md](sources.md).
 
-An artifact MUST NOT imply that selected-entrypoint, selected-surface,
-project-local, or sync-tool behavior is portable merely because the artifact
-references the portable core.
+An artifact MUST NOT imply that vendor shim, platform-surface, project-local, or
+installer behavior is portable merely because the artifact references the
+portable core.
 
 ## Provenance Expectations
 
@@ -167,8 +168,8 @@ An evidence reference SHOULD identify:
 
 Evidence references are pointers, not evidence-packing instructions. Tooling for
 collecting, compressing, redacting, or serializing evidence belongs to the
-evidence-packing contract or the relevant selected entrypoint, selected surface,
-or tooling layer.
+evidence-packing contract or the relevant project-local, platform-surface, or
+tooling layer.
 
 ## Limitations And Uncertainty
 
@@ -199,17 +200,17 @@ Portable artifact rules MUST NOT own:
   handling;
 - project-local artifact storage paths, naming conventions, release procedures,
   validation commands, or operational facts;
-- selected-entrypoint or selected-surface template syntax, platform fields,
-  copied payloads, or runtime behavior;
-- sync metadata such as lock-file entries, managed-file checksums, installed
-  optional-group records, source resolution, or update algorithms;
+- vendor shim or platform surface template syntax, platform fields, copied
+  payloads, or runtime behavior;
+- installer implementation details such as archive download mechanics, copy
+  algorithms, or diagnostic output format;
 - evidence-packing implementation behavior;
 - detailed workflow roles, handoff formats, or orchestration rules;
 - evaluation cases, fixtures, scoring rubrics, or datasets.
 
-Project-local conventions belong in `docs/project/**`. Optional entrypoint and
-surface artifacts belong with their selected source-owned layers. Sync metadata
-behavior belongs to the path ownership and sync safety contract.
+Project-local conventions belong in `docs/project/**`. Vendor shim and platform
+surface artifacts belong with their owning consumer layer. Installer ownership
+behavior belongs to [ownership.md](ownership.md).
 Evidence-packing behavior belongs in [evidence-packing.md](evidence-packing.md)
 or a tool-specific layer.
 Agent-authored durable text output rules belong in [outputs.md](outputs.md).

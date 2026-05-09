@@ -11,8 +11,8 @@ payloads.
 
 The core contract owns:
 
-- the boundary between portable contracts, project-local extensions, optional
-  entrypoints, optional collaboration surfaces, and sync or lint tooling;
+- the boundary between portable contracts, project-local extensions,
+  missing-only routing shims, platform collaboration surfaces, and tooling;
 - the expectation that agents inspect current repository evidence before acting;
 - the expectation that durable claims are backed by observed evidence;
 - the rule that portable contracts remain repository-agnostic and
@@ -28,12 +28,12 @@ The core contract MUST NOT own:
   operational assumptions;
 - artifact schemas or detailed validation vocabulary;
 - detailed thread-role, handoff, or workflow rules;
-- optional entrypoint payloads, collaboration-surface payloads, or
+- vendor shim payload text, collaboration-surface payloads, or
   platform-specific runtime behavior;
-- sync implementation details, lock-file contents, or portability-lint rules.
+- installer implementation details or portability-lint rules.
 
-Those topics belong to their dedicated contracts, project extensions, selected
-entrypoint or surface layers, or tools.
+Those topics belong to their dedicated contracts, project extensions,
+consumer-owned platform surfaces, or tools.
 
 ## Extension Path
 
@@ -48,5 +48,4 @@ should be added to the owning document:
 - validation rules in [validation.md](validation.md);
 - evidence-packing rules in [evidence-packing.md](evidence-packing.md);
 - evaluation rules in [evaluations.md](evaluations.md);
-- path ownership and sync safety rules in
-  [path-ownership-and-sync-safety.md](path-ownership-and-sync-safety.md).
+- ownership and installer safety rules in [ownership.md](ownership.md).

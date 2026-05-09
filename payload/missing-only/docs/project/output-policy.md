@@ -1,7 +1,7 @@
 # Project Output Policy
 
 Use this file to record local policy for durable text outputs that agents,
-maintainers, tools, selected entrypoints, or selected surfaces create for this
+maintainers, tools, vendor shims, or platform surfaces create for this
 repository.
 
 Local output policy extends the portable output contract. It MUST NOT silently
@@ -15,8 +15,8 @@ instead of guessing.
 ## Change-Proposal Bodies
 
 Record local requirements for reviewable change-proposal or pull request bodies.
-Use generic field names or placeholders when a selected surface owns the final
-platform template mapping.
+Use generic field names or placeholders when a consumer-owned platform surface
+owns the final template mapping.
 
 | Requirement | Applies to | Local rule or field | Status | Evidence pointer |
 | --- | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ history.
 ## Command And Structured Body Handling
 
 Record local policy for command snippets, command bodies, body files, standard
-input, structured API fields, selected-surface fields, or equivalent safe
+input, structured API fields, platform-surface fields, or equivalent safe
 artifact boundaries.
 
 | Body type | Safe boundary | Local handling rule | Unavailable or sensitive handling |
@@ -70,25 +70,25 @@ readiness reports, and follow-up summaries when those outputs are local policy.
 
 ## Surface-Owned Platform Fields
 
-Record local decisions about platform or selected-surface fields without making
-them portable doctrine. If the project does not use a selected surface, record
+Record local decisions about platform surface fields without making them
+portable doctrine. If the project does not use a platform surface, record
 `not_required` or an omitted reason.
 
 | Field or mechanism | Owner layer | Local handling | Status |
 | --- | --- | --- | --- |
-| `[label, status, checkbox, template field, reviewer request, milestone, release field, or omitted reason]` | `[project extension, selected surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
+| `[label, status, checkbox, template field, reviewer request, milestone, release field, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
 
 ## Output Boundaries
 
 - Local output policy MUST identify whether a rule is confirmed, pending,
   omitted, unknown, or `maintainer_confirmed`.
 - Local policy MAY specialize exact headings, fields, references, trailers,
-  message conventions, body handling, and selected-surface mapping.
+  message conventions, body handling, and platform-surface mapping.
 - Local policy MUST NOT claim validation success without evidence that satisfies
   the portable validation contract.
 - Static output bodies MUST NOT mirror changing review, CI, deployment, or
   external state as always-current truth.
 - Command text that is meant to be copied or executed should be separated from
   unrelated narrative.
-- Surface-owned fields MUST remain selected-surface or platform mappings, not
+- Surface-owned fields MUST remain platform-surface or platform mappings, not
   durable portable-core doctrine.

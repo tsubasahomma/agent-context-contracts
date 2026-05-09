@@ -1,10 +1,11 @@
 # Project Extension
 
 Use this file as the README for a consumer repository's local project extension.
-It may be seeded from `scaffolds/project/**` during adoption, and it becomes
-consumer-owned after materialization. The local project extension records local
-identity, surfaces, output policy, validation expectations, workflow exceptions,
-and secrets policy while keeping portable contracts free of local facts.
+It may be seeded from `payload/missing-only/docs/project/**` during adoption, and
+it becomes consumer-owned after materialization. The local project extension
+records local identity, surfaces, output policy, validation expectations,
+workflow exceptions, and secrets policy while keeping portable contracts free of
+local facts.
 
 ## Purpose
 
@@ -19,14 +20,14 @@ contracts only.
 
 ## Ownership
 
-Files under `scaffolds/project/**` are source-package scaffolds.
-Materialized files under `docs/project/**`, or another declared project
+Files under `payload/missing-only/docs/project/**` are missing-only starter
+files. Materialized files under `docs/project/**`, or another declared project
 extension path, are consumer-owned after creation.
 
 After materialization, project extension files MUST NOT be treated as
-package-managed files. Sync or update tooling MAY seed missing files during
-initial adoption, but it MUST NOT overwrite existing project extension files or
-previously materialized project extension files.
+source-owned portable files. Installer refreshes MAY seed missing files, but
+they MUST NOT overwrite existing project extension files or previously
+materialized project extension files.
 
 If a consumer uses another project extension path, record that path in the
 package metadata or local adoption notes. The alternate path has the same
@@ -35,7 +36,7 @@ consumer-owned status as `docs/project/**`.
 ## Adoption
 
 1. Choose the project extension path, usually `docs/project/`.
-2. Copy or seed these scaffold files into that path.
+2. Copy or seed these missing-only starter files into that path.
 3. Replace bracketed prompts with local information that is safe to record.
 4. Leave unknown, pending, omitted, and maintainer-confirmed facts explicit
    instead of guessing.
@@ -69,7 +70,7 @@ Recommended files:
 
 Local policy MAY specialize repository facts after adoption. It MUST NOT
 silently replace portable source, output, artifact, workflow, validation,
-evidence-packing, ownership, or sync-safety boundaries from
+evidence-packing, ownership, or installer-safety boundaries from
 `docs/agent-context/**`.
 
 ## Local Fact States
@@ -94,10 +95,11 @@ validation vocabulary:
 
 ## Update Safety
 
-Scaffold updates in the source package do not automatically change a consumer's
-materialized project extension. Consumers MAY manually compare new scaffold
-versions and copy useful wording, but they retain ownership of the local files.
+Missing-only starter updates in the source package do not automatically change a
+consumer's materialized project extension. Consumers MAY manually compare new
+starter versions and copy useful wording, but they retain ownership of the local
+files.
 
-Do not replace a materialized project extension file just because the source
-scaffold changed. Preserve local edits, local policy decisions, and local
-validation evidence unless the consumer intentionally revises them.
+Do not replace a materialized project extension file just because the
+missing-only starter changed. Preserve local edits, local policy decisions, and
+local validation evidence unless the consumer intentionally revises them.

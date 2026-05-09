@@ -1,9 +1,9 @@
-# Claude Entrypoint Routing
+# GitHub Copilot Routing
 
-This file is an optional Claude-specific entry point. It does not replace the
+This file is a missing-only GitHub Copilot routing shim. It does not replace the
 durable operating contracts.
 
-Use this routing order before making or reviewing changes:
+Before making or reviewing changes, use this routing order:
 
 1. Start with the root `AGENTS.md`.
 2. Read `docs/agent-context/README.md` and the relevant portable contracts.
@@ -13,8 +13,10 @@ Use this routing order before making or reviewing changes:
 4. If `docs/project/**` is absent or incomplete, report the missing local
    evidence instead of inventing local facts.
 
-For validation and readiness reporting, follow
-`docs/agent-context/validation.md` and `docs/agent-context/workflows.md`.
+Keep work bounded to the accepted task. Re-inspect current repository evidence
+before editing, treat handoff text as scope evidence rather than proof of
+current state, and report out-of-scope findings without silently expanding the
+task.
 
 Do not put repository identity, maintainer names, host paths, local commands,
 secrets, tokens, private identifiers, or durable portable-core rules in this

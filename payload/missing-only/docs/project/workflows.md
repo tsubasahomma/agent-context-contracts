@@ -32,14 +32,14 @@ and the evidence or confirmation that supports it.
 ## Branch And Change Routing
 
 Record local branching or change-routing policy only as consumer-owned facts.
-Do not infer a branch naming convention from historical examples, issue text, or
-selected entrypoint or surface defaults.
+Do not infer a branch naming convention from historical examples, issue text,
+vendor shims, or platform surface defaults.
 
 | Policy area | Applies to | Local rule | Status | Evidence pointer |
 | --- | --- | --- | --- | --- |
 | Branch naming | `[work type, role, release scope, or omitted reason]` | `[local naming rule, pending decision, omitted reason, or maintainer confirmation]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 | Change ownership | `[paths, artifacts, generated outputs, or workflow stage]` | `[who may create, update, review, or route the change]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
-| Scope escalation | `[finding, request, blocked validation, or review gate]` | `[route to maintainer, planner, orchestrator, selected surface, queue, or omitted reason]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
+| Scope escalation | `[finding, request, blocked validation, or review gate]` | `[route to maintainer, planner, orchestrator, platform surface, queue, or omitted reason]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[local evidence pointer or limitation]` |
 
 ## Release And Deployment Notes
 
@@ -91,5 +91,5 @@ history.
 - Release or deployment notes MUST avoid secrets and sensitive operational
   details unless the local secrets policy allows the specific summary.
 - Durable output formatting, issue-reference policy, trailers, closure keywords,
-  and merge-message policy belong in `output-policy.md` or a selected-surface
+  and merge-message policy belong in `output-policy.md` or a platform-surface
   mapping.
