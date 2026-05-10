@@ -1,91 +1,108 @@
 # Project Validation
 
-Use this file to record validation commands, manual checks, CI checks,
-environment assumptions, output-artifact validation routing, evidence
-expectations, and unavailable checks for a consumer repository.
+Use this file to record reusable local validation memory for one consumer
+repository. It may cover local commands, manual checks, CI checks, environment
+assumptions, output validation routing, evidence expectations, unavailable
+checks, and validation-specific case studies.
 
 Portable validation status tokens are `passed`, `failed`, `pending`, `skipped`,
-`not_required`, and `maintainer_confirmed`. Use them in local validation reports
-and readiness summaries when making claims about checks.
+`not_required`, and `maintainer_confirmed`. Use them in validation reports and
+readiness summaries when making validation claims.
 
-Do not copy local commands or environment assumptions into portable core files.
-Durable output body requirements belong in `output-policy.md`; this file records
-how validation for those outputs is run, evidenced, skipped, or marked
-unavailable.
+Local validation memory extends the portable validation contract. It MUST NOT
+silently replace the portable claim model, status vocabulary, evidence
+requirements, success-claim rules, or reporting boundaries.
 
-## Local Validation Commands
+Do not use this file as a complete validation questionnaire. Leave it sparse
+until concrete repository work reveals reusable validation knowledge.
 
-Record only commands that are safe to document for this repository. Use
-placeholders or omitted states when command details are sensitive or undecided.
+Durable output body rules belong in `output-policy.md`. Workflow gates and
+handoff routing belong in `workflows.md`.
 
-| Check | Command or procedure | Covers | Evidence expected |
-| --- | --- | --- | --- |
-| `[check name]` | `[local command, procedure, pending, or omitted reason]` | `[paths, artifacts, or behaviors]` | `[exit status, output summary, inspected artifact, or limitation]` |
+## Validation Memory Rules
 
-## Environment Assumptions
+Use the local memory layers below. Observed cases and pending validation
+decisions are non-authoritative. They may guide future checks, but they do not
+make validation `passed`, authorize a skipped check, or prove readiness.
 
-Local runtime, dependency, service, data, and credential assumptions belong here
-or in another consumer-owned local file. Do not treat them as portable baseline
-requirements.
+`Confirmed Local Decisions` are authoritative only for their recorded scope. A
+confirmed validation decision requires explicit maintainer confirmation, a
+materialized local authority rule, or another recorded authoritative local
+evidence pointer whose ownership, freshness, and scope are clear.
 
-| Assumption | Required for | Status | Notes |
-| --- | --- | --- | --- |
-| `[environment assumption]` | `[validation command, manual check, CI check, or workflow]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[safe setup notes or limitation]` |
+When authority is missing, keep the entry in `Observed Validation Case Studies`,
+`Pending Local Validation Decisions`, or an explicit state such as `unknown`,
+`pending`, `omitted`, or `not_required`.
 
-## Manual Checks
+`maintainer_confirmed` is an explicit state or evidence marker for the exact
+confirmed claim. It is not a synonym for every `Confirmed Local Decision`;
+confirmed decisions may also be authorized by a materialized local authority
+rule or another authoritative local evidence pointer.
 
-| Check | Criteria | Evidence expected | When unavailable |
-| --- | --- | --- | --- |
-| `[manual check]` | `[review criteria]` | `[reviewed files, rendered output, comparison, or maintainer confirmation]` | `[pending, skipped, not_required, or escalation rule]` |
+Project-memory entries may describe which checks are expected and what evidence
+is useful, but the entry itself is not validation evidence. A validation claim
+must cite observed command output, inspected state, CI evidence, manual review
+evidence, exact maintainer confirmation, or another evidence type allowed by the
+portable validation contract.
 
-## CI Checks
+## Observed Validation Case Studies
 
-Use generic CI check names or local identifiers that are safe to record. Do not
-add platform-specific requirements unless they are truly local project facts.
+Record concrete validation cases that may help future agents choose or report
+checks. These entries are evidence pointers and examples, not policy.
 
-| Check | Covers | Required status | Evidence pointer |
-| --- | --- | --- | --- |
-| `[CI check name or omitted reason]` | `[scope covered]` | `[passed, failed, pending, skipped, not_required, or maintainer_confirmed]` | `[run locator, summary location, or unavailable reason]` |
-
-## Evidence Expectations
-
-Validation claims should cite evidence that later reviewers can inspect.
-
-| Evidence type | Local expectation | Redaction or limit |
-| --- | --- | --- |
-| Command evidence | `[exit status, relevant output, subject coverage]` | `[redaction or omitted reason]` |
-| Inspected-state evidence | `[paths, diffs, rendered artifacts, or source state]` | `[redaction or omitted reason]` |
-| CI evidence | `[check result, covered revision, output summary]` | `[redaction or omitted reason]` |
-| Manual review evidence | `[criteria, reviewer role, inspected artifacts]` | `[redaction or omitted reason]` |
-| Maintainer confirmation | `[exact confirmation and evidence pointer]` | `[scope limits]` |
-
-## Output Validation Routing
-
-Use this section to record which validation or review checks apply to durable
-outputs such as change-proposal bodies, change messages, issue bodies, worker
-prompts, evaluator prompts, validation reports, readiness reports, command
-bodies, release notes, rollback notes, or evidence summaries.
-
-| Output type | Required check | Evidence expected | When unavailable |
-| --- | --- | --- | --- |
-| `[output type]` | `[local command, manual review, platform-surface check, maintainer confirmation, pending, or omitted reason]` | `[status, output summary, inspected body, rendered artifact, or limitation]` | `[pending, skipped, not_required, maintainer_confirmed, or escalation rule]` |
-
-## Unavailable Checks
-
-Unavailable validation MUST NOT be reported as passed. Use this section to make
-missing evidence explicit.
-
-| Check | State | Reason | Residual risk | Next action |
+| Case | Validation area | Observation | Evidence pointer | Outcome or limit |
 | --- | --- | --- | --- | --- |
-| `[unavailable check]` | `[pending, skipped, or not_required]` | `[why evidence is unavailable]` | `[risk if any]` | `[rerun, ask maintainer, defer, or no action]` |
+| `[case name]` | `[command, manual check, CI check, environment assumption, output validation, unavailable check, evidence handling, or other area]` | `[what was checked, unavailable, surprising, flaky, sensitive, or useful]` | `[command output, local file, CI run, issue, pull request, maintainer note, or omitted reason]` | `[reusable lesson, residual risk, pending decision, not_required scope, or limit]` |
+
+## Pending Local Validation Decisions
+
+Use this section when a local validation rule appears needed but authority has
+not confirmed it. Pending entries are proposals or open questions only.
+
+| Decision question | Candidate validation rule | Scope | Evidence basis | Needed authority or blocker | State |
+| --- | --- | --- | --- | --- | --- |
+| `[question]` | `[proposed command, manual check, CI expectation, environment assumption, output check, unavailable-check handling, evidence rule, or omitted reason]` | `[paths, artifacts, behavior, output type, risk class, release scope, or not_required reason]` | `[observed case, current source, CI evidence, maintainer question, or limitation]` | `[maintainer confirmation, local authority rule, platform owner, unavailable evidence, sensitive-data boundary, or blocker]` | `[unknown, pending, omitted, or not_required]` |
+
+## Confirmed Local Validation Decisions
+
+Use this section only for scoped local validation policy with authority. Do not
+promote an observed check, successful run, issue text, pull request text, label,
+checkbox, project field, or repeated agent behavior into confirmed policy unless
+an authority source explicitly makes that surface decisive for the recorded
+scope.
+
+| Decision | Scope | Required evidence | Authority source | Evidence pointer | Limits |
+| --- | --- | --- | --- | --- | --- |
+| `[confirmed validation rule or exception]` | `[exact paths, artifacts, behavior, output type, risk class, release scope, or other boundary]` | `[command output, inspected state, CI result, manual review, maintainer confirmation, redacted summary, or not_required reason]` | `[maintainer confirmation, materialized local authority rule, or authoritative local evidence pointer]` | `[where the authority and supporting evidence are recorded]` | `[what is not validated, freshness limit, required recheck, redaction limit, or portable boundary]` |
+
+## Common Validation Decision Areas
+
+Record an entry above only when it is reusable. Common validation decisions
+include:
+
+- local commands, procedures, fixtures, generated-output checks, and safe
+  command documentation boundaries;
+- environment, dependency, service, data, credential, and runtime assumptions
+  that are safe to record in a consumer-owned file;
+- manual review criteria, CI checks, output validation routing, evidence
+  expectations, and unavailable-check handling;
+- redaction or omission rules for sensitive validation evidence;
+- handling for checks that are `pending`, `skipped`, `not_required`, or
+  `maintainer_confirmed`.
 
 ## Validation Boundaries
 
-- Local validation commands and procedures MUST stay in consumer-owned files.
-- Unavailable checks MUST use `pending`, `skipped`, or `not_required`; they MUST
-  NOT be reported as `passed`.
+- Unavailable validation MUST NOT be reported as `passed`; use `pending`,
+  `skipped`, or `not_required` with a reason.
+- `passed` and `maintainer_confirmed` claims require evidence for the exact
+  subject and scope being reported.
+- A local command or CI expectation recorded here is not proof of a later
+  command result or CI result.
 - Output validation MUST preserve the output role. A validation report records
-  evidence and status; it does not become a readiness report unless the workflow
-  readiness requirements are also satisfied.
-- Static output bodies SHOULD cite observed validation evidence and freshness
-  instead of mirroring changing CI, review, deployment, or external state.
+  evidence and status; it is not a readiness report unless workflow readiness
+  requirements are also satisfied.
+- Do not copy local commands, runtime assumptions, CI names, or environment
+  facts into portable core files.
+- Do not record secrets, sensitive values, transient task details, stale
+  historical prose, role-specific scratch narration, commented-out
+  instructions, or obsolete guidance.
