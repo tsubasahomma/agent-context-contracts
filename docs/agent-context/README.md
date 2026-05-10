@@ -22,7 +22,7 @@ missing-only seed content, not active project-local context.
 | --- | --- | --- |
 | First-pass orientation | [Core contract](core.md) | [Source precedence and trust boundaries](sources.md), then the relevant topic contracts below. |
 | Implement or change repository content | [Source precedence and trust boundaries](sources.md), [Workflow contracts](workflows.md) | [Validation contracts](validation.md), [Agent-authored output contracts](outputs.md), [Ownership and installer safety](ownership.md). |
-| Review or evaluate a change | [Evaluation contracts](evaluations.md) | [Validation contracts](validation.md), [Source precedence and trust boundaries](sources.md), [Agent-authored output contracts](outputs.md). |
+| Review or evaluate a change | [Evaluation contracts](evaluations.md) | [Validation contracts](validation.md), [Workflow contracts](workflows.md), [Source precedence and trust boundaries](sources.md), [Agent-authored output contracts](outputs.md). |
 | Validate a change | [Validation contracts](validation.md) | [Evidence-packing contracts](evidence-packing.md), [Source precedence and trust boundaries](sources.md), and topic contracts for the validated surface. |
 | Consult or update project-local memory | Materialized `docs/project/**` files when present and relevant | [Source precedence and trust boundaries](sources.md), [Ownership and installer safety](ownership.md). |
 | Check ownership or installer boundaries | [Ownership and installer safety](ownership.md) | [Core contract](core.md), [Source precedence and trust boundaries](sources.md). |
