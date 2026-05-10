@@ -1,178 +1,104 @@
 # Project Output Policy
 
-Use this file to record local policy for durable text outputs that agents,
-maintainers, tools, vendor shims, or platform surfaces create for this
-repository.
+Use this file to record reusable local policy for durable text outputs that
+agents, maintainers, tools, vendor shims, or platform surfaces create for one
+consumer repository.
 
-Local output policy extends the portable output contract. It MUST NOT silently
-replace portable source, artifact, workflow, validation, evidence-packing,
-ownership, or safety boundaries.
+Local output policy extends the portable output contract. It MAY specialize
+language choices, local fields, references, trailers, safe body handling,
+comments, prompts, reports, change proposals, change messages, and platform
+surface mappings. It MUST NOT silently replace portable source, artifact,
+workflow, validation, evidence-packing, ownership, or safety boundaries.
 
-Do not add concrete local output policy to portable core files. Use explicit
-states such as `unknown`, `pending`, `omitted`, `not_required`, and
-`maintainer_confirmed` instead of guessing.
+Do not use this file as a full output-template form. Leave it sparse until
+concrete repository work reveals reusable output policy.
 
-## Local Decision States
+## Output Memory Rules
 
-Use these states when recording local policy decisions:
+Use the local memory layers below. Observed cases and pending output decisions
+are non-authoritative. They may guide future output drafting, but they do not
+make a field required, authorize platform mutation, or prove validation.
 
-- `unknown`: the local decision has not been investigated.
-- `pending`: the decision is expected but not settled.
-- `omitted`: this output intentionally leaves the field or mechanism out.
-- `not_required`: this output does not need the field or mechanism for the
-  stated local scope.
-- `maintainer_confirmed`: the local decision is backed by explicit maintainer
-  confirmation.
+`Confirmed Local Decisions` are authoritative only for their recorded scope. A
+confirmed output decision requires explicit maintainer confirmation, a
+materialized local authority rule, or another recorded authoritative local
+evidence pointer whose ownership, freshness, and scope are clear.
 
-Add other local state values only when the project owns their meaning.
+When authority is missing, keep the entry in `Observed Durable-Output Case
+Studies`, `Pending Local Output Decisions`, or an explicit state such as
+`unknown`, `pending`, `omitted`, or `not_required`.
 
-## Language Policy
+`maintainer_confirmed` is an explicit state or evidence marker for the exact
+confirmed claim. It is not a synonym for every `Confirmed Local Decision`;
+confirmed decisions may also be authorized by a materialized local authority
+rule or another authoritative local evidence pointer.
 
-Record local language decisions for conversational coordination and durable
-artifacts. Keep the two decisions separate because conversation language and
-durable artifact language may serve different consumers.
+Project-memory entries may point to validation evidence, but they are not
+validation evidence by themselves. Static output bodies should cite observed
+evidence and freshness instead of mirroring changing review, CI, deployment, or
+external status as always-current truth.
 
-| Language surface | Applies to | Local decision | Status | Evidence pointer |
+## Observed Durable-Output Case Studies
+
+Record concrete output cases that may help future agents draft or route durable
+text. These entries are evidence pointers and examples, not policy.
+
+| Case | Output surface | Observation | Evidence pointer | Outcome or limit |
 | --- | --- | --- | --- | --- |
-| Conversation language | `[agent conversation, maintainer coordination, platform comments, pending decision, or not_required reason]` | `[local language, follow requester language, surface-owned rule, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Durable artifact language | `[repository documentation, issue bodies, change proposals, review comments, validation reports, readiness reports, pending decision, or not_required reason]` | `[local language, artifact-specific rule, surface-owned rule, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+| `[case name]` | `[issue body, change proposal, change message, review comment, worker prompt, evaluator prompt, validation report, readiness report, command body, release note, rollback note, evidence summary, or other surface]` | `[what was written, omitted, corrected, or risky]` | `[issue, pull request, local file, review finding, maintainer note, or omitted reason]` | `[reusable lesson, unresolved risk, pending decision, not_required scope, or limit]` |
 
-## Parent Issue Local Fields
+## Pending Local Output Decisions
 
-Record local field decisions for Parent Issue bodies. Use placeholders until a
-consumer-owned tracker, project extension, or platform surface confirms concrete
-field names.
+Use this section when a local output rule appears needed but authority has not
+confirmed it. Pending entries are proposals or open questions only.
 
-| Local field slot | Required when | Local handling | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| `[parent field name or omitted reason]` | `[parent scope type, risk class, tracker surface, pending decision, or not_required reason]` | `[required, optional, surface-owned, project-extension-owned, omitted, or pending]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+| Decision question | Candidate output rule | Affected outputs | Evidence basis | Needed authority or blocker | State |
+| --- | --- | --- | --- | --- | --- |
+| `[question]` | `[proposed field, heading, language rule, reference rule, trailer rule, safe-body rule, comment rule, platform mapping, or omitted reason]` | `[output types, platform surfaces, risk class, release scope, or not_required reason]` | `[observed case, current source, platform surface, maintainer question, or limitation]` | `[maintainer confirmation, local authority rule, platform owner, unavailable evidence, or blocker]` | `[unknown, pending, omitted, or not_required]` |
 
-## Child Issue Local Fields
+## Confirmed Local Output Decisions
 
-Record local field decisions for Child Issue bodies. Keep the entries focused on
-one bounded work item and local routing needs.
+Use this section only for scoped local output policy with authority. Do not
+promote an observed output, issue text, pull request text, label, checkbox,
+project field, successful check, or repeated agent behavior into confirmed
+policy unless an authority source explicitly makes that surface decisive for the
+recorded scope.
 
-| Local field slot | Required when | Local handling | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| `[child field name or omitted reason]` | `[work item type, affected surface, dependency, risk class, pending decision, or not_required reason]` | `[required, optional, surface-owned, project-extension-owned, omitted, or pending]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
+| Decision | Scope | Affected outputs | Authority source | Evidence pointer | Limits |
+| --- | --- | --- | --- | --- | --- |
+| `[confirmed output rule or exception]` | `[exact output type, platform surface, path set, risk class, release scope, or other boundary]` | `[issue body, change proposal, change message, prompt, finding, validation report, readiness report, comment, command body, release note, rollback note, evidence summary, or platform mapping]` | `[maintainer confirmation, materialized local authority rule, or authoritative local evidence pointer]` | `[where the authority and supporting evidence are recorded]` | `[what is not authorized, freshness limit, required recheck, or portable boundary]` |
 
-## Change-Proposal Local Fields
+## Common Output Decision Areas
 
-Record local requirements for reviewable change-proposal or pull request bodies.
-Use generic field names or placeholders when a consumer-owned platform surface
-owns the final template mapping.
+Record an entry above only when it is reusable. Common output decisions include:
 
-| Local field slot | Applies to | Local handling | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| `[proposal field name, platform field, or omitted reason]` | `[all changes, risk class, release scope, artifact type, pending decision, or not_required reason]` | `[required heading, optional field, surface-owned mapping, evidence note, freshness note, omitted, or pending]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-
-## Change Messages
-
-Record local commit, changeset, or version-control message policy. Keep subject
-and body limits practical, and record local exceptions instead of treating a
-numeric target as an absolute validity gate.
-
-| Policy area | Local decision | Practical exceptions | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| Subject style | `[plain imperative, scoped, structured, generated, pending, omitted, or maintainer_confirmed rule]` | `[exception category, not_required reason, or omitted]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Subject length target | `[local target, soft limit, pending decision, omitted, or not_required reason]` | `[URLs, generated identifiers, machine fields, local exception category, or omitted]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Body line target | `[local target, soft limit, pending decision, omitted, or not_required reason]` | `[URLs, code, diagnostic output, trailers, machine fields, non-prose text, local exception category, or omitted]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Body required when | `[rationale, risk, validation, release impact, discarded alternative, pending decision, or omitted reason]` | `[exception category, not_required reason, or omitted]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Scope notation | `[scope list source, surface-owned scope, pending decision, omitted, or not_required reason]` | `[exception category, not_required reason, or omitted]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-
-## Commit Conventions
-
-Record whether this project opts in to, opts out of, defers, or omits named
-commit-message conventions. Do not treat any convention as the local default
-until this table records the local decision.
-
-| Convention area | Local decision | Applies to | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| Conventional Commits | `[opt_in, opt_out, pending, omitted, not_required, or maintainer_confirmed decision]` | `[all changes, release changes, generated changes, platform surface, pending decision, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Other named convention | `[convention name placeholder, opt_in, opt_out, pending, omitted, not_required, or maintainer_confirmed decision]` | `[all changes, release changes, generated changes, platform surface, pending decision, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-
-## Tracker References, Closure Syntax, And Trailers
-
-Record local decisions for tracker references, closure syntax, and message
-trailers. Use placeholders for syntax examples until the owning tracker or
-platform surface confirms concrete forms.
-
-| Policy area | Local decision | Applies to | Status | Evidence pointer |
-| --- | --- | --- | --- | --- |
-| Tracker references | `[allowed, required, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[issue bodies, proposal bodies, change messages, release notes, platform field, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Closure syntax | `[allowed, required, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[issue bodies, proposal bodies, change messages, merge messages, platform field, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-| Message trailers | `[allowed, required, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[change messages, merge messages, release changes, generated changes, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-
-## Merge Messages And Release Notes
-
-Record local policy for merge-message bodies, release-note fields, rollback
-notes, deployment notes, readiness reports, and follow-up summaries when those
-outputs are local policy.
-
-| Output | Required local content | Evidence expectation | Status | Boundary |
-| --- | --- | --- | --- | --- |
-| `[merge message, release note, rollback note, deployment note, readiness report, follow-up output, or omitted reason]` | `[field, note, owner role, pending decision, omitted, or not_required reason]` | `[validation claim, maintainer confirmation, inspected state, surface-owned field, limitation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[what this output may not decide or claim]` |
-
-## Issue And Prompt Fields
-
-Record local fields expected in issue bodies, worker prompts, evaluator prompts,
-review findings, validation reports, readiness reports, or evidence summaries.
-Fields should help consumers review scope and evidence without requiring broad
-history.
-
-| Output type | Local field | Required when | Evidence or validation expectation | Status |
-| --- | --- | --- | --- | --- |
-| `[worker prompt, evaluator prompt, review finding, validation report, readiness report, evidence summary, or omitted reason]` | `[field name, evidence slot, status slot, or omitted reason]` | `[scope, risk class, artifact type, pending decision, not_required reason, or maintainer confirmation]` | `[evidence pointer, validation status, limitation, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
-
-## AI-Authored Comments
-
-Record local policy for agent-authored comments on collaboration surfaces.
-Comments should be sparse, role-specific, and evidence-oriented. Do not require
-comments for every progress update unless a consumer-owned surface or local
-policy explicitly owns that requirement.
-Record whether agents should update an existing durable comment or create a new
-comment, and record any local noise limits before treating those behaviors as
-settled policy.
-
-| Comment purpose | Required when | Required content | Update behavior | Noise limit | Local placement or owner | Status | Evidence pointer |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `[worker readiness, evaluator finding, orchestrator routing, maintainer question, or omitted reason]` | `[scope, risk class, platform event, pending decision, not_required reason, or maintainer confirmation]` | `[role or purpose, evidence basis, requested decision or next owner, limitations, or omitted reason]` | `[update existing, create new, surface-owned, pending, omitted, or not_required reason]` | `[material events only, review findings only, no progress chatter, surface-owned, pending, omitted, or not_required reason]` | `[project extension, platform surface, owner role, pending, or omitted reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` | `[local evidence pointer, confirmation reference, or limitation]` |
-
-## Command And Structured Body Handling
-
-Record local policy for command snippets, command bodies, body files, standard
-input, structured API fields, platform-surface fields, or equivalent safe
-artifact boundaries.
-
-| Body type | Safe boundary | Local handling rule | Unavailable or sensitive handling |
-| --- | --- | --- | --- |
-| `[command snippet, command body, issue body, change-proposal body, prompt, report, or other structured body]` | `[body file, stdin, structured field, surface-owned field, pending, or omitted reason]` | `[copyable boundary, quoting rule, storage locator, or confirmation requirement]` | `[pending, skipped, not_required, omitted, redacted, or maintainer_confirmed handling]` |
-
-## Platform Surface Mapping
-
-Record local decisions about platform surface fields without making them
-portable doctrine. If the project does not use a platform surface, record
-`not_required` or an omitted reason.
-
-| Surface field or mechanism | Mapped local output | Owner layer | Local handling | Status |
-| --- | --- | --- | --- | --- |
-| `[label placeholder, status placeholder, checkbox placeholder, template field placeholder, reviewer request placeholder, milestone placeholder, release field placeholder, or omitted reason]` | `[parent issue, child issue, change proposal, change message, release note, validation report, readiness report, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
-| `[assignee placeholder or omitted reason]` | `[parent issue, child issue, change proposal, review surface, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
-| `[reviewer request placeholder or omitted reason]` | `[change proposal, review surface, release change, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
-| `[project-field placeholder or omitted reason]` | `[parent issue, child issue, change proposal, readiness report, or omitted reason]` | `[project extension, platform surface, platform, maintainer, or unknown]` | `[required, optional, forbidden, surface-owned, pending, omitted, or not_required reason]` | `[unknown, pending, omitted, not_required, or maintainer_confirmed]` |
+- conversation language and durable artifact language, recorded separately;
+- Parent Issue, Child Issue, change-proposal, change-message, review-finding,
+  validation-report, readiness-report, prompt, command-body, release-note, and
+  rollback-note fields;
+- issue references, closure syntax, trailers, merge-message policy,
+  release-note policy, commit subject style, subject length targets, body line
+  targets, and local exceptions;
+- AI-authored comment triggers, update behavior, noise limits, local placement,
+  and required evidence content;
+- safe structured-body boundaries such as body files, standard input,
+  structured API fields, or platform-surface-owned fields;
+- platform-surface mappings for labels, assignees, reviewer requests,
+  milestones, project fields, templates, or status fields when the consumer
+  repository owns those mappings.
 
 ## Output Boundaries
 
-- Local output policy MUST identify whether a rule is confirmed, pending,
-  omitted, unknown, `not_required`, or `maintainer_confirmed`.
-- Local policy MAY specialize exact headings, fields, references, trailers,
-  message conventions, body handling, language choices, and platform-surface
-  mapping.
-- Local policy MUST NOT claim validation success without evidence that satisfies
-  the portable validation contract.
-- Static output bodies MUST NOT mirror changing review, CI, deployment, or
-  external state as always-current truth.
-- Command text that is meant to be copied or executed should be separated from
-  unrelated narrative.
-- Surface-owned fields MUST remain platform-surface or platform mappings, not
-  durable portable-core doctrine.
+- Durable output policy MUST identify whether a local rule is confirmed,
+  pending, omitted, unknown, `not_required`, or `maintainer_confirmed`.
+- Agent-authored comments SHOULD stay sparse, role-specific, and
+  evidence-oriented unless confirmed local policy requires a different shape.
+- Local output policy MUST NOT claim validation success without evidence that
+  satisfies the portable validation contract.
+- Static output bodies MUST NOT mirror changing review, CI, deployment,
+  release, or external state as always-current truth.
+- Platform fields, labels, checkboxes, reviewer requests, and assignment
+  behavior are local or surface-owned mappings, not portable doctrine.
+- Do not record secrets, sensitive values, transient task details, stale
+  historical prose, role-specific scratch narration, commented-out
+  instructions, or obsolete guidance.
