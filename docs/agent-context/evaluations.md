@@ -221,6 +221,17 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Fail condition | The artifact relies on vague phrases, broad history, conversation memory, or generated summaries when concrete identifiers are available and material, or it mandates a platform-specific identifier syntax as portable core. |
 | Expected evidence | Review of the handoff or report, available artifact or source locators, local policy for identifier syntax when applicable, and stated limitations for unavailable or intentionally omitted identifiers. |
 
+## EVAL-019 Project Memory Authority-State Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | A missing-only project-memory starter or materialized project extension lets observations, repeated examples, pending proposals, or successful validation output become confirmed local policy without authority, or treats `maintainer_confirmed` as a missing-authority or pending-proposal state instead of an exact confirmed-claim marker. |
+| Governing contract | [ownership.md](ownership.md), [sources.md](sources.md), [validation.md](validation.md), [outputs.md](outputs.md), and [workflows.md](workflows.md). |
+| Input or condition | `payload/missing-only/docs/project/**`, materialized `docs/project/**` files when under review, project-memory entries, local memory starter changes, or readiness reports that rely on project-memory authority. |
+| Pass condition | Observed case studies and pending local decisions are visibly non-authoritative; confirmed local decisions require explicit maintainer confirmation, materialized local authority, or another authoritative local evidence pointer for the exact scope; `unknown`, `pending`, `omitted`, and `not_required` remain available for missing, unresolved, omitted, or inapplicable facts; `maintainer_confirmed` is used only for exact maintainer-confirmed claims; and project-memory entries are not treated as validation evidence by themselves. |
+| Fail condition | A starter or local-memory entry offers `maintainer_confirmed` as a state for missing authority or pending proposals, promotes an observation or repeated pattern into confirmed policy without authority, generalizes a narrow confirmation to unrelated scope, treats validation success as local policy authority, or uses a project-memory entry as proof that validation passed without citing qualifying validation evidence. |
+| Expected evidence | Manual audit of the project-memory files together, diff review of local memory state tables and confirmed-decision slots, targeted searches for authority-state vocabulary, validation-claim evidence review when project memory is cited, and portability-lint output when reusable text surfaces are in scope. |
+
 ## Boundary Rules
 
 Evaluation contracts own reusable failure cases and evidence expectations for
