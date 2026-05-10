@@ -1,71 +1,82 @@
 # Project Secrets Policy
 
-Use this file to record the consumer repository's local secrets and sensitive
-data handling policy. This file describes classification, storage,
-redaction, and handling boundaries. It must not contain actual secrets.
+Use this file as concise local memory for safe sensitive-data handling. It may
+record reusable observations, pending secrets decisions, and confirmed secrets
+policy, but it must never contain sensitive values.
 
-Do not include tokens, credentials, private keys, passwords, private personal
-data, production data samples, or secret-adjacent values in this file.
+Local secrets memory extends the portable evidence, validation, artifact,
+source, workflow, and ownership contracts. It MUST NOT copy sensitive local
+facts into `docs/agent-context/**` or silently replace portable redaction,
+evidence, validation, or ownership boundaries.
 
-## Classification
+## Safety Rules
 
-Define the local sensitivity classes agents may encounter. Keep class names and
-handling rules safe to share.
+Do not record actual secrets, credentials, authentication material, private
+keys, recovery material, unredacted private personal data, unredacted regulated
+data, production data samples, host-absolute paths, private infrastructure
+identifiers, or secret-adjacent example values.
 
-| Classification | Examples to describe, not reveal | Allowed handling |
-| --- | --- | --- |
-| `[classification name]` | `[safe category examples only]` | `[inspect, summarize, redact, omit, or escalate]` |
+Use safe category names, redacted summaries, evidence pointers, omission notes,
+and exact confirmation records instead. When local secrets policy is missing or
+incomplete, use conservative redaction or omission and report the limitation.
 
-## Storage Boundaries
+## Secrets Memory Rules
 
-Record where sensitive material may be stored or referenced. Do not reveal the
-material itself.
+- Record only reusable classification, storage-boundary, redaction, evidence,
+  validation-handling, or escalation knowledge.
+- Keep observations and pending decisions visibly non-authoritative.
+- Confirmed secrets decisions require explicit maintainer confirmation,
+  materialized local authority, or another authoritative local evidence pointer.
+- Use `unknown`, `pending`, `omitted`, and `not_required` when authority,
+  evidence, or applicability is incomplete.
+- Use `maintainer_confirmed` only for exact maintainer-confirmed claims.
+- Project-memory entries may point to validation evidence, but they are not
+  validation evidence by themselves.
 
-| Sensitive material class | Approved storage or locator type | Agent boundary |
-| --- | --- | --- |
-| `[class]` | `[approved storage category, not a secret value]` | `[may inspect metadata, must not open, ask maintainer, or omitted reason]` |
+## Observed Sensitive-Data Handling Case Studies
 
-## Redaction Rules
+Record concrete handling cases that may help future agents recognize safe
+classification, redaction, storage, evidence, or escalation patterns. These
+entries are evidence pointers and examples, not policy.
 
-| Evidence type | Redaction requirement | Allowed summary |
-| --- | --- | --- |
-| `[command output, file content, CI output, manual evidence, or other type]` | `[mask, omit, paraphrase, aggregate, or maintainer confirmation required]` | `[what can be reported safely]` |
+| Case | Sensitive area | Observation | Safe evidence pointer | Outcome or limit |
+| --- | --- | --- | --- | --- |
+| `[case name]` | `[credential category, private data class, regulated data class, operational data class, sensitive surface, validation evidence, generated artifact, or other area]` | `[what was observed without revealing sensitive values]` | `[redacted file pointer, issue, pull request, maintainer note, validation report, or omitted reason]` | `[safe handling lesson, unresolved risk, pending decision, not_required scope, or limit]` |
 
-## Forbidden Content
+## Pending Local Secrets Decisions
 
-The project extension MUST NOT include:
+Use this section when a local secrets rule, classification, storage boundary,
+redaction rule, evidence rule, or escalation path appears needed but authority
+has not confirmed it. Pending entries are proposals or open questions only.
 
-- actual secrets, tokens, credentials, passwords, private keys, or recovery
-  material;
-- unredacted private personal data or regulated data;
-- production data samples unless the local policy explicitly permits a safe
-  redacted form;
-- host-absolute paths or private infrastructure identifiers when they are not
-  safe to share;
-- instructions that ask agents to expose, print, exfiltrate, or weaken secrets.
+| Decision question | Candidate secrets rule | Affected material or surfaces | Evidence basis | Needed authority or blocker | State |
+| --- | --- | --- | --- | --- | --- |
+| `[question]` | `[proposed classification, storage boundary, redaction rule, evidence rule, escalation path, validation handling, or omitted reason]` | `[safe material category, path set, artifact class, output type, validation evidence, sensitive surface, or not_required reason]` | `[observed case, current source, maintainer question, redacted evidence, or limitation]` | `[maintainer confirmation, local authority rule, security owner, unavailable evidence, unsafe disclosure risk, or blocker]` | `[unknown, pending, omitted, or not_required]` |
 
-## Handling Boundaries
+## Confirmed Local Secrets Decisions
 
-| Situation | Required behavior | Validation or confirmation |
-| --- | --- | --- |
-| `[suspected secret in source]` | `[stop, redact, avoid quoting, ask maintainer, or follow local incident path]` | `[pending, skipped, maintainer_confirmed, or evidence pointer]` |
-| `[secret needed for validation]` | `[use existing environment, ask maintainer, mark unavailable, or omit]` | `[validation status and limit]` |
-| `[sensitive evidence needed in report]` | `[summarize safely, redact, or omit]` | `[redaction evidence or confirmation]` |
+Use this section only for scoped secrets policy with authority. Do not promote
+an observed handling pattern, successful check, issue text, pull request text,
+label, checkbox, project field, or repeated agent behavior into confirmed
+policy unless an authority source explicitly makes that surface decisive for the
+recorded scope.
 
-## Escalation And Confirmation
+| Decision | Scope | Affected material or surfaces | Authority source | Evidence pointer | Limits |
+| --- | --- | --- | --- | --- | --- |
+| `[confirmed secrets rule, classification, storage boundary, redaction rule, evidence rule, escalation path, or exception]` | `[exact paths, artifact classes, output types, validation evidence, sensitive surfaces, work types, or other boundary]` | `[safe material category or surface class, never sensitive values]` | `[maintainer confirmation, materialized local authority rule, or authoritative local evidence pointer]` | `[where the authority and supporting evidence are recorded]` | `[what is not authorized, freshness limit, required recheck, redaction limit, expiration, or portable boundary]` |
 
-Use maintainer confirmation when a local policy decision could expose sensitive
-data, weaken a boundary, or rely on an exception.
+## Secrets Boundaries
 
-| Question | Required confirmer role | Evidence pointer | Scope limit |
-| --- | --- | --- | --- |
-| `[policy question]` | `[role, not private personal detail]` | `[local evidence pointer]` | `[exact scope and expiration if any]` |
-
-## Unknown Or Omitted Policy
-
-Do not guess secrets policy. If a policy fact is unknown, pending, or omitted,
-record that state explicitly and use the matching validation status in reports.
-
-| Policy area | State | Reason | Next safe action |
-| --- | --- | --- | --- |
-| `[policy area]` | `[unknown, pending, omitted, or maintainer_confirmed]` | `[why the state applies]` | `[ask maintainer, mark validation pending, or not required]` |
+- Never quote, invent, transform, or preserve sensitive values in this file.
+- Use category names and redacted summaries instead of example values.
+- If a material evidence source contains sensitive data, omit, redact, mask,
+  aggregate, summarize, or request confirmation before reporting it.
+- If safe handling is impossible, mark the evidence unavailable, pending,
+  skipped, or limited instead of weakening the boundary.
+- `maintainer_confirmed` can support only the exact confirmed secrets claim and
+  scope recorded with the confirmation evidence.
+- Secrets policy entries do not prove validation status by themselves. They may
+  describe which evidence is safe to use, but validation reports must cite the
+  observed or confirmed evidence directly.
+- Do not record transient task notes, issue-plan narration, stale migration
+  prose, worker self-reporting, dead comments, or obsolete guidance.
