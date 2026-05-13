@@ -11,14 +11,16 @@ payloads.
 
 The core contract owns:
 
-- the boundary between portable contracts, project-local extensions,
-  missing-only routing shims, platform collaboration surfaces, and tooling;
+- the boundary between portable runtime protocols, reference contracts,
+  project-local extensions, missing-only routing shims, platform collaboration
+  surfaces, and tooling;
 - the expectation that agents inspect current repository evidence before acting;
 - the expectation that durable claims are backed by observed evidence;
 - the rule that portable contracts remain repository-agnostic and
   vendor-agnostic;
-- the reading order from the root entry point to this contract set and then to
-  any consumer-owned project extension.
+- the reading order from the root entry point to task-specific runtime
+  protocols, this reference contract set, and any consumer-owned project
+  extension.
 
 ## Must Not Own
 
@@ -27,9 +29,9 @@ The core contract MUST NOT own:
 - repository names, maintainers, host paths, local commands, secrets, or
   operational assumptions;
 - artifact schemas or detailed validation vocabulary;
-- detailed thread-role, handoff, or workflow rules;
-- vendor shim payload text, collaboration-surface payloads, or
-  platform-specific runtime behavior;
+- detailed runtime protocol, thread-role, handoff, or workflow rules;
+- vendor adapter payload text, vendor shim payload text, collaboration-surface
+  payloads, or platform-specific runtime behavior;
 - installer implementation details or portability-lint rules.
 
 Those topics belong to their dedicated contracts, project extensions,

@@ -16,7 +16,7 @@ and does not create a consumer-side lock file or equivalent state file.
 - **Resolved source commit**: the immutable full commit SHA resolved from the
   configured source channel for one installer run.
 - **Consumer repository**: the destination repository where the installer is run.
-- **Source-owned portable payload**: `AGENTS.md` plus
+- **Source-owned portable payload**: `AGENTS.md`, `.agent/**`, and
   `docs/agent-context/**`, copied from the resolved source commit and owned by
   the source repository.
 - **Consumer-owned local context**: `docs/project/**`, owned by the consumer
@@ -26,7 +26,8 @@ and does not create a consumer-side lock file or equivalent state file.
   absent.
 - **Vendor routing shim**: a thin missing-only instruction file for a specific
   agent or platform that routes readers back to `AGENTS.md`,
-  `docs/agent-context/README.md`, and relevant `docs/project/**` files.
+  `.agent/README.md`, `docs/agent-context/README.md`, and relevant
+  `docs/project/**` files.
 - **Platform collaboration surface**: a platform-native issue form, pull request
   template, review form, workflow template, or similar collaboration file.
 
@@ -58,6 +59,7 @@ adoption and refresh do not require subcommands.
 | Category | Source path | Destination path | Installer behavior |
 | --- | --- | --- | --- |
 | Source-owned portable payload | `AGENTS.md` | `AGENTS.md` | Overwrite from the resolved source commit on every run. |
+| Source-owned portable payload | `.agent/**` | `.agent/**` | Replace from the resolved source commit on every run. |
 | Source-owned portable payload | `docs/agent-context/**` | `docs/agent-context/**` | Replace from the resolved source commit on every run. |
 | Consumer-owned local context | `payload/missing-only/docs/project/**` | `docs/project/**` | Create absent files only; preserve existing files. |
 | Missing-only vendor shim | `payload/missing-only/CLAUDE.md` | `CLAUDE.md` | Create only if absent; preserve existing files. |
@@ -67,15 +69,19 @@ adoption and refresh do not require subcommands.
 
 ## Source-Owned Portable Payload
 
-`AGENTS.md` and `docs/agent-context/**` are maintained by the source repository.
-Consumer repositories SHOULD NOT place local identity, commands, secrets policy,
-workflow exceptions, validation commands, or platform-specific collaboration
-rules in these paths.
+`AGENTS.md`, `.agent/**`, and `docs/agent-context/**` are maintained by the
+source repository. Consumer repositories SHOULD NOT place local identity,
+commands, secrets policy, workflow exceptions, validation commands, or
+platform-specific collaboration rules in these paths.
 
 Because these paths are source-owned, the installer overwrites or replaces them
 from the resolved source commit on every run. A consumer that needs local policy
 MUST put that policy under `docs/project/**` or another explicitly documented
 consumer-owned local extension path.
+
+`AGENTS.md` owns runtime routing. `.agent/**` owns concise runtime protocols,
+role entry points, and thin vendor adapter mappings. `docs/agent-context/**`
+owns portable reference contracts.
 
 ## Missing-Only Seeding
 
@@ -101,6 +107,7 @@ missing-only so agent-specific tools can find the portable and local context.
 Vendor shims MUST route readers to:
 
 - the root `AGENTS.md`;
+- `.agent/README.md` and relevant runtime protocols;
 - `docs/agent-context/README.md`;
 - relevant files under `docs/project/**` when present.
 

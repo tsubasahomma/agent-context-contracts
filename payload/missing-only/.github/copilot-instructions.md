@@ -6,11 +6,13 @@ durable operating contracts.
 Before making or reviewing changes, use this routing order:
 
 1. Start with the root `AGENTS.md`.
-2. Read `docs/agent-context/README.md` and the relevant portable contracts.
-3. If `docs/project/**` exists, read the relevant local extension files for
+2. Read the relevant runtime protocol under `.agent/**`.
+3. Read `docs/agent-context/README.md` and the relevant reference contracts
+   when the runtime protocol or task needs durable boundaries.
+4. If `docs/project/**` exists, read the relevant local extension files for
    repository-local identity, surfaces, validation commands, workflow
    exceptions, and policy.
-4. If `docs/project/**` is absent or incomplete, report the missing local
+5. If `docs/project/**` is absent or incomplete, report the missing local
    evidence instead of inventing local facts.
 
 Keep work bounded to the accepted task. Re-inspect current repository evidence

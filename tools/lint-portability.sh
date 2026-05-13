@@ -13,6 +13,7 @@ Scans portable agent-context files for repository-local facts and portability
 boundary drift. With no PATH arguments, the default scan surface is:
 
   AGENTS.md
+  .agent/**
   docs/agent-context/**
   payload/missing-only/**
 
@@ -135,6 +136,7 @@ scan_file() {
 
     function reusable_text_surface(file) {
       return file ~ /^AGENTS\.md$/ ||
+        file ~ /^\.agent\// ||
         file ~ /^docs\/agent-context\// ||
         file ~ /^payload\/missing-only\// ||
         file ~ /^tests\/fixtures\/portability-lint\// ||
@@ -288,6 +290,7 @@ EOF
 
 if [ "$#" -eq 0 ]; then
   scan_target "${repo_root}/AGENTS.md"
+  scan_target "${repo_root}/.agent"
   scan_target "${repo_root}/docs/agent-context"
   scan_target "${repo_root}/payload/missing-only"
 else
