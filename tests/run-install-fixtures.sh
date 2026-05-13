@@ -90,7 +90,7 @@ make_source_archive() {
   mkdir -p "$source_tree"
   (
     cd "$repo_root"
-    tar -cf - AGENTS.md docs/agent-context payload/missing-only
+    tar -cf - AGENTS.md .agent docs/agent-context payload/missing-only
   ) | (
     cd "$source_tree"
     tar -xf -
@@ -167,8 +167,10 @@ test_install_and_refresh_behavior() {
 
   source_tree="${tmp_root}/source-parent/agent-context-contracts-${commit}"
   target="${tmp_root}/target"
-  mkdir -p "${target}/docs/agent-context" "${target}/docs/project" "${target}/.github"
+  mkdir -p "${target}/.agent/protocols" "${target}/docs/agent-context" "${target}/docs/project" "${target}/.github"
   printf 'stale AGENTS\n' >"${target}/AGENTS.md"
+  printf 'stale agent README\n' >"${target}/.agent/README.md"
+  printf 'stale agent extra\n' >"${target}/.agent/protocols/obsolete.md"
   printf 'stale portable README\n' >"${target}/docs/agent-context/README.md"
   printf 'stale portable extra\n' >"${target}/docs/agent-context/obsolete.md"
   printf 'consumer profile\n' >"${target}/docs/project/profile.md"
@@ -181,6 +183,9 @@ test_install_and_refresh_behavior() {
   assert_contains "$output" "Resolved commit: ${commit}"
   cmp -s "${source_tree}/AGENTS.md" "${target}/AGENTS.md" ||
     fail "AGENTS.md was not overwritten from source archive"
+  cmp -s "${source_tree}/.agent/README.md" "${target}/.agent/README.md" ||
+    fail ".agent/README.md was not overwritten from source archive"
+  assert_no_path "${target}/.agent/protocols/obsolete.md"
   cmp -s "${source_tree}/docs/agent-context/README.md" "${target}/docs/agent-context/README.md" ||
     fail "docs/agent-context/README.md was not overwritten from source archive"
   assert_no_path "${target}/docs/agent-context/obsolete.md"
@@ -231,9 +236,11 @@ test_dry_run_does_not_mutate() {
 
   assert_contains "$output" "Mode: dry-run"
   assert_contains "$output" "OVERWRITE AGENTS.md"
+  assert_contains "$output" "REPLACE .agent/"
   assert_contains "$output" "REPLACE docs/agent-context/"
   assert_contains "$output" "CREATE missing-only CLAUDE.md"
   assert_no_path "${target}/AGENTS.md"
+  assert_no_path "${target}/.agent"
   assert_no_path "${target}/docs"
   assert_no_path "${target}/agent-context.lock.json"
 
@@ -260,6 +267,7 @@ test_cli_repo_and_channel_flags_override_environment() {
   assert_contains "$calls" "https://codeload.github.com/cli-owner/cli-repo/tar.gz/${commit}"
   assert_not_contains "$calls" "https://api.github.com/repos/test-owner/test-repo/commits/main"
   assert_file "${target}/AGENTS.md"
+  assert_file "${target}/.agent/README.md"
   assert_no_path "${target}/agent-context.lock.json"
 
   pass "CLI repo and slash-containing channel flags override environment defaults and use encoded commit API URL"
@@ -313,6 +321,30 @@ test_source_owned_file_parent_refusal() {
   assert_no_path "${target}/agent-context.lock.json"
 
   pass "source-owned payload refuses non-directory parent before partial writes"
+}
+
+test_source_owned_agent_symlink_replaced_safely() {
+  commit=9999999999999999999999999999999999999999
+  archive="${tmp_root}/agent-symlink-source-owned.tar.gz"
+  fake_bin="${tmp_root}/agent-symlink-bin"
+  calls="${tmp_root}/agent-symlink-curl-calls.log"
+  make_source_archive "$archive" "$commit"
+  make_fake_curl "$fake_bin" "$archive" "$calls" "$commit"
+
+  target="${tmp_root}/agent-symlink-target"
+  external="${tmp_root}/agent-symlink-external"
+  mkdir -p "$target" "$external"
+  printf 'external marker\n' >"${external}/marker.txt"
+  ln -s "$external" "${target}/.agent"
+
+  output="${tmp_root}/agent-symlink.out"
+  run_installer "$target" "$output"
+
+  assert_file_contains "${external}/marker.txt" "external marker"
+  assert_file "${target}/.agent/README.md"
+  [ ! -L "${target}/.agent" ] || fail ".agent symlink was not replaced by a directory"
+
+  pass "source-owned .agent symlink destination is replaced without writing outside target"
 }
 
 test_missing_only_parent_symlink_refusal() {
@@ -386,6 +418,7 @@ test_source_owned_parent_symlink_refusal
 test_source_owned_file_parent_refusal
 test_missing_only_parent_symlink_refusal
 test_missing_only_file_parent_refusal
+test_source_owned_agent_symlink_replaced_safely
 test_old_subcommands_are_not_public_lifecycle
 
 log "completed ${pass_count} fixture checks"

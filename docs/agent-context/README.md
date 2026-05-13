@@ -1,7 +1,9 @@
 # Agent Context Contracts
 
-This directory contains portable operating contracts for agent collaboration in
-a consumer repository. The contracts are repository-agnostic: they define
+This directory contains portable reference contracts for agent collaboration in
+a consumer repository. The runtime entry point is the root `AGENTS.md`, which
+routes agents into task-specific protocols under `.agent/**` before they consult
+these reference contracts. The contracts are repository-agnostic: they define
 reusable boundaries, expectations, and extension points without embedding local
 identity, host details, commands, secrets, vendor-specific baseline assumptions,
 or local operational facts.
@@ -13,10 +15,12 @@ exceptions, policy details, or sensitive surfaces.
 ## Reader Path
 
 Use this table as a navigation aid only. It points to the contracts that own the
-details instead of replacing their rules. After reading the relevant portable
-contracts, read materialized `docs/project/**` files when they exist and are
-relevant. Starter files under `payload/missing-only/docs/project/**` are
-missing-only seed content, not active project-local context.
+details instead of replacing their rules. For normal runtime work, start with
+`AGENTS.md` and the relevant `.agent/**` protocol first. After reading the
+relevant runtime protocol and reference contracts, read materialized
+`docs/project/**` files when they exist and are relevant. Starter files under
+`payload/missing-only/docs/project/**` are missing-only seed content, not active
+project-local context.
 
 | Task | Start with | Then read as needed |
 | --- | --- | --- |
@@ -51,6 +55,7 @@ Source-owned portable payload:
 
 ```text
 AGENTS.md
+.agent/**
 docs/agent-context/**
 ```
 
@@ -73,7 +78,8 @@ context and existing vendor instruction files are preserved.
 
 ## Ownership Boundary
 
-Portable files in this directory own reusable collaboration contracts only. They
+Portable files in this directory own reusable collaboration reference contracts
+only. Runtime protocol selection belongs under `.agent/**`. Reference contracts
 MUST NOT own repository identity, local source maps, local validation commands,
 secrets policy details, platform collaboration templates, optional vendor shim
 content, installer implementation details, or portability-lint implementation

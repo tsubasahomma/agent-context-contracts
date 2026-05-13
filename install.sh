@@ -16,8 +16,8 @@ Install or refresh portable agent-context files in a consumer repository.
 
 By default this resolves tsubasahomma/agent-context-contracts main to a full
 commit SHA, downloads one GitHub archive for that commit, overwrites the
-source-owned portable payload, and seeds missing-only payload files only when
-the destination path is absent.
+source-owned portable payload, including runtime protocols under .agent, and
+seeds missing-only payload files only when the destination path is absent.
 
 Environment:
   AGENT_CONTEXT_REPO      Source repository owner/name.
@@ -162,6 +162,7 @@ EOF
 
 preflight_destinations() {
   ensure_destination_parent_safe "AGENTS.md"
+  ensure_destination_parent_safe ".agent"
   ensure_destination_parent_safe "docs/agent-context"
   preflight_missing_only_destinations "$1"
 }
@@ -263,7 +264,9 @@ archive_url="https://codeload.github.com/${repo}/tar.gz/${commit}"
 curl_fetch "$archive_url" >"$archive"
 tar -xzf "$archive" --strip-components=1 -C "$source_dir"
 
-if [ ! -f "${source_dir}/AGENTS.md" ] || [ ! -d "${source_dir}/docs/agent-context" ]; then
+if [ ! -f "${source_dir}/AGENTS.md" ] ||
+  [ ! -d "${source_dir}/.agent" ] ||
+  [ ! -d "${source_dir}/docs/agent-context" ]; then
   printf 'install.sh: source archive does not contain the portable payload\n' >&2
   exit 65
 fi
@@ -281,6 +284,7 @@ else
 fi
 
 copy_overwrite_file "${source_dir}/AGENTS.md" "AGENTS.md"
+replace_directory "${source_dir}/.agent" ".agent"
 replace_directory "${source_dir}/docs/agent-context" "docs/agent-context"
 seed_missing_only "${source_dir}/payload/missing-only"
 

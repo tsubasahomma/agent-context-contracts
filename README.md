@@ -1,7 +1,8 @@
 # Agent Context Contracts
 
-This repository provides portable, reviewable agent-context files that can be
-installed into a consumer repository with one command:
+This repository provides portable runtime protocols and reviewable
+agent-context reference contracts that can be installed into a consumer
+repository with one command:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/tsubasahomma/agent-context-contracts/main/install.sh | sh
@@ -19,13 +20,15 @@ and copies files from that archive.
 | Source path | Destination path | Behavior |
 | --- | --- | --- |
 | `AGENTS.md` | `AGENTS.md` | Overwritten on every run. |
+| `.agent/**` | `.agent/**` | Replaced from the resolved source commit on every run. |
 | `docs/agent-context/**` | `docs/agent-context/**` | Replaced from the resolved source commit on every run. |
 | `payload/missing-only/**` | Matching destination paths | Created only when the destination file is absent. |
 
-The portable contracts live in `AGENTS.md` and `docs/agent-context/**`. Consumer
-repositories should keep repository identity, commands, local policy, workflow
-exceptions, validation details, and sensitive-surface notes under
-`docs/project/**`.
+The default runtime reading path starts at `AGENTS.md` and task-selective
+protocols under `.agent/**`. The reference contracts live under
+`docs/agent-context/**`. Consumer repositories should keep repository identity,
+commands, local policy, workflow exceptions, validation details, and
+sensitive-surface notes under `docs/project/**`.
 
 Before writing managed paths, the installer refuses unsafe destination parents,
 including symlinked parent components and parent components that are files
@@ -51,9 +54,9 @@ The missing-only tree may seed local project starter files under
 - `GEMINI.md`;
 - `.github/copilot-instructions.md`.
 
-Vendor shims route agents to `AGENTS.md`, `docs/agent-context/README.md`, and
-relevant `docs/project/**` files. Existing vendor instruction files in a
-consumer repository are always preserved.
+Vendor shims route agents to `AGENTS.md`, `.agent/README.md`,
+`docs/agent-context/README.md`, and relevant `docs/project/**` files. Existing
+vendor instruction files in a consumer repository are always preserved.
 
 ## What This Does Not Manage
 
@@ -99,6 +102,7 @@ sh install.sh --dry-run
 
 ## Contract Index
 
-Start with [docs/agent-context/README.md](docs/agent-context/README.md) for the
-portable contract set. Ownership and installer behavior are defined in
+Start with `AGENTS.md` for runtime protocol selection. Use
+[docs/agent-context/README.md](docs/agent-context/README.md) for the portable
+reference contract set. Ownership and installer behavior are defined in
 [docs/agent-context/ownership.md](docs/agent-context/ownership.md).

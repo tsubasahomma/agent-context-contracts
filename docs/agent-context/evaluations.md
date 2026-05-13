@@ -29,7 +29,7 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | --- | --- |
 | Risk | Portable contracts or missing-only starters embed repository identity, host paths, local commands, private identifiers, secrets, branch policy, concrete tracker references, or local operational facts. |
 | Governing contract | [core.md](core.md), [sources.md](sources.md), [ownership.md](ownership.md), and [validation.md](validation.md). |
-| Input or condition | Portable contracts, root routing instructions, missing-only starter files, vendor shims, lint fixtures, or proposed contract changes. |
+| Input or condition | Portable runtime protocols, reference contracts, root routing instructions, missing-only starter files, vendor shims, lint fixtures, or proposed contract changes. |
 | Pass condition | Reusable text uses repository-agnostic language or explicit placeholders, and local facts are confined to consumer-owned `docs/project/**` files after installation. |
 | Fail condition | Reusable text requires or reveals a concrete repository, host path, command, private identifier, secret-adjacent value, branch convention, tracker number, platform label, reviewer, CI name, release policy, or local workflow fact. |
 | Expected evidence | Portability-lint output when applicable, targeted leakage searches, and manual review of changed reusable text. |
@@ -41,7 +41,7 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Risk | A vendor routing shim becomes the durable source of portable doctrine or local policy. |
 | Governing contract | [ownership.md](ownership.md), [sources.md](sources.md), and [core.md](core.md). |
 | Input or condition | A missing-only vendor instruction file or proposed routing-shim change. |
-| Pass condition | The shim routes readers to `AGENTS.md`, `docs/agent-context/README.md`, and relevant `docs/project/**` files without duplicating portable doctrine or inventing local facts. |
+| Pass condition | The shim routes readers to `AGENTS.md`, `.agent/README.md`, `docs/agent-context/README.md`, and relevant `docs/project/**` files without duplicating portable doctrine or inventing local facts. |
 | Fail condition | The shim contains standalone operating rules, local project facts, validation claims, platform requirements, or durable policy that belongs to portable contracts or the project extension. |
 | Expected evidence | Diff review of the shim and link checks to the owning contracts. |
 
@@ -52,7 +52,7 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Risk | Installer behavior blurs source-owned portable payload and consumer-owned missing-only payload. |
 | Governing contract | [ownership.md](ownership.md). |
 | Input or condition | Installer design, fixture output, dry-run output, or implementation diff. |
-| Pass condition | `AGENTS.md` and `docs/agent-context/**` are refreshed from one resolved source commit; `payload/missing-only/**` files are created only when absent; existing `docs/project/**` and vendor files are preserved; no consumer-side state file is created. |
+| Pass condition | `AGENTS.md`, `.agent/**`, and `docs/agent-context/**` are refreshed from one resolved source commit; `payload/missing-only/**` files are created only when absent; existing `docs/project/**` and vendor files are preserved; no consumer-side state file is created. |
 | Fail condition | The installer patches, merges, overwrites, deletes, renames, or tracks missing-only files; requires previous state; creates a lock or equivalent state file; installs platform collaboration surfaces by default; or exposes a package-manager lifecycle as public adoption behavior. |
 | Expected evidence | Focused installer fixtures, inspected target files, resolved commit output, archive-fetch evidence, and absence of state-file creation. |
 
@@ -231,6 +231,17 @@ Evaluation reports SHOULD use the validation status vocabulary in
 | Pass condition | Observed case studies and pending local decisions are visibly non-authoritative; confirmed local decisions require explicit maintainer confirmation, materialized local authority, or another authoritative local evidence pointer for the exact scope; `unknown`, `pending`, `omitted`, and `not_required` remain available for missing, unresolved, omitted, or inapplicable facts; `maintainer_confirmed` is used only for exact maintainer-confirmed claims; and project-memory entries are not treated as validation evidence by themselves. |
 | Fail condition | A starter or local-memory entry offers `maintainer_confirmed` as a state for missing authority or pending proposals, promotes an observation or repeated pattern into confirmed policy without authority, generalizes a narrow confirmation to unrelated scope, treats validation success as local policy authority, or uses a project-memory entry as proof that validation passed without citing qualifying validation evidence. |
 | Expected evidence | Manual audit of the project-memory files together, diff review of local memory state tables and confirmed-decision slots, targeted searches for authority-state vocabulary, validation-claim evidence review when project memory is cited, and portability-lint output when reusable text surfaces are in scope. |
+
+## EVAL-020 Runtime Protocol And Adapter Authority Drift
+
+| Field | Evaluation |
+| --- | --- |
+| Risk | Runtime protocols duplicate reference-contract authority, or vendor adapters become portable doctrine instead of thin mappings. |
+| Governing contract | [core.md](core.md), [sources.md](sources.md), [ownership.md](ownership.md), and [workflows.md](workflows.md). |
+| Input or condition | `AGENTS.md`, `.agent/protocols/**`, `.agent/roles/**`, `.agent/adapters/**`, vendor shims, or proposed runtime routing changes. |
+| Pass condition | Runtime protocols stay concise and task-selective, reference contracts retain durable boundary authority, and adapters map to tool-native surfaces without replacing portable protocols or embedding local facts. |
+| Fail condition | A runtime file copies broad reference doctrine, a reference contract requires every task to read the full contract set first, or an adapter makes a vendor feature, command, branch mechanic, platform field, or agent behavior mandatory for all consumers. |
+| Expected evidence | Diff review of runtime files, targeted stale-reading-path searches, portability-lint output, and manual review that adapter claims are non-authoritative mappings. |
 
 ## Boundary Rules
 
